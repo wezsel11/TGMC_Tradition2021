@@ -665,3 +665,17 @@ GLOBAL_PROTECT(AdminProcCallSpamPrevention)
 	dellog += "</ol>"
 
 	usr << browse(dellog.Join(), "window=dellog")
+
+
+/client/proc/allow_browser_inspect()
+	set name = "Allow Browser Inspect"
+	set category = "Debug"
+
+	if(!check_rights(R_DEBUG))
+		return
+	if(byond_version < 516)
+		to_chat(usr, "<span class='warning'>You can only use this on 516!</span>")
+		return
+
+	to_chat(usr, "<span class='notice'>You can now right click to use inspect on browsers.</span>")
+	winset(src, null, "browser-options=+devtools")

@@ -129,15 +129,14 @@
 		var/mob/living/carbon/human/H = L
 		if((H.species.species_flags & NO_PAIN))
 			return ..()
-	switch(current_cycle)
-		if(1 to agony_start - 1)
-			if(prob(5))
-				to_chat(L, discomfort_message)
-		if(agony_start to INFINITY)
-			L.apply_effect(agony_amount, AGONY)
-			if(prob(5))
-				L.emote(pick("dry heaves!", "coughs!", "splutters!"))
-				to_chat(L, discomfort_message)
+	if(current_cycle >= 1 && current_cycle < agony_start)
+		if(prob(5))
+			to_chat(L, discomfort_message)
+	else if(current_cycle >= agony_start)
+		L.apply_effect(agony_amount, AGONY)
+		if(prob(5))
+			L.emote(pick("dry heaves!", "coughs!", "splutters!"))
+			to_chat(L, discomfort_message)
 	return ..()
 
 /datum/reagent/consumable/capsaicin/condensed

@@ -25,9 +25,13 @@ window.Byond = (function () {
   // Utility functions
   var hasOwn = Object.prototype.hasOwnProperty;
   // Basic checks to detect whether this page runs in BYOND
-  var isByond = !!navigator.userAgent.match(/Trident\/(\d+).+?;/i)
+  // BYOND 515 and older: Internet Explorer (Trident) served from /tmp
+  var isTridentByond = !!navigator.userAgent.match(/Trident\/(\d+).+?;/i)
     && location.hostname === '127.0.0.1'
     && location.pathname.indexOf('/tmp') === 0;
+  // BYOND 516+: Edge WebView2 (Chromium)
+  var isWebViewByond = !!navigator.userAgent.match(/Edg\//i);
+  var isByond = isTridentByond || isWebViewByond;
   // Makes a BYOND call.
   // See: https://secure.byond.com/docs/ref/skinparams.html
   Byond.call = function (path, params) {
@@ -53,6 +57,12 @@ window.Byond = (function () {
         }
       }
     }
+    // BYOND 516+: call the client directly instead of navigating,
+    // which would abort the page load in WebView2
+    if (window.cef_to_byond) {
+      cef_to_byond('byond://' + url);
+      return;
+    }
     // Perform a standard call via location.href
     if (url.length < 2048) {
       location.href = 'byond://' + url;
@@ -63,6 +73,38 @@ window.Byond = (function () {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     xhr.send();
+  };
+  // Loads an asset, retrying while it is not yet in the client's cache.
+  // On BYOND 516+ the page can be shown before its assets have arrived.
+  var loadAsset = function (createNode, attempt) {
+    attempt = attempt || 0;
+    var node = createNode();
+    node.onerror = function () {
+      node.parentNode.removeChild(node);
+      if (attempt < 10) {
+        setTimeout(function () {
+          loadAsset(createNode, attempt + 1);
+        }, 250 + attempt * 250);
+      }
+    };
+    document.getElementsByTagName('head')[0].appendChild(node);
+  };
+  Byond.loadCss = function (url) {
+    loadAsset(function () {
+      var node = document.createElement('link');
+      node.type = 'text/css';
+      node.rel = 'stylesheet';
+      node.href = url;
+      return node;
+    });
+  };
+  Byond.loadJs = function (url) {
+    loadAsset(function () {
+      var node = document.createElement('script');
+      node.type = 'text/javascript';
+      node.src = url;
+      return node;
+    });
   };
   return Byond;
 })();
@@ -109,21 +151,21 @@ window.__updateQueue__ = [];
 window.update = function (stateJson) {
   window.__updateQueue__.push(stateJson);
 };
-Byond.call('', {
-  src: window.__ref__,
-  action: 'tgui:initialize',
-});
 </script>
 
 <!-- Styles -->
-<link rel="stylesheet" type="text/css" href="tgui.bundle.css">
+<script type="text/javascript">
+Byond.loadCss('tgui.bundle.css');
+</script>
 
 <!-- This is processed in byond, so interfaces can override the
   html head if needed, for custom sheets of style etc. -->
 <!--customheadhtml-->
 
 <!-- Scripts -->
-<script type="text/javascript" defer src="tgui.bundle.js"></script>
+<script type="text/javascript">
+Byond.loadJs('tgui.bundle.js');
+</script>
 
 </head>
 <body>
@@ -175,6 +217,15 @@ Nanotrasen (c) 2525-2559
     <div>Please enable Javascript and restart the game.</div>
   </div>
 </noscript>
+
+<!-- Signal tgui that we're ready to receive updates. Done at the end of the
+  page so the call cannot interrupt loading of the page itself. -->
+<script type="text/javascript">
+Byond.call('', {
+  src: window.__ref__,
+  action: 'tgui:initialize',
+});
+</script>
 
 </body>
 </html>

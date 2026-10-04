@@ -10,7 +10,7 @@ GLOBAL_VAR(restart_counter)
 /world/New()
 	var/debug_server = world.GetConfig("env", "AUXTOOLS_DEBUG_DLL")
 	if (debug_server)
-		call(debug_server, "auxtools_init")()
+		LIBCALL(debug_server, "auxtools_init")()
 		enable_debugging()
 #ifdef REFERENCE_TRACKING
 	enable_reference_tracking()

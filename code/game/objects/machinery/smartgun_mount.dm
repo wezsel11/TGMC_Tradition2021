@@ -558,10 +558,13 @@
 	if(user.lying_angle || !Adjacent(user) || user.incapacitated() || !user.client)
 		user.unset_interaction()
 
-/mob/living/proc/toogle_mg_burst_fire(obj/machinery/standard_hmg/MG in list(interactee))
+/mob/living/proc/toogle_mg_burst_fire()
 	set name = "Toggle MG Burst Fire"
 	set category = "Weapons"
 
+	var/obj/machinery/standard_hmg/MG = interactee
+	if(!istype(MG))
+		return
 	if(!incapacitated() && MG.operator == src)
 		MG.burst_fire = !MG.burst_fire
 		to_chat(src, "<span class='notice'>You set [MG] to [MG.burst_fire ? "burst fire" : "single fire"] mode.</span>")

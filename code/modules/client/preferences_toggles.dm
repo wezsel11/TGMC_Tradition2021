@@ -152,10 +152,13 @@
 		mob.stop_sound_channel(CHANNEL_AMBIENT)
 
 
-/client/verb/toggle_special(role in BE_SPECIAL_FLAGS)
+/client/verb/toggle_special()
 	set category = "Preferences"
 	set name = "Toggle Special Roles"
 
+	var/role = input("Toggle which special role?", "Toggle Special Roles") as null|anything in BE_SPECIAL_FLAGS
+	if(!role)
+		return
 	var/role_flag = BE_SPECIAL_FLAGS[role]
 	if(!role_flag)
 		return

@@ -360,7 +360,8 @@ GLOBAL_PROTECT(admin_verbs_asay)
 	/datum/admins/proc/view_del_failures,
 #endif
 	/datum/admins/proc/check_bomb_impacts,
-	/client/proc/toggle_cdn
+	/client/proc/toggle_cdn,
+	/client/proc/allow_browser_inspect
 	)
 GLOBAL_LIST_INIT(admin_verbs_debug, world.AVdebug())
 GLOBAL_PROTECT(admin_verbs_debug)
@@ -438,7 +439,8 @@ GLOBAL_PROTECT(admin_verbs_fun)
 	/datum/admins/proc/change_ship_map,
 	/datum/admins/proc/panic_bunker,
 	/datum/admins/proc/mode_check,
-	/client/proc/toggle_cdn
+	/client/proc/toggle_cdn,
+	/client/proc/allow_browser_inspect
 	)
 GLOBAL_LIST_INIT(admin_verbs_server, world.AVserver())
 GLOBAL_PROTECT(admin_verbs_server)

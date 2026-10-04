@@ -102,7 +102,8 @@
 		return // Bail if we're not supposed to open.
 
 	// Build window options
-	var/window_options = "can_minimize=0;auto_format=0;"
+	// file= stores the page in the client's cache dir, so relative asset urls (tgui.bundle.js) resolve on 516+
+	var/window_options = "file=[window_id].html;can_minimize=0;auto_format=0;"
 	// If we have a width and height, use them.
 	if(width && height)
 		window_options += "size=[width]x[height];"
