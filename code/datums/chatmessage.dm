@@ -144,6 +144,19 @@
 	var/complete_text = "<span class='center maptext [extra_classes.Join(" ")]' style='color: [tgt_color]'>[owner.say_emphasis(text)]</span>"
 
 	var/mheight = WXH_TO_HEIGHT(owned_by.MeasureText(complete_text, null, CHAT_MESSAGE_WIDTH))
+
+	if(!VERB_SHOULD_YIELD)
+		return finish_image_generation(mheight, target, owner, complete_text, lifespan)
+
+	var/datum/callback/our_callback = CALLBACK(src, .proc/finish_image_generation, mheight, target, owner, complete_text, lifespan)
+	SSrunechat.message_queue += our_callback
+
+
+///finishes the image generation after the MeasureText() call in generate_image().
+///necessary because after that call the proc can resume at the end of the tick and cause overtime.
+/datum/chatmessage/proc/finish_image_generation(mheight, atom/target, mob/owner, complete_text, lifespan)
+	if(QDELETED(src) || !owned_by)
+		return
 	approx_lines = max(1, mheight / CHAT_MESSAGE_APPROX_LHEIGHT)
 
 	// Translate any existing messages upwards, apply exponential decay factors to timers

@@ -33,6 +33,8 @@ SUBSYSTEM_DEF(runechat)
 	var/list/bucket_list = list()
 	/// Queue used for storing messages that are scheduled for deletion too far in the future for the buckets
 	var/list/datum/chatmessage/second_queue = list()
+	/// Messages waiting to finish image generation after MeasureText(), see [/datum/chatmessage/proc/finish_image_generation]
+	var/list/datum/callback/message_queue = list()
 
 /datum/controller/subsystem/runechat/PreInit()
 	bucket_list.len = BUCKET_LEN
@@ -49,11 +51,24 @@ SUBSYSTEM_DEF(runechat)
 	if (MC_TICK_CHECK)
 		return
 
+	while(length(message_queue))
+		var/datum/callback/queued_message = message_queue[length(message_queue)]
+		message_queue.len--
+		queued_message.Invoke()
+		if(MC_TICK_CHECK)
+			return
+
 	// Check for when we need to loop the buckets, this occurs when
 	// the head_offset is approaching BUCKET_LEN ticks in the past
 	if (practical_offset > BUCKET_LEN)
 		head_offset += TICKS2DS(BUCKET_LEN)
 		practical_offset = 1
+		resumed = FALSE
+
+	// Check for when we have to reset buckets, typically from auto-reset
+	if ((length(bucket_list) != BUCKET_LEN) || (world.tick_lag != bucket_resolution))
+		reset_buckets()
+		bucket_list = src.bucket_list
 		resumed = FALSE
 
 	// Store a reference to the 'working' chatmessage so that we can resume if the MC
@@ -117,6 +132,11 @@ SUBSYSTEM_DEF(runechat)
 /datum/controller/subsystem/runechat/Recover()
 	bucket_list |= SSrunechat.bucket_list
 	second_queue |= SSrunechat.second_queue
+
+/datum/controller/subsystem/runechat/proc/reset_buckets()
+	bucket_list.len = BUCKET_LEN
+	head_offset = world.time
+	bucket_resolution = world.tick_lag
 
 /**
  * Enters the runechat subsystem with this chatmessage, inserting it into the end-of-life queue
