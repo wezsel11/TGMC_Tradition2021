@@ -1,69 +1,74 @@
-FROM tgstation/byond:513.1526 as base
+# Builds and runs the game on Linux.
+#
+# The build stage runs tools/tgs4_scripts/PreCompile.sh, the same script
+# tgstation-server runs on Linux, so building this image also tests the
+# TGS Linux deploy path (rust_g, tgui and DM compile).
+#
+# BYOND 516 needs glibc 2.34 or newer, so Ubuntu 22.04 is the oldest usable base.
+# PreCompile.sh installs its own build packages (rust, git, i386 libssl and
+# multilib), so the build stage adds nothing on top of the BYOND stage.
+#
+# Usage:
+#   docker build -t tgmc .
+#   docker run -p 1337:1337 -v tgmc-data:/tgmc/data tgmc
+# Mount your own config with -v /path/to/config:/tgmc/config
 
-FROM base as build_base
+FROM ubuntu:22.04 AS byond
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN dpkg --add-architecture i386 \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    unzip \
+    make \
+    libc6:i386 \
+    libstdc++6:i386 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY dependencies.sh /tmp/dependencies.sh
+
+RUN . /tmp/dependencies.sh \
+    && cd /tmp \
+    && curl -fsSL -H "User-Agent: tgstation/1.0 CI Script" \
+    "https://www.byond.com/download/build/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip" \
+    -o byond.zip \
+    && unzip -q byond.zip \
+    && cd byond \
+    && make install \
+    && cd / \
+    && rm -rf /tmp/byond /tmp/byond.zip /tmp/dependencies.sh
+
+FROM byond AS build
+
+COPY . /tgmc_src
+
+WORKDIR /precompile
+
+RUN bash /tgmc_src/tools/tgs4_scripts/PreCompile.sh /tgmc_src
+
+WORKDIR /tgmc_src
+
+RUN DreamMaker -max_errors 0 tgmc.dme \
+    && bash tools/deploy.sh /deploy \
+    && cp -r config /deploy/config
+
+FROM byond
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-    git \
-    ca-certificates
+    libssl3:i386 \
+    zlib1g:i386 \
+    && rm -rf /var/lib/apt/lists/*
 
-FROM build_base as rust_g
+COPY --from=build /deploy /tgmc
 
-WORKDIR /rust_g
-
-RUN apt-get install -y --no-install-recommends \
-    libssl-dev \
-    pkg-config \
-    curl \
-    gcc-multilib \
-    && curl https://sh.rustup.rs -sSf | sh -s -- -y --default-host i686-unknown-linux-gnu \
-    && git init \
-    && git remote add origin https://github.com/tgstation/rust-g
-
-COPY dependencies.sh .
-
-RUN /bin/bash -c "source dependencies.sh \
-    && git fetch --depth 1 origin \$RUST_G_VERSION" \
-    && git checkout FETCH_HEAD \
-    && ~/.cargo/bin/cargo build --release
-
-
-COPY dependencies.sh .
-
-ENV CC=gcc-7 CXX=g++-7
-
-RUN ln -s /usr/include/mariadb /usr/include/mysql \
-    && ln -s /usr/lib/i386-linux-gnu /root/MariaDB \
-    && cmake .. \
-    && make
-
-FROM base as dm_base
-
-WORKDIR /tgstation
-
-FROM dm_base as build
-
-COPY . .
-
-RUN DreamMaker -max_errors 0 tgmc.dme && tools/deploy.sh /deploy
-
-FROM dm_base
+WORKDIR /tgmc
 
 EXPOSE 1337
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends software-properties-common \
-    && add-apt-repository ppa:ubuntu-toolchain-r/test \
-    && apt-get update \
-    && apt-get upgrade -y \
-    && apt-get dist-upgrade -y \
-    && apt-get install -y --no-install-recommends \
-    libmariadb2 \
-    mariadb-client \
-    libssl1.0.0 \
-    && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /root/.byond/bin
-
-VOLUME [ "/tgmc/config", "/tgmc/data" ]
+VOLUME [ "/tgmc/data" ]
 
 ENTRYPOINT [ "DreamDaemon", "tgmc.dmb", "-port", "1337", "-trusted", "-close", "-verbose" ]

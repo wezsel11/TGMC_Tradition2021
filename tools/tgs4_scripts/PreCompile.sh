@@ -29,22 +29,24 @@ fi
 
 # apt packages, libssl needed by rust-g but not included in TGS barebones install
 if ! ( [ -x "$has_git" ] && [ -x "$has_grep" ] && [ -f "/usr/lib/i386-linux-gnu/libssl.so" ] ); then
-	echo "Installing apt dependencies..."
+	# Package list as in tgstation's InstallDeps.sh. libssl1.1:i386 is not listed: it does not
+	# exist on Ubuntu 22.04+, which BYOND 516 requires (glibc 2.34). The libssl-dev packages pull
+	# in the libssl version rust-g links against.
+	echo "Installing apt dependencies. If this fails because sudo needs a password, install them yourself:"
+	echo "sudo apt-get install -y lib32z1 git pkg-config libssl-dev:i386 libssl-dev zlib1g-dev:i386 g++-multilib"
 	if ! [ -x "$has_sudo" ]; then
 		dpkg --add-architecture i386
 		apt-get update
-		apt-get install -y git libssl-dev:i386
+		apt-get install -y lib32z1 git pkg-config libssl-dev:i386 libssl-dev zlib1g-dev:i386 g++-multilib
 		rm -rf /var/lib/apt/lists/*
 	else
 		sudo dpkg --add-architecture i386
 		sudo apt-get update
-		sudo apt-get install -y git libssl-dev:i386
+		sudo apt-get install -y lib32z1 git pkg-config libssl-dev:i386 libssl-dev zlib1g-dev:i386 g++-multilib
 		sudo rm -rf /var/lib/apt/lists/*
 	fi
 fi
-dpkg --add-architecture i386
-apt-get update
-apt-get install -y lib32z1 pkg-config libssl-dev:i386 libssl-dev libssl1.1:i386
+
 # update rust-g
 if [ ! -d "rust-g" ]; then
 	echo "Cloning rust-g..."
