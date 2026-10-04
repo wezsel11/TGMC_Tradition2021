@@ -43,6 +43,9 @@ See `DEPLOYING.md` for how to host it.
   links; VV now requires the VAREDIT permission
 - BYOND's client-side debug VV is blocked, as it ignored VV read protections
 - The admin href token is hidden from View Variables
+- Reading player notes through admin links requires the BAN permission, as
+  modern TGMC (mentors could read them)
+- The list of variables that must never be copied is protected from editing
 - Fixed the round-end SQL query and null values in death records
 - Fixed HTML injection through carbon copies
 - Non-ASCII text is rejected in OOC, flavor text, supply requests and command
