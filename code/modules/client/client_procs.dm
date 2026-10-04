@@ -137,6 +137,10 @@
 	GLOB.clients += src
 	GLOB.directory[ckey] = src
 
+	// BYOND 516+: byondstorage gives browser pages a persistent window.hubStorage (as modern TGMC)
+	if(byond_version >= 516)
+		winset(src, null, "browser-options=find,refresh,byondstorage")
+
 	// Instantiate tgui panel
 	tgui_panel = new(src)
 

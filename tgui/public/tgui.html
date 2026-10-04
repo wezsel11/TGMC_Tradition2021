@@ -405,6 +405,25 @@ if (!window.navigator.msSaveBlob && window.showSaveFilePicker) {
   };
 }
 
+// BYOND 516+: localStorage and IndexedDB are tied to the page's address,
+// which changes every session, so settings would be lost on reconnect.
+// When byondstorage is enabled, use its persistent hubStorage instead
+// (like modern tgui) by presenting it as localStorage.
+if (window.hubStorage && window.hubStorage.getItem) {
+  try {
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      get: function () { return window.hubStorage; },
+    });
+    // Make tgui's storage skip IndexedDB and pick localStorage
+    Object.defineProperty(window, 'indexedDB', {
+      configurable: true,
+      get: function () { return undefined; },
+    });
+  }
+  catch (err) {}
+}
+
 // Early initialization
 window.__updateQueue__ = [];
 window.update = function (message) {
