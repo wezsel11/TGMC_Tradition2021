@@ -12,7 +12,7 @@
 		return
 	last_tgs_check = rtod
 	var/server = CONFIG_GET(string/server)
-	return "Round ID: [GLOB.round_id] | Round Time: [gameTimestamp("hh:mm")] | Players: [length(GLOB.clients)] | Ground Map: [length(SSmapping.configs) ? SSmapping.configs[GROUND_MAP].map_name : "Loading..."] | Ship Map: [length(SSmapping.configs) ? SSmapping.configs[SHIP_MAP].map_name : "Loading..."] | Mode: [GLOB.master_mode] | Round Status: [SSticker.HasRoundStarted() ? (SSticker.IsRoundInProgress() ? "Active" : "Finishing") : "Starting"] | Link: [server ? server : "<byond://[world.internet_address]:[world.port]>"]"
+	return new /datum/tgs_message_content("Round ID: [GLOB.round_id] | Round Time: [gameTimestamp("hh:mm")] | Players: [length(GLOB.clients)] | Ground Map: [length(SSmapping.configs) ? SSmapping.configs[GROUND_MAP].map_name : "Loading..."] | Ship Map: [length(SSmapping.configs) ? SSmapping.configs[SHIP_MAP].map_name : "Loading..."] | Mode: [GLOB.master_mode] | Round Status: [SSticker.HasRoundStarted() ? (SSticker.IsRoundInProgress() ? "Active" : "Finishing") : "Starting"] | Link: [server ? server : "<byond://[world.internet_address]:[world.port]>"]")
 
 
 /datum/tgs_chat_command/ahelp
@@ -24,7 +24,7 @@
 /datum/tgs_chat_command/ahelp/Run(datum/tgs_chat_user/sender, params)
 	var/list/all_params = splittext(params, " ")
 	if(length(all_params) < 2)
-		return "Insufficient parameters"
+		return new /datum/tgs_message_content("Insufficient parameters")
 	var/target = all_params[1]
 	all_params.Cut(1, 2)
 	var/id = text2num(target)
@@ -33,9 +33,9 @@
 		if(AH)
 			target = AH.initiator_ckey
 		else
-			return "Ticket #[id] not found!"
+			return new /datum/tgs_message_content("Ticket #[id] not found!")
 	var/res = TgsPm(target, all_params.Join(" "), sender.friendly_name)
-	return res
+	return new /datum/tgs_message_content(res)
 
 
 /datum/tgs_chat_command/namecheck
@@ -47,10 +47,10 @@
 /datum/tgs_chat_command/namecheck/Run(datum/tgs_chat_user/sender, params)
 	params = trim(params)
 	if(!params)
-		return "Insufficient parameters"
+		return new /datum/tgs_message_content("Insufficient parameters")
 	log_admin("Chat Name Check: [sender.friendly_name] on [params]")
 	message_admins("Name checking [params] from [sender.friendly_name]")
-	return keywords_lookup(params, TRUE)
+	return new /datum/tgs_message_content(keywords_lookup(params, TRUE))
 
 
 /datum/tgs_chat_command/adminwho
@@ -60,7 +60,7 @@
 
 
 /datum/tgs_chat_command/adminwho/Run(datum/tgs_chat_user/sender, params)
-	return tgsadminwho()
+	return new /datum/tgs_message_content(tgsadminwho())
 
 
 /datum/tgs_chat_command/sdql
@@ -71,16 +71,16 @@
 
 /datum/tgs_chat_command/sdql/Run(datum/tgs_chat_user/sender, params)
 	if(GLOB.AdminProcCaller)
-		return "Unable to run query, another admin proc call is in progress. Try again later."
+		return new /datum/tgs_message_content("Unable to run query, another admin proc call is in progress. Try again later.")
 	GLOB.AdminProcCaller = "CHAT_[sender.friendly_name]"	//_ won't show up in ckeys so it'll never match with a real admin
 	var/list/results = world.SDQL2_query(params, GLOB.AdminProcCaller, GLOB.AdminProcCaller, TRUE)
 	GLOB.AdminProcCaller = null
 	if(!results)
-		return "Query produced no output"
+		return new /datum/tgs_message_content("Query produced no output")
 	var/list/text_res = results.Copy(1, 3)
 	var/list/refs = results[4]
 	var/list/names = results[5]
-	. = "[text_res.Join("\n")][length(refs) ? "\nRefs: [refs.Join(" ")]" : ""][length(names) ? "\nText: [replacetext(names.Join(" "), "<br>", "")]" : ""]"
+	. = new /datum/tgs_message_content("[text_res.Join("\n")][length(refs) ? "\nRefs: [refs.Join(" ")]" : ""][length(names) ? "\nText: [replacetext(names.Join(" "), "<br>", "")]" : ""]")
 
 
 /datum/tgs_chat_command/reload_admins
@@ -93,7 +93,7 @@
 	ReloadAsync()
 	log_admin("[sender.friendly_name] reloaded admins via chat command.")
 	message_admins("[sender.friendly_name] reloaded admins via chat command.")
-	return "Admins reloaded."
+	return new /datum/tgs_message_content("Admins reloaded.")
 
 
 /datum/tgs_chat_command/reload_admins/proc/ReloadAsync()
@@ -111,4 +111,4 @@
 	if(rtod - last_tgs_check < TGS_STATUS_THROTTLE)
 		return
 	last_tgs_check = rtod
-	return "Time Dilation: [round(SStime_track.time_dilation_current,1)]% AVG:([round(SStime_track.time_dilation_avg_fast,1)]%, [round(SStime_track.time_dilation_avg,1)]%, [round(SStime_track.time_dilation_avg_slow,1)]%)"
+	return new /datum/tgs_message_content("Time Dilation: [round(SStime_track.time_dilation_current,1)]% AVG:([round(SStime_track.time_dilation_avg_fast,1)]%, [round(SStime_track.time_dilation_avg,1)]%, [round(SStime_track.time_dilation_avg_slow,1)]%)")

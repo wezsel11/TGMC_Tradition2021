@@ -269,15 +269,7 @@ SUBSYSTEM_DEF(ticker)
 	if(usr && !check_rights(R_SERVER))
 		return
 
-	if(istype(GLOB.tgs, /datum/tgs_api/v3210))
-		var/datum/tgs_api/v3210/API = GLOB.tgs
-		if(API.reboot_mode == 2)
-			graceful = TRUE
-	else if(istype(GLOB.tgs, /datum/tgs_api/v4))
-		var/datum/tgs_api/v4/API = GLOB.tgs
-		if(API.reboot_mode == 1)
-			graceful = TRUE
-
+	// TGS 5+ handles shutdown/restart reboot modes itself via TgsReboot() (DMAPI 7)
 	if(graceful)
 		to_chat_immediate(world, "<h3><span class='boldnotice'>Shutting down...</span></h3>")
 		world.Reboot(FALSE)
