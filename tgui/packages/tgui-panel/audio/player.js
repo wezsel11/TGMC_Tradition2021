@@ -31,7 +31,12 @@ export class AudioPlayer {
       this.node.playbackRate = this.options.pitch || 1;
       this.node.currentTime = this.options.start || 0;
       this.node.volume = this.volume;
-      this.node.play();
+      // play() returns a promise in Chromium (BYOND 516); an unhandled
+      // rejection on a failed playback would crash the chat panel.
+      const playback = this.node.play();
+      if (playback) {
+        playback.catch((error) => logger.log('playback error', error));
+      }
       for (let subscriber of this.onPlaySubscribers) {
         subscriber();
       }
