@@ -126,6 +126,8 @@ GLOBAL_DATUM_INIT(iconCache, /savefile, new("tmp/iconCache.sav")) //Cache of ico
 /datum/chatOutput/proc/showChat()
 	winset(owner, "output", "is-visible=false")
 	winset(owner, "browseroutput", "is-disabled=false;is-visible=true")
+	// BYOND 516+ no longer swaps overlapping controls via is-visible, so switch the pane shown in the selector
+	winset(owner, "legacy_output_selector", "left=output_browser")
 
 /proc/syncChatRegexes()
 	for (var/user in GLOB.clients)
