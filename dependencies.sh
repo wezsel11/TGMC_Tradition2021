@@ -14,7 +14,8 @@ unset LIST
 export RUST_G_VERSION=0.4.5
 
 #node version
-export NODE_VERSION=12
+export NODE_VERSION=22
+export NODE_VERSION_LTS=22.11.0
 
 # PHP version
 export PHP_VERSION=5.6
