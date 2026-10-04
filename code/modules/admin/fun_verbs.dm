@@ -369,7 +369,9 @@
 		title = data["title"]
 		music_extra_data["start"] = data["start_time"]
 		music_extra_data["end"] = data["end_time"]
-		switch(alert(usr, "Show the title of and link to this song to the players?\n[title]", "Play Internet Sound", "Yes", "No", "Cancel"))
+		music_extra_data["link"] = data["webpage_url"]
+		music_extra_data["title"] = data["title"]
+		switch(tgui_alert(usr, "Show the title of and link to this song to the players?\n[title]", "Play Internet Sound", list("Yes", "No", "Cancel")))
 			if("Yes")
 				show = TRUE
 			if("Cancel")
@@ -399,8 +401,8 @@
 		var/client/C = M?.client
 		if(!C?.prefs)
 			continue
-		if((C.prefs.toggles_sound & SOUND_MIDI) && C.chatOutput?.working && C.chatOutput.loaded)
-			C.chatOutput.sendMusic(web_sound_url, music_extra_data)
+		if(C.prefs.toggles_sound & SOUND_MIDI)
+			C.tgui_panel?.play_music(web_sound_url, music_extra_data)
 			if(show)
 				to_chat(C, "<span class='boldnotice'>An admin played: <a href='[data["webpage_url"]]'>[title]</a></span>")
 
@@ -432,9 +434,7 @@
 
 	for(var/i in GLOB.clients)
 		var/client/C = i
-		if(!C?.chatOutput.loaded || !C.chatOutput.working)
-			continue
-		C.chatOutput.stopMusic()
+		C?.tgui_panel?.stop_music()
 
 
 	log_admin("[key_name(usr)] stopped the currently playing music.")
@@ -602,7 +602,7 @@
 			input_light_impact_range = clamp(input_light_impact_range, 0, world_max)
 			input_flash_range = clamp(input_flash_range, 0, world_max)
 			input_flame_range = clamp(input_flame_range, 0, world_max)
-			switch(tgalert(usr, "Deploy payload?", "DIR: [input_devastation_range] | HIR: [input_heavy_impact_range] | LIR: [input_light_impact_range] | FshR: [input_flash_range] | FlmR: [input_flame_range] | ThR: [input_throw_range]", "Launch!", "Cancel"))
+			switch(tgui_alert(usr, "Deploy payload?", "DIR: [input_devastation_range] | HIR: [input_heavy_impact_range] | LIR: [input_light_impact_range] | FshR: [input_flash_range] | FlmR: [input_flame_range] | ThR: [input_throw_range]", list("Launch!", "Cancel")))
 				if("Launch!")
 					explosion(usr.loc, input_devastation_range, input_heavy_impact_range, input_light_impact_range, input_flash_range, input_flame_range, input_throw_range)
 				else
