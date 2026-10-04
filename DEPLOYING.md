@@ -30,6 +30,15 @@ like modern TGMC:
 3. Deploy. `PreCompile` builds rust_g (Linux) and tgui, then TGS compiles
    `tgmc.dme`.
 
+On Linux, BYOND 516 needs glibc 2.34 or newer (Ubuntu 22.04+). `PreCompile.sh`
+installs missing build packages with apt; if the TGS user has no passwordless
+sudo, install them once yourself:
+
+    sudo apt-get install -y lib32z1 git pkg-config libssl-dev:i386 libssl-dev zlib1g-dev:i386 g++-multilib
+
+(Modern TGMC's `PreCompile.sh` installs `libssl1.1:i386` unconditionally, which
+fails on Ubuntu 22.04+; this repository uses tgstation's package list instead.)
+
 `config/` and `data/` are static files; on first deploy `config/` is
 populated from this repository. Use this repository's `config/` rather
 than a modern TGMC config. Modern config keys unknown to this codebase are
@@ -40,8 +49,11 @@ only logged and ignored, but defaults and maps differ.
 The code expects schema **2.0**; modern TGMC is at **2.5**. Everything
 between 2.0 and 2.5 is additive or widens column types (see
 `SQL/database_changelog.md` on modern TGMC), and no column used in 2021 was
-removed, so this code should work against a current TGMC database. On
-start it logs a schema mismatch warning (2.0 vs 2.5) and continues.
+removed, so this code works against a current TGMC database. On start it
+logs a schema mismatch warning (2.5 vs 2.0) and continues. Tested against
+MariaDB 10.11 with the modern TGMC schema, on Windows and Linux: connection,
+round start, end and shutdown records, player and connection logging, and
+admins loaded from the database.
 
 Running without a database is possible (`SQL_ENABLED` off), but then bans,
 notes and player data from the database are not available.
@@ -54,6 +66,16 @@ notes and player data from the database are not available.
 
 Built tgui bundles are committed in `tgui/public/`, so a plain
 `dm.exe tgmc.dme` also works without Node.
+
+## Docker
+
+    docker build -t tgmc .
+    docker run -p 1337:1337 -v tgmc-data:/tgmc/data tgmc
+
+The image is Ubuntu 22.04 with the BYOND version from `dependencies.sh`. It
+builds through `tools/tgs4_scripts/PreCompile.sh`, so a successful image build
+also means the TGS Linux path works. Mount your own config with
+`-v /path/to/config:/tgmc/config`.
 
 ## BYOND 516 notes
 
@@ -74,7 +96,8 @@ The 2021 UI code was adapted the way modern TGMC handles it:
 | Compiles on BYOND 513, 514, 515 and 516 (0 errors, 0 warnings) | tested |
 | Local server on Windows, BYOND 516 | tested: boots, plays, vendors, closets, TGChat |
 | TGS Windows path (`PreCompile.bat` + DM compile, clean checkout) | simulated, works |
-| TGS Linux path (`PreCompile.sh`) | **not tested**, identical to modern TGMC |
-| Against a current TGMC database | **not tested**, schema analysis only |
-| Full round with multiple players, round end and restart | **not tested** |
+| TGS Linux path (`PreCompile.sh` on Ubuntu 22.04, rust_g, tgui, DM compile, boot) | tested in Docker |
+| Against a current TGMC database (schema 2.5) | tested on Windows and Linux: rounds, players, connections, DB admins |
+| Round end and restart (one player, with database) | tested |
+| Full round with multiple players | **not tested** |
 | GitHub Actions CI | not updated |

@@ -12,6 +12,8 @@
 #   docker build -t tgmc .
 #   docker run -p 1337:1337 -v tgmc-data:/tgmc/data tgmc
 # Mount your own config with -v /path/to/config:/tgmc/config
+# (on Docker Desktop for Windows a bind-mounted config is not read; copy it
+# in with `docker cp` before starting the container instead)
 
 FROM ubuntu:22.04 AS byond
 
