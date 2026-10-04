@@ -101,6 +101,8 @@ GLOBAL_LIST_INIT(huds, list(
 	if(!A || (A in hudatoms))
 		return FALSE
 	hudatoms |= A
+	if(!ismob(A))
+		RegisterSignal(A, COMSIG_PARENT_QDELETING, .proc/remove_from_hud, A)
 	for(var/u in hudusers)
 		var/mob/M = u
 		if(!queued_to_see[M])
