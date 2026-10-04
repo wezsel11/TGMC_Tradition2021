@@ -385,6 +385,26 @@ window.__augmentStack__ = function (stack, error) {
   return stack + '\nUser Agent: ' + navigator.userAgent;
 };
 
+// BYOND 516+: msSaveBlob only exists in Internet Explorer. Provide it via
+// the "Save as" file picker, like modern tgui's Byond.saveBlob does.
+if (!window.navigator.msSaveBlob && window.showSaveFilePicker) {
+  window.navigator.msSaveBlob = function (blob, filename) {
+    var dot = filename.lastIndexOf('.');
+    var accept = {};
+    accept[blob.type || 'text/plain'] = [dot !== -1 ? filename.substring(dot) : '.txt'];
+    window.showSaveFilePicker({
+      suggestedName: filename,
+      types: [{ description: 'SS13 file', accept: accept }],
+    })
+      .then(function (file) { return file.createWritable(); })
+      .then(function (file) {
+        return file.write(blob).then(function () { return file.close(); });
+      })
+      .catch(function () {});
+    return true;
+  };
+}
+
 // Early initialization
 window.__updateQueue__ = [];
 window.update = function (message) {
