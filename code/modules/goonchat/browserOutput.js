@@ -14,7 +14,7 @@ window.onerror = function(msg, url, line, col, error) {
 		extra += !error ? '' : ' | error: ' + error;
 		extra += !navigator.userAgent ? '' : ' | user agent: ' + navigator.userAgent;
 		var debugLine = 'Error: ' + msg + ' | url: ' + url + ' | line: ' + line + extra;
-		window.location = '?_src_=chat&proc=debug&param[error]='+escaper(debugLine);
+		runByond('?_src_=chat&proc=debug&param[error]='+escaper(debugLine));
 	}
 	return true;
 };
@@ -433,6 +433,11 @@ function internalOutput(message, flag)
 
 //Runs a route within byond, client or server side. Consider this "ehjax" for byond.
 function runByond(uri) {
+	//BYOND 516+: call the client directly, navigating would abort/reload the page in WebView2
+	if (window.cef_to_byond) {
+		cef_to_byond(uri.indexOf('byond://') === 0 ? uri : 'byond://' + uri);
+		return;
+	}
 	window.location = uri;
 }
 

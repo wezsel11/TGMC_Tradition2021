@@ -303,6 +303,7 @@
 		if("Revert to old chat")
 			winset(src, "output", "is-visible=true;is-disabled=false")
 			winset(src, "browseroutput", "is-visible=false")
+			winset(src, "legacy_output_selector", "left=output_legacy")
 			return
 		if("Cancel")
 			return
@@ -326,6 +327,7 @@
 		if(action == "Switch to old chat")
 			winset(src, "output", "is-visible=true ; is-disabled=false")
 			winset(src, "browseroutput", "is-visible=false")
+			winset(src, "legacy_output_selector", "left=output_legacy")
 		log_game("GOONCHAT: [key_name(src)] Failed to fix their goonchat window after recreating the chatOutput and forcing a load()")
 		return
 
@@ -348,6 +350,7 @@
 				if(action == "Switch to old chat")
 					winset(src, "output", "is-visible=true ; is-disabled=false")
 					winset(src, "browseroutput", "is-visible=false")
+					winset(src, "legacy_output_selector", "left=output_legacy")
 				log_game("GOONCHAT: [key_name(src)] Failed to fix their goonchat window forcing a start() and forcing a load()")
 				return
 
@@ -367,6 +370,7 @@
 				if(action == "Switch to old chat")
 					winset(src, "output", "is-visible=true;is-disabled=false")
 					winset(src, "browseroutput", "is-visible=false")
+					winset(src, "legacy_output_selector", "left=output_legacy")
 				log_game("GOONCHAT: [key_name(src)] Failed to fix their goonchat window forcing a show() and forcing a load()")
 		return
 
