@@ -105,6 +105,10 @@
 				if(!input || !(usr in view(1,src)) || authenticated != 2 || world.time < cooldown_message + COOLDOWN_COMM_MESSAGE)
 					return FALSE
 
+				if(NON_ASCII_CHECK(input))
+					to_chat(usr, "<span class='warning'>That announcement contained characters prohibited in IC chat! Consider reviewing the server rules.</span>")
+					return FALSE
+
 				priority_announce(input, type = ANNOUNCEMENT_COMMAND)
 				message_admins("[ADMIN_TPMONTY(usr)] has just sent a command announcement")
 				log_game("[key_name(usr)] has just sent a command announcement.")

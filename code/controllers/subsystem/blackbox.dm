@@ -198,7 +198,7 @@ SUBSYSTEM_DEF(blackbox)
 			"key" = L.ckey,
 			"job" = L.job ? L.job.title : "Unassigned",
 			"special" = "unused",
-			"pod" = get_area_name(L, TRUE),
+			"pod" = get_area_name(L, TRUE) || "",
 			"laname" = L.real_name,
 			"lakey" = L.ckey,
 			"brute" = L.getBruteLoss(),

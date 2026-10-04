@@ -55,6 +55,10 @@
 		return QDEL_HINT_LETMELIVE
 	return ..()
 
+/datum/admins/can_vv_get(var_name)
+	if(var_name == NAMEOF(src, href_token))
+		return FALSE
+	return ..()
 
 /datum/admins/proc/activate()
 	if(IsAdminAdvancedProcCall())
