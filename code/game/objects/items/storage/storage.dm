@@ -138,12 +138,15 @@
 	if(!opened)
 		orient2hud()
 		opened = 1
-	if (use_sound)
+	if(user.s_active == src)
+		close(user)
+		return TRUE
+	user.s_active?.close(user)
+	if(use_sound && user.stat != DEAD)
 		playsound(src.loc, src.use_sound, 25, 1, 3)
 
-	if (user.s_active)
-		user.s_active.close(user)
 	show_to(user)
+	return TRUE
 
 
 /obj/item/storage/proc/close(mob/user)
@@ -452,6 +455,8 @@
 	. = ..()
 
 	if(!can_be_inserted(I))
+		if(user.s_active != src) //Show the storage so the user can see why it did not fit
+			open(user)
 		return
 
 	return handle_item_insertion(I, FALSE, user)
