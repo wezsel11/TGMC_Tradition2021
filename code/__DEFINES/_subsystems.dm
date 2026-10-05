@@ -114,24 +114,6 @@
 
 
 
-#define COMPILE_OVERLAYS(A)\
-	if (TRUE) {\
-		var/list/ad = A.add_overlays;\
-		var/list/rm = A.remove_overlays;\
-		var/list/po = A.priority_overlays;\
-		if(LAZYLEN(rm)){\
-			A.overlays -= rm;\
-			rm.Cut();\
-		}\
-		if(LAZYLEN(ad)){\
-			A.overlays |= ad;\
-			ad.Cut();\
-		}\
-		if(LAZYLEN(po)){\
-			A.overlays |= po;\
-		}\
-		A.flags_atom &= ~OVERLAY_QUEUED;\
-	}
 
 
 /// Explosion Subsystem subtasks
