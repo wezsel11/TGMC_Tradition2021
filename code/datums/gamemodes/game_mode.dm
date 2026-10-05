@@ -446,6 +446,11 @@ Sensors indicate [numXenosShip || "no"] unknown lifeform signature[numXenosShip 
 		dat += "[GLOB.round_statistics.xeno_silo_corpses] number of corpses fed to resin silos."
 	if(GLOB.round_statistics.xeno_rally_hive)
 		dat += "[GLOB.round_statistics.xeno_rally_hive] number of times xeno leaders rallied the hive."
+	//Where the larvas came from, as modern TGMC (#7942)
+	if(GLOB.round_statistics.larva_from_marine_spawning >= 0.1)
+		dat += "[round(GLOB.round_statistics.larva_from_marine_spawning, 0.1)] larvas came from marine spawning."
+	if(GLOB.round_statistics.larva_from_siloing_body >= 0.1)
+		dat += "[round(GLOB.round_statistics.larva_from_siloing_body, 0.1)] larvas came from siloing bodies."
 
 	var/output = jointext(dat, "<br>")
 	for(var/mob/player in GLOB.player_list)

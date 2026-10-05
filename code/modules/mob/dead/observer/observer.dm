@@ -905,3 +905,15 @@ GLOBAL_VAR_INIT(observer_default_invisibility, INVISIBILITY_OBSERVER)
 			return
 
 	return ..()
+
+///Ctrl+Shift click for admins with ghost vision: on yourself spawns a spatial agent, on another ghost turns it into a human. As modern TGMC (#14086)
+/mob/dead/observer/CtrlShiftClickOn(atom/A)
+	if(!ghost_vision || !check_rights(R_SPAWN, FALSE))
+		return ..()
+	if(A == src)
+		client.holder.spatial_agent()
+		return
+	if(!isobserver(A))
+		return ..()
+	var/mob/dead/observer/target_ghost = A
+	target_ghost.change_mob_type(/mob/living/carbon/human, null, null, TRUE) //always delmob, ghosts shouldn't be left lingering

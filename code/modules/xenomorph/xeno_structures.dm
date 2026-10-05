@@ -207,6 +207,7 @@
 
 	var/datum/job/xeno_job = SSjob.GetJobType(/datum/job/xenomorph)
 	xeno_job.add_job_points(1.75) //4 corpses per burrowed; 7 points per larva
+	GLOB.round_statistics.larva_from_siloing_body += 1.75 / xeno_job.job_points_needed
 
 	log_combat(victim, user, "was consumed by a resin silo")
 	log_game("[key_name(victim)] was consumed by a resin silo at [AREACOORD(victim.loc)].")
