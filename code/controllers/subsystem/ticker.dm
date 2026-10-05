@@ -253,7 +253,7 @@ SUBSYSTEM_DEF(ticker)
 	if(mode)
 		GLOB.master_mode = mode
 	else
-		GLOB.master_mode = "Extended"
+		GLOB.master_mode = "Distress Signal"
 	log_game("Saved mode is '[GLOB.master_mode]'")
 
 

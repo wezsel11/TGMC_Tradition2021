@@ -31,6 +31,7 @@ map prison_station_fop
 endmap
 
 map vapor_processing
+	disabled
 endmap
 
 map icy_caves
@@ -38,6 +39,7 @@ map icy_caves
 endmap
 
 map desert
+	disabled
 endmap
 
 map research_outpost
@@ -49,6 +51,7 @@ map lava_outpost
 endmap
 
 map whiskey_outpost_v2
+	disabled
 endmap
 
 map magmoor_digsite_iv
@@ -56,4 +59,5 @@ map magmoor_digsite_iv
 endmap
 
 map marine_hq
+	disabled
 endmap
