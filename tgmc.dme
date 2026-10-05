@@ -44,6 +44,7 @@
 #include "code\__DEFINES\factions.dm"
 #include "code\__DEFINES\flags.dm"
 #include "code\__DEFINES\footsteps.dm"
+#include "code\__DEFINES\html_assistant.dm"
 #include "code\__DEFINES\instruments.dm"
 #include "code\__DEFINES\interaction.dm"
 #include "code\__DEFINES\is_helpers.dm"

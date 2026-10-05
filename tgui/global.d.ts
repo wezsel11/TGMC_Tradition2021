@@ -112,6 +112,11 @@ interface ByondType {
    * Loads a script into the document.
    */
   loadJs(url: string): void;
+
+  /**
+   * Downloads a blob, platform-agnostic
+   */
+  saveBlob(blob: Blob, filename: string, ext: string): void;
 }
 
 declare const Byond: ByondType;
