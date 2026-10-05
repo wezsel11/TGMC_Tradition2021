@@ -106,7 +106,9 @@
 		return
 	var/window_size = ""
 	if(width && height)
-		window_size = "size=[width]x[height];"
+		var/client/user_client = istype(user, /client) ? user : user?.client
+		var/scaling = user_client?.window_scaling || 1 //516 scales the content with the monitor DPI, so scale the window too
+		window_size = "size=[width * scaling]x[height * scaling];"
 	common_asset.send(user)
 	if(length(stylesheets))
 		SSassets.transport.send_assets(user, stylesheets)

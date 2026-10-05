@@ -222,6 +222,8 @@
 		set_macros()
 		update_movement_keys()
 
+	INVOKE_ASYNC(src, .proc/acquire_dpi)
+
 	// Initialize tgui panel
 	tgui_panel.initialize()
 
@@ -856,3 +858,7 @@ GLOBAL_VAR_INIT(automute_on, null)
 			change_view(var_value)
 			return TRUE
 	return ..()
+
+/// This grabs the DPI of the user per their skin
+/client/proc/acquire_dpi()
+	window_scaling = text2num(winget(src, null, "dpi"))
