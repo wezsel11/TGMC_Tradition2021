@@ -51,7 +51,7 @@
 	lit = !lit
 
 	var/image/I = image('icons/obj/items/gun.dmi', src, "+lit")
-	I.pixel_x += 3
+	I.pixel_w += 3
 
 	if (lit)
 		overlays += I

@@ -827,10 +827,10 @@ ColorTone(rgb, tone)
 				continue
 			// Find the new dimensions of the flat icon to fit the added overlay
 			add_size = list(
-				min(flatX1, I.pixel_x+1),
-				max(flatX2, I.pixel_x+add.Width()),
-				min(flatY1, I.pixel_y+1),
-				max(flatY2, I.pixel_y+add.Height())
+				min(flatX1, I.pixel_x+I.pixel_w+1),
+				max(flatX2, I.pixel_x+I.pixel_w+add.Width()),
+				min(flatY1, I.pixel_y+I.pixel_z+1),
+				max(flatY2, I.pixel_y+I.pixel_z+add.Height())
 			)
 
 			if(flat_size ~! add_size)
@@ -844,7 +844,7 @@ ColorTone(rgb, tone)
 				flat_size = add_size.Copy()
 
 			// Blend the overlay into the flattened icon
-			flat.Blend(add, blendMode2iconMode(curblend), I.pixel_x + 2 - flatX1, I.pixel_y + 2 - flatY1)
+			flat.Blend(add, blendMode2iconMode(curblend), I.pixel_x + I.pixel_w + 2 - flatX1, I.pixel_y + I.pixel_z + 2 - flatY1)
 
 		if(A.color)
 			if(islist(A.color))

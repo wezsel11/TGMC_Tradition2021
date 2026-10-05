@@ -378,8 +378,8 @@ should be alright.
 		if(A.attach_icon)
 			item_icon = A.attach_icon
 		I = image(A.icon,src, item_icon)
-		I.pixel_x = attachable_offset["[slot]_x"] - A.pixel_shift_x
-		I.pixel_y = attachable_offset["[slot]_y"] - A.pixel_shift_y
+		I.pixel_w = attachable_offset["[slot]_x"] - A.pixel_shift_x
+		I.pixel_z = attachable_offset["[slot]_y"] - A.pixel_shift_y
 		attachable_overlays[slot] = I
 		overlays += I
 	else

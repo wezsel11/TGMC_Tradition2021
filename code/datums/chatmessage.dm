@@ -197,7 +197,7 @@
 				m.animate_lifespan = remaining_time + CHAT_MESSAGE_EOL_FADE
 			else
 				// Your time has come my son
-				animate(alpha = 0, time = CHAT_MESSAGE_EOL_FADE)
+				animate(m.message, alpha = 0, time = CHAT_MESSAGE_EOL_FADE)
 			// We run this after the alpha animate, because we don't want to interrup it, but also don't want to block it by running first
 			// Sooo instead we do this. bit messy but it fuckin works
 			animate(m.message, pixel_y = m.message.pixel_y + mheight, time = CHAT_MESSAGE_SPAWN_TIME, flags = ANIMATION_PARALLEL)

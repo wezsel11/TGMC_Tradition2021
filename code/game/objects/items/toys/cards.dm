@@ -246,8 +246,8 @@
 	if(cards.len == 1)
 		var/datum/playingcard/P = cards[1]
 		var/image/I = new(src.icon, (concealed ? "card_back" : "[P.card_icon]") )
-		I.pixel_x += (-5+rand(10))
-		I.pixel_y += (-5+rand(10))
+		I.pixel_w += (-5+rand(10))
+		I.pixel_z += (-5+rand(10))
 		overlays += I
 		return
 
@@ -269,16 +269,16 @@
 	var/i = 0
 	for(var/datum/playingcard/P in cards)
 		var/image/I = new(src.icon, (concealed ? "card_back" : "[P.card_icon]") )
-		//I.pixel_x = origin+(offset*i)
+		//I.pixel_w = origin+(offset*i)
 		switch(direction)
 			if(SOUTH)
-				I.pixel_x = 8-(offset*i)
+				I.pixel_w = 8-(offset*i)
 			if(WEST)
-				I.pixel_y = -6+(offset*i)
+				I.pixel_z = -6+(offset*i)
 			if(EAST)
-				I.pixel_y = 8-(offset*i)
+				I.pixel_z = 8-(offset*i)
 			else
-				I.pixel_x = -7+(offset*i)
+				I.pixel_w = -7+(offset*i)
 		I.transform = M
 		overlays += I
 		i++
