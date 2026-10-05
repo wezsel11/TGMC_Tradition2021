@@ -32,6 +32,22 @@ SUBSYSTEM_DEF(mapping)
 /datum/controller/subsystem/mapping/proc/HACK_LoadMapConfig()
 	if(!configs)
 		configs = load_map_configs(ALL_MAPTYPES, error_if_missing = FALSE)
+		// A map saved by an earlier vote may since have been disabled in the map rotation, don't load it then
+		for(var/maptype in ALL_MAPTYPES)
+			var/list/rotation = config.maplist ? config.maplist[maptype] : null
+			var/datum/map_config/saved = configs[maptype]
+			if(!length(rotation) || (saved.map_name in rotation))
+				continue
+			var/datum/map_config/fallback = config.defaultmaps ? config.defaultmaps[maptype] : null
+			if(!fallback)
+				continue
+			log_world("[saved.map_name] is not in the map rotation anymore, loading [fallback.map_name] instead.")
+			var/datum/map_config/replacement = new
+			if(!replacement.LoadConfig(fallback.config_filename, TRUE, maptype))
+				qdel(replacement)
+				continue
+			qdel(saved)
+			configs[maptype] = replacement
 		for(var/i in GLOB.clients)
 			var/client/C = i
 			winset(C, null, "mainwindow.title='[CONFIG_GET(string/title)] - [SSmapping.configs[SHIP_MAP].map_name]'")
