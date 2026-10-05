@@ -36,7 +36,7 @@
 
 	if(stored_larva)
 		RegisterSignal(shrike_hive, list(COMSIG_HIVE_XENO_MOTHER_PRE_CHECK, COMSIG_HIVE_XENO_MOTHER_CHECK), .proc/is_burrowed_larva_host)
-		notify_ghosts("\The <b>[shrike_caller]</b> is calling for the burrowed larvas to wake up!", enter_link = "join_larva=1", enter_text = "Join as Larva", source = shrike_caller, action = NOTIFY_JOIN_AS_LARVA)
+		notify_ghosts("\The <b>[shrike_caller]</b> is calling for the burrowed larvas to wake up!", enter_link = "join_larva=1", enter_text = "Join as Larva", source = shrike_caller, action = NOTIFY_JOIN_AS_LARVA, flashwindow = TRUE)
 		addtimer(CALLBACK(src, .proc/calling_larvas_end, shrike_caller), CALLING_BURROWED_DURATION)
 
 	succeed_activate()

@@ -572,7 +572,7 @@ Sensors indicate [numXenosShip || "no"] unknown lifeform signature[numXenosShip 
 		if(job.job_flags & JOB_FLAG_SPECIALNAME)
 			name_to_check = job.get_special_name(NP.client)
 		if(CONFIG_GET(flag/prevent_dupe_names) && GLOB.real_names_joined.Find(name_to_check))
-			to_chat(usr, "<span class='warning'>Someone has already joined the round with this character name. Please pick another.<spawn>")
+			to_chat(usr, "<span class='warning'>Someone has already joined the round with this character name. Go to Game Preferences under the Preferences tab and change your character/name.</span>")
 			return FALSE
 	if(!SSjob.AssignRole(NP, job, TRUE))
 		to_chat(usr, "<span class='warning'>Failed to assign selected role.<spawn>")

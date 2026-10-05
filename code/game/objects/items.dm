@@ -161,9 +161,9 @@
 
 
 /obj/item/attack_ghost(mob/dead/observer/user)
-	if(!can_interact(user))
+	. = ..()
+	if(. || !can_interact(user))
 		return
-
 	return interact(user)
 
 

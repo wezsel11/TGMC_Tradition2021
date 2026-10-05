@@ -73,7 +73,7 @@ export const Cargo = (props, context) => {
               <OrderList type={deniedrequests} />
             )}
             {!!selectedPackCat
-              && (<Category selectedPackCat={selectedPackCat} />)}
+              && (<Category selectedPackCat={selectedPackCat} should_filter />)}
           </Window.Content>
         </Flex.Item>
       </Flex>
@@ -496,7 +496,21 @@ const Category = (props, context) => {
   const {
     selectedPackCat,
     level,
+    should_filter,
   } = props;
+
+  // Search field, as modern TGMC (#8930)
+  const [
+    filter,
+    setFilter,
+  ] = useLocalState(context, `pack-name-filter`, null);
+
+  const filterSearch = entry =>
+    should_filter && filter
+      ? supplypackscontents[entry].name
+        ?.toLowerCase()
+        .includes(filter.toLowerCase())
+      : true;
 
   return (
     <Section level={level || 1} title={
@@ -505,8 +519,18 @@ const Category = (props, context) => {
         {selectedMenu}
       </>
     }>
+      {!!should_filter && (
+        <Flex mb={1}>
+          <FlexItem width="60px">
+            Search:
+          </FlexItem>
+          <FlexItem grow={1}>
+            <Input fluid onInput={(_e, value) => setFilter(value)} />
+          </FlexItem>
+        </Flex>
+      )}
       <Table>
-        { selectedPackCat.map(entry => {
+        { selectedPackCat.filter(filterSearch).map(entry => {
           const shop_list = shopping_list[entry] || 0;
           const count = shop_list ? shop_list.count : 0;
           const {
