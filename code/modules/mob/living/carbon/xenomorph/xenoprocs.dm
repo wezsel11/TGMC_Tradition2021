@@ -181,86 +181,64 @@
 
 //Adds stuff to your "Status" pane -- Specific castes can have their own, like carrier hugger count
 //Those are dealt with in their caste files.
-/mob/living/carbon/xenomorph/Stat()
+/mob/living/carbon/xenomorph/get_status_tab_items()
 	. = ..()
 
-	if(!statpanel("Game"))
-		return
-
 	if(!(xeno_caste.caste_flags & CASTE_EVOLUTION_ALLOWED))
-		stat("Evolve Progress:", "(FINISHED)")
+		. += "Evolve Progress: (FINISHED)"
 	else if(!hive.check_ruler())
-		stat("Evolve Progress:", "(HALTED - NO RULER)")
+		. += "Evolve Progress: (HALTED - NO RULER)"
 	else
-		stat("Evolve Progress:", "[evolution_stored]/[xeno_caste.evolution_threshold]")
+		. += "Evolve Progress: [evolution_stored]/[xeno_caste.evolution_threshold]"
 
 	if(upgrade_possible())
-		stat("Upgrade Progress:", "[upgrade_stored]/[xeno_caste.upgrade_threshold]")
+		. += "Upgrade Progress: [upgrade_stored]/[xeno_caste.upgrade_threshold]"
 	else //Upgrade process finished or impossible
-		stat("Upgrade Progress:", "(FINISHED)")
+		. += "Upgrade Progress: (FINISHED)"
 
 	if(xeno_caste.plasma_max > 0)
-		stat("Plasma:", "[plasma_stored]/[xeno_caste.plasma_max]")
+		. += "Plasma: [plasma_stored]/[xeno_caste.plasma_max]"
 
 	if(hivenumber != XENO_HIVE_CORRUPTED)
 		if(hive.slashing_allowed == XENO_SLASHING_ALLOWED)
-			stat("Slashing of hosts status:", "ALLOWED")
+			. += "Slashing of hosts status: ALLOWED"
 		else if(hive.slashing_allowed == XENO_SLASHING_RESTRICTED)
-			stat("Slashing of hosts status:","RESTRICTED")
+			. += "Slashing of hosts status: RESTRICTED"
 		else
-			stat("Slashing of hosts status:","FORBIDDEN")
+			. += "Slashing of hosts status: FORBIDDEN"
 
 	//Very weak <= 1.0, weak <= 2.0, no modifier 2-3, strong <= 3.5, very strong <= 4.5
-	var/msg_holder = ""
 	if(frenzy_aura)
-		switch(frenzy_aura)
-			if(-INFINITY to 1.0)
-				msg_holder = "Very weak"
-			if(1.1 to 2.0)
-				msg_holder = "Weak"
-			if(2.1 to 2.9)
-				msg_holder = "Medium"
-			if(3.0 to 3.9)
-				msg_holder = "Strong"
-			if(4.0 to INFINITY)
-				msg_holder = "Very strong"
-		stat("Frenzy pheromone strength:", msg_holder)
+		. += "Frenzy pheromone strength: [aura_strength_text(frenzy_aura)]"
 	if(warding_aura)
-		switch(warding_aura)
-			if(-INFINITY to 1.0)
-				msg_holder = "Very weak"
-			if(1.1 to 2.0)
-				msg_holder = "Weak"
-			if(2.1 to 2.9)
-				msg_holder = "Medium"
-			if(3.0 to 3.9)
-				msg_holder = "Strong"
-			if(4.0 to INFINITY)
-				msg_holder = "Very strong"
-		stat("Warding pheromone strength:", msg_holder)
+		. += "Warding pheromone strength: [aura_strength_text(warding_aura)]"
 	if(recovery_aura)
-		switch(recovery_aura)
-			if(-INFINITY to 1.0)
-				msg_holder = "Very weak"
-			if(1.1 to 2.0)
-				msg_holder = "Weak"
-			if(2.1 to 2.9)
-				msg_holder = "Medium"
-			if(3.0 to 3.9)
-				msg_holder = "Strong"
-			if(4.0 to INFINITY)
-				msg_holder = "Very strong"
-		stat("Recovery pheromone strength:", msg_holder)
+		. += "Recovery pheromone strength: [aura_strength_text(recovery_aura)]"
 
 	switch(hivenumber)
 		if(XENO_HIVE_NORMAL)
 			if(hive.hive_orders && hive.hive_orders != "")
-				stat("Hive Orders:", hive.hive_orders)
+				. += "Hive Orders: [hive.hive_orders]"
 			var/countdown = SSticker.mode?.get_hivemind_collapse_countdown()
 			if(countdown)
-				stat("<b>Orphan hivemind collapse timer:</b>", countdown)
+				. += "Orphan hivemind collapse timer: [countdown]"
 		if(XENO_HIVE_CORRUPTED)
-			stat("Hive Orders:","Follow the instructions of our masters")
+			. += "Hive Orders: Follow the instructions of our masters"
+
+///Describes the strength of a pheromone aura for the status tab
+/proc/aura_strength_text(strength)
+	switch(strength)
+		if(-INFINITY to 1.0)
+			return "Very weak"
+		if(1.1 to 2.0)
+			return "Weak"
+		if(2.1 to 2.9)
+			return "Medium"
+		if(3.0 to 3.9)
+			return "Strong"
+		if(4.0 to INFINITY)
+			return "Very strong"
+	return ""
 
 //A simple handler for checking your state. Used in pretty much all the procs.
 /mob/living/carbon/xenomorph/proc/check_state()
@@ -298,13 +276,13 @@
 /mob/living/carbon/xenomorph/proc/remove_inherent_verbs()
 	if(inherent_verbs)
 		for(var/verb_path in inherent_verbs)
-			verbs -= verb_path
+			remove_verb(src, verb_path)
 
 //Add all your inherent caste verbs and procs. Used in evolution.
 /mob/living/carbon/xenomorph/proc/add_inherent_verbs()
 	if(inherent_verbs)
 		for(var/verb_path in inherent_verbs)
-			verbs |= verb_path
+			add_verb(src, verb_path)
 
 
 //Adds or removes a delay to movement based on your caste. If speed = 0 then it shouldn't do much.
@@ -650,7 +628,7 @@
 	return FALSE
 
 /mob/living/carbon/xenomorph/proc/setup_verbs()
-	verbs += /mob/living/proc/lay_down
+	add_verb(src, /mob/living/proc/lay_down)
 
 /mob/living/carbon/xenomorph/hivemind/setup_verbs()
 	return

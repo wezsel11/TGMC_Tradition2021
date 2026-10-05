@@ -10,7 +10,7 @@ SUBSYSTEM_DEF(lighting)
 
 
 /datum/controller/subsystem/lighting/stat_entry()
-	..("L:[length(sources_queue)]|C:[length(corners_queue)]|O:[length(objects_queue)]")
+	return ..("L:[length(sources_queue)]|C:[length(corners_queue)]|O:[length(objects_queue)]")
 
 
 /datum/controller/subsystem/lighting/Initialize(timeofday)

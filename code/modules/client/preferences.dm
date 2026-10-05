@@ -115,6 +115,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 	///Whether to mute goonchat combat messages when we are the source, such as when we are shot.
 	var/mute_self_combat_messages = FALSE
+	///Whether or not the MC tab of the Stat Panel refreshes fast. This is expensive so make sure you need it.
+	var/fast_mc_refresh = FALSE
+	///When enabled, will split the 'Admin' panel into several tabs.
+	var/split_admin_tabs = TRUE
 	///Whether to mute goonchat combat messages from others, such as when they are shot.
 	var/mute_others_combat_messages = FALSE
 	///Whether to mute xeno health alerts from when other xenos are badly hurt.
@@ -350,6 +354,11 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	dat += "<b>Mute self combat messages:</b> <a href='?_src_=prefs;preference=mute_self_combat_messages'>[mute_self_combat_messages ? "Enabled" : "Disabled"]</a><br>"
 	dat += "<b>Mute others combat messages:</b> <a href='?_src_=prefs;preference=mute_others_combat_messages'>[mute_others_combat_messages ? "Enabled" : "Disabled"]</a><br>"
 	dat += "<b>Mute xeno health alert messages:</b> <a href='?_src_=prefs;preference=mute_xeno_health_alert_messages'>[mute_xeno_health_alert_messages ? "Enabled" : "Disabled"]</a><br>"
+
+	if(parent?.holder)
+		dat += "<h2>Administration:</h2>"
+		dat += "<b>Fast MC tab refresh:</b> <a href='?_src_=prefs;preference=fast_mc_refresh'>[fast_mc_refresh ? "Enabled" : "Disabled"]</a><br>"
+		dat += "<b>Split admin tabs:</b> <a href='?_src_=prefs;preference=split_admin_tabs'>[split_admin_tabs ? "Enabled" : "Disabled"]</a><br>"
 
 	dat += "<h2>Runechat Settings:</h2>"
 	dat += "<b>Show Runechat Chat Bubbles:</b> <a href='?_src_=prefs;preference=chat_on_map'>[chat_on_map ? "Enabled" : "Disabled"]</a><br>"
@@ -981,6 +990,12 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			desiredfps = clamp(desiredfps, 0, 240)
 			clientfps = desiredfps
 			parent.fps = desiredfps
+
+		if("fast_mc_refresh")
+			fast_mc_refresh = !fast_mc_refresh
+
+		if("split_admin_tabs")
+			split_admin_tabs = !split_admin_tabs
 
 		if("mute_self_combat_messages")
 			mute_self_combat_messages = !mute_self_combat_messages

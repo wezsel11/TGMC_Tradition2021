@@ -748,6 +748,26 @@ Proc for attack log creation, because really why not
 
 
 /atom/Topic(href, href_list)
+	if(usr?.client && href_list["statpanel_item_click"])
+		var/list/paramslist = list()
+		switch(href_list["statpanel_item_click"])
+			if("left")
+				paramslist["left"] = "1"
+			if("right")
+				paramslist["right"] = "1"
+			if("middle")
+				paramslist["middle"] = "1"
+			else
+				return
+		if(href_list["statpanel_item_shiftclick"])
+			paramslist["shift"] = "1"
+		if(href_list["statpanel_item_ctrlclick"])
+			paramslist["ctrl"] = "1"
+		if(href_list["statpanel_item_altclick"])
+			paramslist["alt"] = "1"
+		usr.client.Click(src, loc, "statbrowser", list2params(paramslist))
+		return TRUE
+
 	. = ..()
 	if(.)
 		return

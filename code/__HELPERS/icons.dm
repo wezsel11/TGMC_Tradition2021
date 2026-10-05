@@ -1043,7 +1043,7 @@ ColorTone(rgb, tone)
  * * frame - what frame of the icon_state's animation for the icon being used
  * * moving - whether or not to use a moving state for the given icon
  */
-/proc/icon2html(thing, target, icon_state, dir = SOUTH, frame = 1, moving = FALSE)
+/proc/icon2html(thing, target, icon_state, dir = SOUTH, frame = 1, moving = FALSE, sourceonly = FALSE)
 	if (!thing)
 		return
 
@@ -1074,6 +1074,8 @@ ColorTone(rgb, tone)
 				SSassets.transport.register_asset(name, thing)
 			for(var/thing2 in targets)
 				SSassets.transport.send_assets(thing2, name)
+			if(sourceonly)
+				return SSassets.transport.get_asset_url(name)
 			return "<img class='icon icon-misc' src='[SSassets.transport.get_asset_url(name)]'>"
 
 		//its either an atom, image, or mutable_appearance, we want its icon var
@@ -1114,6 +1116,8 @@ ColorTone(rgb, tone)
 	for (var/client_target in targets)
 		SSassets.transport.send_assets(client_target, key)
 
+	if(sourceonly)
+		return SSassets.transport.get_asset_url(key)
 	return "<img class='icon icon-[icon_state]' src='[SSassets.transport.get_asset_url(key)]'>"
 
 
@@ -1152,15 +1156,15 @@ ColorTone(rgb, tone)
 
 
 //Costlier version of icon2html() that uses getFlatIcon() to account for overlays, underlays, etc. Use with extreme moderation, ESPECIALLY on mobs.
-/proc/costly_icon2html(thing, target)
+/proc/costly_icon2html(thing, target, sourceonly = FALSE)
 	if(!thing)
 		return
 
 	if(isicon(thing))
-		return icon2html(thing, target)
+		return icon2html(thing, target, sourceonly = sourceonly)
 
 	var/icon/I = getFlatIcon(thing)
-	return icon2html(I, target)
+	return icon2html(I, target, sourceonly = sourceonly)
 
 
 //For creating consistent icons for human looking simple animals

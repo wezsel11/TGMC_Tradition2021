@@ -64,7 +64,7 @@
 
 
 /mob/living/carbon/monkey/Initialize()
-	verbs += /mob/living/proc/lay_down
+	add_verb(src, /mob/living/proc/lay_down)
 	create_reagents(1000)
 
 	if(greaterform_type)
@@ -256,12 +256,11 @@
 	return 1
 
 
-/mob/living/carbon/monkey/Stat()
+/mob/living/carbon/monkey/get_status_tab_items()
 	. = ..()
 
-	if(statpanel("Game"))
-		stat(null, text("Intent: []", a_intent))
-		stat(null, text("Move Mode: []", m_intent))
+	. += "Intent: [a_intent]"
+	. += "Move Mode: [m_intent]"
 
 /mob/living/carbon/monkey/verb/removeinternal()
 	set name = "Remove Internals"

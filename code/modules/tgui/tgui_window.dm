@@ -20,6 +20,9 @@
 	// Vars passed to initialize proc (and saved for later)
 	var/inline_assets
 	var/fancy
+	var/inline_html
+	var/inline_js
+	var/inline_css
 
 /**
  * public
@@ -47,11 +50,15 @@
  * optional inline_assets list List of assets to inline into the html.
  * optional inline_html string Custom HTML to inject.
  * optional fancy bool If TRUE, will hide the window titlebar.
+ * optional inline_js string Custom JS to inject.
+ * optional inline_css string Custom CSS to inject.
  */
 /datum/tgui_window/proc/initialize(
 		inline_assets = list(),
 		inline_html = "",
-		fancy = FALSE)
+		fancy = FALSE,
+		inline_js = "",
+		inline_css = "")
 	log_tgui(client,
 		context = "[id]/initialize",
 		window = src)
@@ -59,6 +66,9 @@
 		return
 	src.inline_assets = inline_assets
 	src.fancy = fancy
+	src.inline_html = inline_html
+	src.inline_js = inline_js
+	src.inline_css = inline_css
 	status = TGUI_WINDOW_LOADING
 	fatally_errored = FALSE
 	// Build window options
@@ -86,7 +96,11 @@
 	if(length(inline_assets_str))
 		inline_assets_str = "<script>\n" + inline_assets_str + "</script>\n"
 	html = replacetextEx(html, "<!-- tgui:assets -->\n", inline_assets_str)
-	// Inject custom HTML
+	// Inject custom HTML, CSS and JS
+	if(inline_css)
+		inline_html = "<style>\n[inline_css]\n</style>\n[inline_html]"
+	if(inline_js)
+		inline_html += "\n<script>\n[inline_js]\n</script>\n"
 	html = replacetextEx(html, "<!-- tgui:html -->\n", inline_html)
 	// Open the window
 	client << browse(html, "window=[id];[options]")
@@ -317,7 +331,7 @@
 			client << link(href_list["url"])
 		if("cacheReloaded")
 			// Reinitialize
-			initialize(inline_assets = inline_assets, fancy = fancy)
+			initialize(inline_assets = inline_assets, inline_html = inline_html, fancy = fancy, inline_js = inline_js, inline_css = inline_css)
 			// Resend the assets
 			for(var/asset in sent_assets)
 				send_asset(asset)
