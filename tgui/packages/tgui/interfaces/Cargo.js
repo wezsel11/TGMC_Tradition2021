@@ -325,14 +325,14 @@ const Packs = (props, context) => {
     packs,
   } = props;
 
-  return packs.map(pack => (
-    <Pack pack={pack} key={pack} />
+  return Object.keys(packs).map(pack => (
+    <Pack pack={pack} key={pack} amount={packs[pack]} />
   ));
 };
 
 const Pack = (props, context) => {
   const { act, data } = useBackend(context);
-  const { pack } = props;
+  const { pack, amount } = props;
   const {
     supplypackscontents,
   } = data;
@@ -346,14 +346,14 @@ const Pack = (props, context) => {
       <Collapsible
         color="gray"
         title={
-          <PackName cost={cost} name={name} pl={0} />
+          <PackName cost={cost} name={name} pl={0} amount={amount} />
         }>
         <Table>
           <PackContents contains={contains} />
         </Table>
       </Collapsible>
     ) : (
-      <PackName cost={cost} name={name} pl="22px" />
+      <PackName cost={cost} name={name} pl="22px" amount={amount} />
     )
   );
 };
@@ -363,12 +363,14 @@ const PackName = (props, context) => {
     cost,
     name,
     pl,
+    amount,
   } = props;
 
   return (
     <Box inline pl={pl}>
-      <Box textAlign="right" inline width="65px">
-        {cost} points
+      <Box textAlign="right" inline width={amount ? "140px" : "65px"}>
+        {amount ? amount + "x " : ""}
+        {cost} points {amount > 1 ? "(" + amount * cost + ")" : ""}
       </Box>
       <Box width="15px" inline />
       <Box inline>
