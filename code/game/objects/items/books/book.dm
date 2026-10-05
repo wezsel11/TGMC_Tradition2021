@@ -63,7 +63,7 @@
 				title = newtitle
 
 			if("Contents")
-				var/content = strip_html(input(usr, "Write your book's contents:") as message|null, 8192)
+				var/content = strip_html(tgui_input_text(usr, "Write your book's contents:", multiline = TRUE), 8192)
 				if(!content)
 					to_chat(usr, "The content is invalid.")
 					return

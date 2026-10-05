@@ -398,7 +398,7 @@ What a mess.*/
 			switch(href_list["field"])
 				if("name")
 					if (istype(active1, /datum/data/record))
-						var/t1 = reject_bad_name(input(usr, "Please input name:", "Secure. records", active1.fields["name"]) as text|null)
+						var/t1 = reject_bad_name(tgui_input_text(usr, "Please input name:", "Secure. records", active1.fields["name"]))
 						if (!t1 || active1 != a1)
 							return
 						active1.fields["name"] = t1

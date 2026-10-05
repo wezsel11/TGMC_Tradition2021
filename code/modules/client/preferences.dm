@@ -24,6 +24,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/ui_style_alpha = 230
 	var/tgui_fancy = TRUE
 	var/tgui_lock = FALSE
+	///Whether to use TGUI input boxes instead of the BYOND ones
+	var/tgui_input = TRUE
 	var/toggles_deadchat = TOGGLES_DEADCHAT_DEFAULT
 	var/toggles_chat = TOGGLES_CHAT_DEFAULT
 	var/toggles_sound = TOGGLES_SOUND_DEFAULT
@@ -361,6 +363,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		dat += "<b>Split admin tabs:</b> <a href='?_src_=prefs;preference=split_admin_tabs'>[split_admin_tabs ? "Enabled" : "Disabled"]</a><br>"
 
 	dat += "<h2>Runechat Settings:</h2>"
+	dat += "<b>TGUI input boxes:</b> <a href='?_src_=prefs;preference=tgui_input'>[tgui_input ? "Enabled" : "Disabled"]</a><br>"
 	dat += "<b>Show Runechat Chat Bubbles:</b> <a href='?_src_=prefs;preference=chat_on_map'>[chat_on_map ? "Enabled" : "Disabled"]</a><br>"
 	dat += "<b>Runechat message char limit:</b> <a href='?_src_=prefs;preference=max_chat_length;task=input'>[max_chat_length]</a><br>"
 	dat += "<b>See Runechat for non-mobs:</b> <a href='?_src_=prefs;preference=see_chat_non_mob'>[see_chat_non_mob ? "Enabled" : "Disabled"]</a><br>"
@@ -686,7 +689,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			randomize_appearance_for()
 
 		if("age")
-			var/new_age = input(user, "Choose your character's age:\n([AGE_MIN]-[AGE_MAX])", "Age") as num|null
+			var/new_age = tgui_input_number(user, "Choose your character's age:\n([AGE_MIN]-[AGE_MAX])", "Age", age, AGE_MAX, AGE_MIN)
 			if(!isnum(new_age))
 				return
 			new_age = round(new_age)
@@ -991,6 +994,9 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			clientfps = desiredfps
 			parent.fps = desiredfps
 
+		if("tgui_input")
+			tgui_input = !tgui_input
+
 		if("fast_mc_refresh")
 			fast_mc_refresh = !fast_mc_refresh
 
@@ -1156,3 +1162,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 	job_preferences[job.title] = level
 	return TRUE
+
+/// Opens the keybindings window, as modern TGMC (#16902)
+/client/verb/hotkeys_help()
+	set name = "Hotkeys"
+	set category = "Preferences"
+
+	prefs.ShowKeybindings(mob)

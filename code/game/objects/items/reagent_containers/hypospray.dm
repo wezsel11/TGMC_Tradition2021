@@ -262,13 +262,16 @@
 
 
 /obj/item/reagent_containers/hypospray/advanced/tricordrazine
+	description_overlay = "Ti"
 	list_reagents = list(/datum/reagent/medicine/tricordrazine = 120)
 
 
 /obj/item/reagent_containers/hypospray/advanced/oxycodone
+	description_overlay = "Ox"
 	list_reagents = list(/datum/reagent/medicine/oxycodone = 120)
 	
 /obj/item/reagent_containers/hypospray/advanced/combat
+	description_overlay = "Cb"
 	name = "Combat hypospray"
 	desc = "An hypospray loaded with several doses of advanced healing and painkilling chemicals. Intended for use in active combat."
 	list_reagents = list(
@@ -278,6 +281,7 @@
 	)	
 	
 /obj/item/reagent_containers/hypospray/advanced/combat_advanced
+	description_overlay = "Av"
 	name = "Advanced combat hypospray"
 	desc = "An hypospray loaded with several doses of advanced healing and painkilling chemicals. Intended for use in active combat."
 	list_reagents = list(
@@ -287,6 +291,7 @@
 	)
 
 /obj/item/reagent_containers/hypospray/advanced/meraderm
+	description_overlay = "MD"
 	name = "A meraderm hypospray"
 	desc = "An hypospray loaded with meralyne and dermaline."
 	list_reagents = list(
@@ -295,6 +300,7 @@
 	)
 
 /obj/item/reagent_containers/hypospray/advanced/meralyne
+	description_overlay = "Mr"
 	name = "A meralyne hypospray"
 	desc = "An hypospray loaded with meralyne."
 	list_reagents = list(
@@ -302,6 +308,7 @@
 	)
 
 /obj/item/reagent_containers/hypospray/advanced/dermaline
+	description_overlay = "Dr"
 	name = "A dermaline hypospray"
 	desc = "An hypospray loaded with dermaline."
 	list_reagents = list(
@@ -335,6 +342,7 @@
 
 		filling.color = mix_color_from_reagents(reagents.reagent_list)
 		overlays += filling
+	update_description_overlay() //overlays.Cut() above removes it
 
 /obj/item/reagent_containers/hypospray/advanced/examine(mob/user as mob)
 	. = ..()

@@ -255,7 +255,7 @@
 
 		if("destination")
 			refresh=0
-			var/new_dest = input("Enter new destination tag", "Mulebot [suffix ? "([suffix])" : ""]", destination) as text|null
+			var/new_dest = tgui_input_text(usr, "Enter new destination tag", "Mulebot [suffix ? "([suffix])" : ""]", destination)
 			refresh=1
 			if(new_dest)
 				set_destination(new_dest)

@@ -101,7 +101,7 @@
 					to_chat(usr, "<span class='warning'>Please allow at least [COOLDOWN_COMM_MESSAGE*0.1] second\s to pass between announcements.</span>")
 					return FALSE
 
-				var/input = input(usr, "Please write a message to announce to the station crew.", "Priority Announcement", "") as message|null
+				var/input = tgui_input_text(usr, "Please write a message to announce to the station crew.", "Priority Announcement", "", multiline = TRUE)
 				if(!input || !(usr in view(1,src)) || authenticated != 2 || world.time < cooldown_message + COOLDOWN_COMM_MESSAGE)
 					return FALSE
 
@@ -291,10 +291,10 @@
 					post_status(href_list["statdisp"])
 
 		if("setmsg1")
-			stat_msg1 = reject_bad_text(input("Line 1", "Enter Message Text", stat_msg1) as text|null, 40)
+			stat_msg1 = reject_bad_text(tgui_input_text(usr, "Line 1", "Enter Message Text", stat_msg1), 40)
 
 		if("setmsg2")
-			stat_msg2 = reject_bad_text(input("Line 2", "Enter Message Text", stat_msg2) as text|null, 40)
+			stat_msg2 = reject_bad_text(tgui_input_text(usr, "Line 2", "Enter Message Text", stat_msg2), 40)
 
 		if("messageTGMC")
 			if(authenticated == 2)
