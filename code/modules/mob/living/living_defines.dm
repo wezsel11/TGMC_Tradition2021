@@ -119,3 +119,6 @@
 
 	/// How much friendly fire damage has this mob done in the last 30 seconds.
 	var/list/friendly_fire = list()
+
+	///The z level this mob is currently registered in, see SSmobs.clients_by_zlevel
+	var/registered_z = null

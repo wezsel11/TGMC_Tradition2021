@@ -22,10 +22,13 @@ A good representation is: 'byond applies a volume reduction to the sound every X
 
 	if(!frequency)
 		frequency = GET_RANDOM_FREQ // Same frequency for everybody
-	// Looping through the player list has the added bonus of working for mobs inside containers
 	var/sound/S = sound(get_sfx(soundin))
-	for(var/i in GLOB.player_list)
-		var/mob/M = i
+	// Only players on the same z-level can hear it, mobs inside containers are registered on the z-level of their turf
+	var/list/listeners = SSmobs.clients_by_zlevel[turf_source.z].Copy()
+	var/list/observers = GLOB.observers_by_zlevel["[turf_source.z]"]
+	if(observers)
+		listeners |= observers
+	for(var/mob/M as anything in listeners)
 		if(!M.client)
 			continue
 		var/turf/T = get_turf(M)

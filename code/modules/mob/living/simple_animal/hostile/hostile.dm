@@ -513,32 +513,8 @@ mob/living/simple_animal/hostile/proc/DestroySurroundings() // for use with mega
 
 /mob/living/simple_animal/hostile/consider_wakeup()
 	. = ..()
-	var/list/tlist
-	var/turf/T = get_turf(src)
-
-	if(!T)
+	if(!get_turf(src))
 		return
-
-	if(!length(SSmobs.clients_by_zlevel[T.z])) // It's fine to use .len here but doesn't compile on 511
-		toggle_ai(AI_Z_OFF)
-		return
-
-	var/cheap_search = isturf(T) && !is_station_level(T.z)
-	if (cheap_search)
-		tlist = ListTargetsLazy(T.z)
-	else
-		tlist = ListTargets()
-
-	if(AIStatus == AI_IDLE && FindTarget(tlist, 1))
-		if(cheap_search) //Try again with full effort
-			FindTarget()
-		toggle_ai(AI_ON)
-
-
-/mob/living/simple_animal/hostile/proc/ListTargetsLazy(z_level)
-	. = list()
-	for(var/i in SSmobs.clients_by_zlevel[z_level])
-		var/mob/M = i
-		if(get_dist(M, src) < vision_range)
-			if(isturf(M.loc))
-				. += M
+	// SSmobs.clients_by_zlevel used to never be filled, so hostile mobs always went to sleep here.
+	// It is filled now (for sounds), so keep that original behaviour explicitly.
+	toggle_ai(AI_Z_OFF)
