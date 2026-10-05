@@ -15,6 +15,10 @@
 	. = ..()
 	if(plasma_cost)
 		name = "[name] ([plasma_cost])"
+	if(!desc && mechanics_text) //Show what the ability does in the button tooltip, as modern TGMC (#11836)
+		desc = mechanics_text
+	button.name = name
+	button.desc = desc
 	button.overlays += image('icons/mob/actions.dmi', button, action_icon_state)
 	cooldown_image = image('icons/effects/progressicons.dmi', null, "busy_clock")
 	cooldown_image.pixel_y = 7
@@ -160,6 +164,7 @@
 	update_button_icon()
 
 /datum/action/xeno_action/update_button_icon()
+	update_button_keybind_text()
 	if(!can_use_action(TRUE, XACT_IGNORE_COOLDOWN))
 		button.color = "#80000080" // rgb(128,0,0,128)
 	else if(!action_cooldown_check())

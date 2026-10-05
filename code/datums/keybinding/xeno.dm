@@ -3,12 +3,14 @@
 	weight = WEIGHT_MOB
 
 /datum/keybinding/xeno/headbite
+	hotkey_keys = list("J")
 	name = "headbite"
 	full_name = "Headbite"
 	description = "Permanently kill a target."
 	keybind_signal = COMSIG_XENOABILITY_HEADBITE
 
 /datum/keybinding/xeno/regurgitate
+	hotkey_keys = list("K")
 	name = "regurgitate"
 	full_name = "Regurgitate"
 	description = "Vomit whatever you have devoured."
@@ -28,6 +30,7 @@
 	keybind_signal = COMSIG_XENOABILITY_CHOOSE_RESIN
 
 /datum/keybinding/xeno/secrete_resin
+	hotkey_keys = list("R")
 	name = "secrete_resin"
 	full_name = "Secrete Resin"
 	description = "Builds whatever you’ve selected with (choose resin structure) on your tile."
@@ -40,18 +43,21 @@
 	keybind_signal = COMSIG_XENOABILITY_SECRETE_RESIN_SILO
 
 /datum/keybinding/xeno/emit_recovery
+	hotkey_keys = list("9")
 	name = "emit_recovery"
 	full_name = "Emit Recovery Pheromones"
 	description = "Increases healing for yourself and nearby teammates."
 	keybind_signal = COMSIG_XENOABILITY_EMIT_RECOVERY
 
 /datum/keybinding/xeno/emit_warding
+	hotkey_keys = list("8")
 	name = "emit_warding"
 	full_name = "Emit Warding Pheromones"
 	description = "Increases armor for yourself and nearby teammates."
 	keybind_signal = COMSIG_XENOABILITY_EMIT_WARDING
 
 /datum/keybinding/xeno/emit_frenzy
+	hotkey_keys = list("7")
 	name = "emit_frenzy"
 	full_name = "Emit Frenzy Pheromones"
 	description = "Increases damage for yourself and nearby teammates."
@@ -70,24 +76,28 @@
 	keybind_signal = COMSIG_XENOABILITY_SHIFT_SPITS
 
 /datum/keybinding/xeno/corrosive_acid
+	hotkey_keys = list("X")
 	name = "corrosive_acid"
 	full_name = "Corrosive Acid"
 	description = "Cover an object with acid to slowly melt it. Takes a few seconds."
 	keybind_signal = COMSIG_XENOABILITY_CORROSIVE_ACID
 
 /datum/keybinding/xeno/spray_acid
+	hotkey_keys = list("F")
 	name = "spray_acid"
 	full_name = "Acid Spray"
 	description = "Sprays some acid"
 	keybind_signal = COMSIG_XENOABILITY_SPRAY_ACID
 
 /datum/keybinding/xeno/xeno_spit
+	hotkey_keys = list("Q")
 	name = "xeno_spit"
 	full_name = "Spit"
 	description = "Spit neurotoxin or acid at your target up to 7 tiles away."
 	keybind_signal = COMSIG_XENOABILITY_XENO_SPIT
 
 /datum/keybinding/xeno/xenohide
+	hotkey_keys = list("C")
 	name = "xenohide"
 	full_name = "Hide"
 	description = "Causes your sprite to hide behind certain objects and under tables. Not the same as stealth. Does not use plasma."
@@ -100,36 +110,42 @@
 	keybind_signal = COMSIG_XENOABILITY_NEUROTOX_STING
 
 /datum/keybinding/xeno/transfer_plasma
+	hotkey_keys = list("N")
 	name = "transfer_plasma"
 	full_name = "Transfer Plasma"
 	description = "Give some of your plasma to a teammate."
 	keybind_signal = COMSIG_XENOABILITY_TRANSFER_PLASMA
 
 /datum/keybinding/xeno/pounce
+	hotkey_keys = list("E")
 	name = "pounce"
 	full_name = "Pounce"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_POUNCE
 
 /datum/keybinding/xeno/plow_charge
+	hotkey_keys = list("Q")
 	name = "plow_charge"
 	full_name = "Bull: Plow Charge"
 	description = "A charge that plows through the victims."
 	keybind_signal = COMSIG_XENOABILITY_BULLCHARGE
 
 /datum/keybinding/xeno/headbutt_charge
+	hotkey_keys = list("F")
 	name = "headbutt_charge"
 	full_name = "Bull: Headbutt Charge"
 	description = "A charge that tosses the victim forward or backwards, depending on intent."
 	keybind_signal = COMSIG_XENOABILITY_BULLHEADBUTT
 
 /datum/keybinding/xeno/gore_charge
+	hotkey_keys = list("R")
 	name = "gore_charge"
 	full_name = "Bull: Gore Charge"
 	description = "A charge that gores the victim."
 	keybind_signal = COMSIG_XENOABILITY_BULLGORE
 
 /datum/keybinding/xeno/long_range_sight
+	hotkey_keys = list("E")
 	name = "long_range_sight"
 	full_name = "Boiler: Long Range Sight"
 	description = ""
@@ -142,18 +158,21 @@
 	keybind_signal = COMSIG_XENOABILITY_TOGGLE_BOMB
 
 /datum/keybinding/xeno/create_bomb
+	hotkey_keys = list("F")
 	name = "create_bomb"
 	full_name = "Boiler: Create Bombard Ammo"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_CREATE_BOMB
 
 /datum/keybinding/xeno/bombard
+	hotkey_keys = list("R")
 	name = "bombard"
 	full_name = "Boiler: Bombard"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_BOMBARD
 
 /datum/keybinding/xeno/throw_hugger
+	hotkey_keys = list("E")
 	name = "throw_hugger"
 	full_name = "Carrier: Throw Hugger"
 	description = ""
@@ -166,30 +185,35 @@
 	keybind_signal = COMSIG_XENOABILITY_RETRIEVE_EGG
 
 /datum/keybinding/xeno/place_trap
+	hotkey_keys = list("Q")
 	name = "place_trap"
 	full_name = "Carrier: Place Trap"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_PLACE_TRAP
 
 /datum/keybinding/xeno/spawn_hugger
+	hotkey_keys = list("F")
 	name = "spawn_hugger"
 	full_name = "Carrier: Spawn Hugger"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_SPAWN_HUGGER
 
 /datum/keybinding/xeno/stomp
+	hotkey_keys = list("Q")
 	name = "stomp"
 	full_name = "Crusher: Stomp"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_STOMP
 
 /datum/keybinding/xeno/toggle_charge
+	hotkey_keys = list("Space")
 	name = "toggle_charge"
 	full_name = "Crusher: Toggle Charge"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_TOGGLE_CHARGE
 
 /datum/keybinding/xeno/cresttoss
+	hotkey_keys = list("E")
 	name = "cresttoss"
 	full_name = "Crusher: Crest Toss"
 	description = ""
@@ -202,48 +226,56 @@
 	keybind_signal = COMSIG_XENOABILITY_HEADBUTT
 
 /datum/keybinding/xeno/forward_charge
+	hotkey_keys = list("R")
 	name = "forward charge"
 	full_name = "Defender: Forward charge"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_FORWARD_CHARGE
 
 /datum/keybinding/xeno/tail_sweep
+	hotkey_keys = list("E")
 	name = "tail_sweep"
 	full_name = "Defender: Tail Sweep"
 	description = "Hit all adjacent units around you, knocking them away and down."
 	keybind_signal = COMSIG_XENOABILITY_TAIL_SWEEP
 
 /datum/keybinding/xeno/crest_defense
+	hotkey_keys = list("Z")
 	name = "crest_defense"
 	full_name = "Defender: Crest Defense"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_CREST_DEFENSE
 
 /datum/keybinding/xeno/fortify
+	hotkey_keys = list("Space")
 	name = "fortify"
 	full_name = "Defender: Fortify"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_FORTIFY
 
 /datum/keybinding/xeno/regenerate_skin
+	hotkey_keys = list("F")
 	name = "regenerate_skin"
 	full_name = "Defender: Regenerate Skin"
 	description = "Regenerate your skin, restoring some health and removing all armor sunder."
 	keybind_signal = COMSIG_XENOABILITY_REGENERATE_SKIN
 
 /datum/keybinding/xeno/emit_neurogas
+	hotkey_keys = list("E")
 	name = "emit_neurogas"
 	full_name = "Defiler: Emit Neurogas"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_EMIT_NEUROGAS
 
 /datum/keybinding/xeno/select_reagent
+	hotkey_keys = list("C")
 	name = "select_reagent"
 	full_name = "Defiler: Select Reagent"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_SELECT_REAGENT
 
 /datum/keybinding/xeno/reagent_slash
+	hotkey_keys = list("R")
 	name = "reagent_slash"
 	full_name = "Defiler: Reagent Slash"
 	description = ""
@@ -256,12 +288,14 @@
 	keybind_signal = COMSIG_XENOABILITY_SALVAGE_PLASMA
 
 /datum/keybinding/xeno/resin_walker
+	hotkey_keys = list("E")
 	name = "resin_walker"
 	full_name = "Hivelord: Toggle Resin Walker"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_RESIN_WALKER
 
 /datum/keybinding/xeno/build_tunnel
+	hotkey_keys = list("ShiftQ")
 	name = "build_tunnel"
 	full_name = "Hivelord: Build Tunnel"
 	description = ""
@@ -274,12 +308,14 @@
 	keybind_signal = COMSIG_XENOABILITY_PLACE_JELLY_POD
 
 /datum/keybinding/xeno/create_jelly
+	hotkey_keys = list("F")
 	name = "create_jelly"
 	full_name = "Hivelord: Create Jelly"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_CREATE_JELLY
 
 /datum/keybinding/xeno/toggle_stealth
+	hotkey_keys = list("Q")
 	name = "toggle_stealth"
 	full_name = "Hunter: Toggle Stealth"
 	description = ""
@@ -298,6 +334,7 @@
 	keybind_signal = COMSIG_XENOABILITY_PSYCHIC_WHISPER
 
 /datum/keybinding/xeno/lay_egg
+	hotkey_keys = list("ShiftQ")
 	name = "lay_egg"
 	full_name = "Lay Egg"
 	description = ""
@@ -310,24 +347,28 @@
 	keybind_signal = COMSIG_XENOABILITY_CALL_OF_THE_BURROWED
 
 /datum/keybinding/xeno/psychic_fling
+	hotkey_keys = list("E")
 	name = "psychic_fling"
 	full_name = "Shrike: Psychic Fling"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_PSYCHIC_FLING
 
 /datum/keybinding/xeno/unrelenting_force
+	hotkey_keys = list("R")
 	name = "unrelenting_force"
 	full_name = "Shrike: Unrelenting Force"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_UNRELENTING_FORCE
 
 /datum/keybinding/xeno/psychic_heal
+	hotkey_keys = list("F")
 	name = "psychic_cure"
 	full_name = "Shrike: Psychic Cure"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_PSYCHIC_CURE
 
 /datum/keybinding/xeno/screech
+	hotkey_keys = list("E")
 	name = "screech"
 	full_name = "Queen: Screech"
 	description = ""
@@ -340,6 +381,7 @@
 	keybind_signal = COMSIG_XENOABILITY_WATCH_XENO
 
 /datum/keybinding/xeno/toggle_queen_zoom
+	hotkey_keys = list("C")
 	name = "toggle_queen_zoom"
 	full_name = "Queen: Toggle Zoom"
 	description = ""
@@ -352,12 +394,14 @@
 	keybind_signal = COMSIG_XENOABILITY_XENO_LEADERS
 
 /datum/keybinding/xeno/queen_heal
+	hotkey_keys = list("H")
 	name = "queen_heal"
 	full_name = "Queen: Give Heal"
 	description = ""
 	keybind_signal = COMSIG_XENOABILITY_QUEEN_HEAL
 
 /datum/keybinding/xeno/queen_give_plasma
+	hotkey_keys = list("N")
 	name = "queen_give_plasma"
 	full_name = "Queen: Give Plasma"
 	description = ""
@@ -382,6 +426,7 @@
 	keybind_signal = COMSIG_XENOABILITY_QUEEN_LARVAL_GROWTH
 
 /datum/keybinding/xeno/ravager_charge
+	hotkey_keys = list("E")
 	name = "ravager_charge"
 	full_name = "Ravager: Eviscerating Charge"
 	description = ""
@@ -394,6 +439,7 @@
 	keybind_signal = COMSIG_XENOABILITY_IGNORE_PAIN
 
 /datum/keybinding/xeno/ravage
+	hotkey_keys = list("R")
 	name = "ravage"
 	full_name = "Ravager: Ravage"
 	description = ""
@@ -406,36 +452,42 @@
 	keybind_signal = COMSIG_XENOABILITY_TOGGLE_SAVAGE
 
 /datum/keybinding/xeno/evasion
+	hotkey_keys = list("Z")
 	name = "evasion"
 	full_name = "Evasion"
 	description = "Take evasive action, forcing non-friendly projectiles that would hit you to miss so long as you keep moving."
 	keybind_signal = COMSIG_XENOABILITY_EVASION
 
 /datum/keybinding/xeno/toggle_agility
+	hotkey_keys = list("Space")
 	name = "toggle_agility"
 	full_name = "Warrior: Toggle Agility"
 	description = "Toggles Agility mode. While in Agility mode, you move much more quickly but can't use abilities and your armor is greatly reduced."
 	keybind_signal = COMSIG_XENOABILITY_TOGGLE_AGILITY
 
 /datum/keybinding/xeno/lunge
+	hotkey_keys = list("E")
 	name = "lunge"
 	full_name = "Warrior: Lunge"
 	description = "Charges towards a target, then neckgrabs them if they're adjacent to you. Stuns on upon grabbing for 1 second."
 	keybind_signal = COMSIG_XENOABILITY_LUNGE
 
 /datum/keybinding/xeno/fling
+	hotkey_keys = list("Q")
 	name = "fling"
 	full_name = "Warrior: Fling"
 	description = "Quickly flings a target 4 tiles away and inflicts a short stun. Shared cooldown with Grapple Toss."
 	keybind_signal = COMSIG_XENOABILITY_FLING
 
 /datum/keybinding/xeno/grapple_toss
+	hotkey_keys = list("F")
 	name = "grapple_toss"
 	full_name = "Warrior: Grapple Toss"
 	description = "Throw a target you're grabbing up to 5 tiles away. Inflicts a short stun and stagger and slow stacks. Shared cooldown with Fling."
 	keybind_signal = COMSIG_XENOABILITY_GRAPPLE_TOSS
 
 /datum/keybinding/xeno/punch
+	hotkey_keys = list("R")
 	name = "punch"
 	full_name = "Warrior: Punch"
 	description = "Punch a hostile creature, a structure or piece of machinery. Damage and status durations are doubled vs creatures you are grabbing. Damage is quadrupled vs structures and machinery."

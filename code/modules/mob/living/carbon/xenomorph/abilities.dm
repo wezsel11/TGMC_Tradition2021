@@ -571,6 +571,7 @@
 	var/mob/living/carbon/xenomorph/X = owner
 	button.overlays.Cut()
 	button.overlays += image('icons/mob/actions.dmi', button, "shift_spit_[X.ammo.icon_state]")
+	update_button_keybind_text()
 
 /datum/action/xeno_action/shift_spits/action_activate()
 	var/mob/living/carbon/xenomorph/X = owner
