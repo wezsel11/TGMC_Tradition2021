@@ -172,38 +172,60 @@
 	set category = "Preferences"
 	set name = "Set Preferred Slot"
 
-	var/slot = input("Which slot would you like to draw/equip from?", "Preferred Slot") as null|anything in list("Suit Storage", "Suit Inside", "Belt", "Back", "Boot", "Helmet", "Left Pocket", "Right Pocket", "Webbing", "Belt", "Belt Holster", "Suit Storage Holster", "Back Holster")
-	switch(slot)
-		if("Suit Storage")
-			prefs.preferred_slot = SLOT_S_STORE
-		if("Suit Inside")
-			prefs.preferred_slot = SLOT_WEAR_SUIT
-		if("Belt")
-			prefs.preferred_slot = SLOT_BELT
-		if("Back")
-			prefs.preferred_slot = SLOT_BACK
-		if("Boot")
-			prefs.preferred_slot = SLOT_IN_BOOT
-		if("Helmet")
-			prefs.preferred_slot = SLOT_IN_HEAD
-		if("Left Pocket")
-			prefs.preferred_slot = SLOT_L_STORE
-		if("Right Pocket")
-			prefs.preferred_slot = SLOT_R_STORE
-		if("Webbing")
-			prefs.preferred_slot = SLOT_IN_ACCESSORY
-		if("Belt")
-			prefs.preferred_slot = SLOT_IN_BELT
-		if("Belt Holster")
-			prefs.preferred_slot = SLOT_IN_HOLSTER
-		if("Suit Storage Holster")
-			prefs.preferred_slot = SLOT_IN_S_HOLSTER
-		if("Back Holster")
-			prefs.preferred_slot = SLOT_IN_B_HOLSTER
-
+	var/slot = choose_preferred_slot("Which slot would you like to draw/equip from?", "Preferred Slot")
+	if(!slot)
+		return
+	prefs.preferred_slot = slot_fluff_to_flag(slot)
 	prefs.save_character()
 
 	to_chat(src, "<span class='notice'>You will now equip/draw from the [slot] slot first.</span>")
+
+
+/client/verb/preferred_slot_alt()
+	set category = "Preferences"
+	set name = "Set Alternate Preferred Slot"
+
+	var/slot = choose_preferred_slot("Which slot would you like to draw/equip from with the alternate quick equip key?", "Alternate Preferred Slot")
+	if(!slot)
+		return
+	prefs.preferred_slot_alt = slot_fluff_to_flag(slot)
+	prefs.save_character()
+
+	to_chat(src, "<span class='notice'>The alternate quick equip key will now equip/draw from the [slot] slot first.</span>")
+
+///Asks which slot to use for quick equip, returns the name of the slot
+/client/proc/choose_preferred_slot(message, title)
+	return tgui_input_list(src, message, title, list("Suit Storage", "Suit Inside", "Belt", "Back", "Boot", "Helmet", "Left Pocket", "Right Pocket", "Webbing", "Inside Belt", "Belt Holster", "Suit Storage Holster", "Back Holster"))
+
+///Turns the name of a quick equip slot into its slot define
+/proc/slot_fluff_to_flag(slot)
+	switch(slot)
+		if("Suit Storage")
+			return SLOT_S_STORE
+		if("Suit Inside")
+			return SLOT_WEAR_SUIT
+		if("Belt")
+			return SLOT_BELT
+		if("Back")
+			return SLOT_BACK
+		if("Boot")
+			return SLOT_IN_BOOT
+		if("Helmet")
+			return SLOT_IN_HEAD
+		if("Left Pocket")
+			return SLOT_L_STORE
+		if("Right Pocket")
+			return SLOT_R_STORE
+		if("Webbing")
+			return SLOT_IN_ACCESSORY
+		if("Inside Belt")
+			return SLOT_IN_BELT
+		if("Belt Holster")
+			return SLOT_IN_HOLSTER
+		if("Suit Storage Holster")
+			return SLOT_IN_S_HOLSTER
+		if("Back Holster")
+			return SLOT_IN_B_HOLSTER
 
 
 /client/verb/typing_indicator()

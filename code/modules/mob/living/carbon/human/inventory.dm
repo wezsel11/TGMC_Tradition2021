@@ -1,7 +1,16 @@
 /mob/living/carbon/human/proc/do_quick_equip()
 	SIGNAL_HANDLER_DOES_SLEEP
 	. = COMSIG_KB_ACTIVATED //The return value must be a flag compatible with the signals triggering this.
+	quick_equip(client?.prefs?.preferred_slot)
 
+///Quick equip with the alternate preferred slot, as modern TGMC (#9917)
+/mob/living/carbon/human/proc/do_quick_equip_alt()
+	SIGNAL_HANDLER_DOES_SLEEP
+	. = COMSIG_KB_ACTIVATED
+	quick_equip(client?.prefs?.preferred_slot_alt)
+
+///Draws an item from, or stores the held item in, the preferred slot first and otherwise the first slot that works
+/mob/living/carbon/human/proc/quick_equip(preferred_slot)
 	if(incapacitated() || lying_angle || istype(loc, /obj/vehicle/multitile/root/cm_armored))
 		return
 
@@ -9,8 +18,8 @@
 	if(!I)
 		if(next_move > world.time)
 			return
-		if(client?.prefs?.preferred_slot)
-			if(draw_from_slot_if_possible(client.prefs.preferred_slot))
+		if(preferred_slot)
+			if(draw_from_slot_if_possible(preferred_slot))
 				next_move = world.time + 3
 				return
 		for(var/slot in SLOT_DRAW_ORDER)
@@ -21,8 +30,8 @@
 		if(s_active && s_active.can_be_inserted(I))
 			s_active.handle_item_insertion(I, FALSE, src)
 			return
-		if(client?.prefs?.preferred_slot)
-			if(equip_to_slot_if_possible(I, client.prefs.preferred_slot, FALSE, FALSE, FALSE))
+		if(preferred_slot)
+			if(equip_to_slot_if_possible(I, preferred_slot, FALSE, FALSE, FALSE))
 				return
 		if(!equip_to_appropriate_slot(I, FALSE))
 			return
@@ -526,3 +535,22 @@
 		if(save_id && istype(i, /obj/item/card/id))
 			continue
 		qdel(i)
+
+///Toggles the light of the worn armor, as modern TGMC (#12389)
+/mob/living/carbon/human/proc/do_toggle_suit_light()
+	SIGNAL_HANDLER
+	. = COMSIG_KB_ACTIVATED
+	if(istype(wear_suit, /obj/item/clothing/suit/storage/marine) || istype(wear_suit, /obj/item/clothing/suit/storage/faction))
+		INVOKE_ASYNC(wear_suit, /obj/item/proc/attack_self, src)
+
+/// Current active hand will interact with the other hand. Uses attackby and attack_hand. As modern TGMC (#17316)
+/mob/living/carbon/human/proc/interact_other_hand()
+	var/atom/active_hand = get_active_held_item()
+	var/atom/inactive_hand = get_inactive_held_item()
+
+	if(!inactive_hand)
+		return
+	if(!active_hand)
+		inactive_hand.attack_hand(src)
+		return
+	inactive_hand.attackby(active_hand, src)

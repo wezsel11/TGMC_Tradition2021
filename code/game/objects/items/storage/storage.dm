@@ -717,4 +717,13 @@
 	var/obj/item/drawn_item = contents[length(contents)]
 	drawn_item.attack_hand(user)
 
+///Ctrl click draws the first item instead of the last, as modern TGMC (#13982)
+/obj/item/storage/CtrlClick(mob/user)
+	if(!ishuman(user) || !length(contents) || isturf(loc))
+		return ..()
+	if(user.get_active_held_item())
+		return ..() //User is already holding something.
+	var/obj/item/drawn_item = contents[1]
+	drawn_item.attack_hand(user)
+
 /obj/item/storage/proc/PopulateContents()

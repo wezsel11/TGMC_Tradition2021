@@ -547,6 +547,10 @@
 
 // human signals for keybindings
 #define COMSIG_KB_QUICKEQUIP "keybinding_quickequip"
+#define COMSIG_KB_QUICKEQUIPALT "keybinding_quickequipalt"
+#define COMSIG_KB_SUITLIGHT "keybinding_suitlight"
+#define COMSIG_KB_HUMAN_INTERACT_OTHER_HAND "keybinding_human_interact_other_hand"
+#define COMSIG_KB_AUTOEJECT "keybind_autoeject"
 #define COMSIG_KB_HOLSTER "keybinding_holster"
 #define COMSIG_KB_UNIQUEACTION "keybinding_uniqueaction"
 #define COMSIG_KB_RAILATTACHMENT "keybinding_railattachment"
