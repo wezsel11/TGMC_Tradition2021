@@ -402,7 +402,7 @@
 			if (!( istype(src.active2, /datum/data/record) ))
 				return
 			var/a2 = src.active2
-			var/t1 = stripped_input("Add Comment:", "Med. records")
+			var/t1 = stripped_input(usr, "Add Comment:", "Med. records")
 			if ((!( t1 ) || !( src.authenticated ) || usr.stat || usr.restrained() || (!in_range(src, usr) && !issilicon(usr)) || src.active2 != a2))
 				return
 			var/counter = 1

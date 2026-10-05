@@ -963,7 +963,7 @@
 	if(!X.check_state())
 		return
 
-	var/msg = stripped_input("Message:", "Psychic Whisper")
+	var/msg = stripped_input(usr, "Message:", "Psychic Whisper")
 	if(!msg)
 		return
 

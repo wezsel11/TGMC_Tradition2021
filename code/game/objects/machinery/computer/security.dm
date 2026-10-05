@@ -452,7 +452,7 @@ What a mess.*/
 						active2.fields["ma_crim_d"] = t1
 				if("notes")
 					if (istype(active2, /datum/data/record))
-						var/t1 = stripped_input("Please summarize notes:", "Secure. records", html_decode(active2.fields["notes"]))
+						var/t1 = stripped_input(usr, "Please summarize notes:", "Secure. records", html_decode(active2.fields["notes"]))
 						if (!t1 || active2 != a2)
 							return
 						active2.fields["notes"] = t1
