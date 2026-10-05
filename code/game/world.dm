@@ -8,10 +8,6 @@ GLOBAL_VAR(restart_counter)
 //This happens after the Master subsystem new(s) (it's a global datum)
 //So subsystems globals exist, but are not initialised
 /world/New()
-	var/debug_server = world.GetConfig("env", "AUXTOOLS_DEBUG_DLL")
-	if (debug_server)
-		LIBCALL(debug_server, "auxtools_init")()
-		enable_debugging()
 #ifdef REFERENCE_TRACKING
 	enable_reference_tracking()
 #endif

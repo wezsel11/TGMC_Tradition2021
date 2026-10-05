@@ -12,6 +12,12 @@
 #define GC_QUEUE_HARDDELETE 2
 #define GC_QUEUE_COUNT 2 //increase this when adding more steps.
 
+// Defines for the ssgarbage queue items
+#define GC_QUEUE_ITEM_QUEUE_TIME 1 //! Time this item entered the queue
+#define GC_QUEUE_ITEM_REF 2 //! Ref to the item
+#define GC_QUEUE_ITEM_GCD_DESTROYED 3 //! Item's gc_destroyed var value. Used to detect ref reuse.
+#define GC_QUEUE_ITEM_INDEX_COUNT 3 //! Number of item indexes, used for allocating the nested lists. Don't forget to increase this if you add a new queue item index
+
 #define GC_QUEUED_FOR_QUEUING -1
 #define GC_CURRENTLY_BEING_QDELETED -2
 
