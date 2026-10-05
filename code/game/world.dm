@@ -104,6 +104,7 @@ GLOBAL_VAR(restart_counter)
 	GLOB.world_debug_log = "[GLOB.log_directory]/debug.log"
 	GLOB.world_paper_log = "[GLOB.log_directory]/paper.log"
 	GLOB.tgui_log = "[GLOB.log_directory]/tgui.log"
+	GLOB.world_json_log = "[GLOB.log_directory]/game.log.json"
 
 #ifdef UNIT_TESTS
 	GLOB.test_log = "[GLOB.log_directory]/tests.log"

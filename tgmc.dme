@@ -899,6 +899,7 @@
 #include "code\modules\admin\debug_verbs.dm"
 #include "code\modules\admin\fun_verbs.dm"
 #include "code\modules\admin\holder.dm"
+#include "code\modules\admin\log_viewer.dm"
 #include "code\modules\admin\IsBanned.dm"
 #include "code\modules\admin\preferences_verbs.dm"
 #include "code\modules\admin\server_verbs.dm"

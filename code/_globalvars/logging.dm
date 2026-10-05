@@ -58,3 +58,13 @@ GLOBAL_LIST_EMPTY(ffattack_log)
 GLOBAL_PROTECT(ffattack_log)
 GLOBAL_LIST_EMPTY(explosion_log)
 GLOBAL_PROTECT(explosion_log)
+
+///Machine readable copy of the categorized logs, one JSON object per line
+GLOBAL_VAR(world_json_log)
+GLOBAL_PROTECT(world_json_log)
+///Recent log entries for the admin log viewer, as list(time, category, message)
+GLOBAL_LIST_EMPTY(log_entries)
+GLOBAL_PROTECT(log_entries)
+///Every log category that has been written this round
+GLOBAL_LIST_EMPTY(log_categories)
+GLOBAL_PROTECT(log_categories)
