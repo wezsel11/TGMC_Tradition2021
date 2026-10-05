@@ -25,6 +25,9 @@
 	set name = ".Say"
 	set hidden = TRUE
 
+	if(client?.tgui_say?.open("Say"))
+		return
+
 	add_typing_indicator()
 	var/message = input("", "Say") as text
 	remove_typing_indicator()
@@ -38,6 +41,9 @@
 /mob/verb/me_wrapper()
 	set name = ".Me"
 	set hidden = TRUE
+
+	if(client?.tgui_say?.open("Me"))
+		return
 
 	add_typing_indicator(TRUE)
 	var/message = input("", "Me \"text\"") as null|text

@@ -364,3 +364,26 @@ window "statwindow"
 		anchor2 = 100,100
 		is-visible = false
 		saved-params = ""
+
+window "tgui_say"
+	elem "tgui_say"
+		type = MAIN
+		pos = 410,400
+		size = 260x32
+		anchor1 = -1,-1
+		anchor2 = -1,-1
+		is-visible = false
+		saved-params = ""
+		statusbar = false
+		can-minimize = false
+		can-resize = false
+		titlebar = false
+		is-pane = false
+	elem "tgui_say_browser"
+		type = BROWSER
+		pos = 0,0
+		size = 260x32
+		anchor1 = 0,0
+		anchor2 = 100,100
+		background-color = #131313
+		saved-params = ""

@@ -156,6 +156,7 @@
 
 	// Instantiate tgui panel
 	tgui_panel = new(src)
+	tgui_say = new(src)
 
 	GLOB.ahelp_tickets.ClientLogin(src)
 
@@ -233,6 +234,9 @@
 
 	// Initialize tgui panel
 	tgui_panel.initialize()
+
+	// Initialize tgui say
+	tgui_say.initialize()
 
 	// Initialize stat panel
 	init_stat_panel()

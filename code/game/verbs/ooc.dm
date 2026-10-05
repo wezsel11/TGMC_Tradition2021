@@ -1,5 +1,7 @@
 /client/verb/ooc_wrapper()
 	set hidden = TRUE
+	if(tgui_say?.open("OOC"))
+		return
 	var/message = input("", "OOC \"text\"") as null|text
 	ooc(message)
 
@@ -107,6 +109,8 @@
 
 /client/verb/looc_wrapper()
 	set hidden = TRUE
+	if(tgui_say?.open("LOOC"))
+		return
 	var/message = input("", "LOOC \"text\"") as null|text
 	looc(message)
 

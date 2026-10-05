@@ -26,6 +26,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/tgui_lock = FALSE
 	///Whether to use TGUI input boxes instead of the BYOND ones
 	var/tgui_input = TRUE
+	var/tgui_say = TRUE
 	var/toggles_deadchat = TOGGLES_DEADCHAT_DEFAULT
 	var/toggles_chat = TOGGLES_CHAT_DEFAULT
 	var/toggles_sound = TOGGLES_SOUND_DEFAULT
@@ -366,6 +367,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 	dat += "<h2>Runechat Settings:</h2>"
 	dat += "<b>TGUI input boxes:</b> <a href='?_src_=prefs;preference=tgui_input'>[tgui_input ? "Enabled" : "Disabled"]</a><br>"
+	dat += "<b>TGUI say:</b> <a href='?_src_=prefs;preference=tgui_say'>[tgui_say ? "Enabled" : "Disabled"]</a><br>"
 	dat += "<b>Show Runechat Chat Bubbles:</b> <a href='?_src_=prefs;preference=chat_on_map'>[chat_on_map ? "Enabled" : "Disabled"]</a><br>"
 	dat += "<b>Runechat message char limit:</b> <a href='?_src_=prefs;preference=max_chat_length;task=input'>[max_chat_length]</a><br>"
 	dat += "<b>See Runechat for non-mobs:</b> <a href='?_src_=prefs;preference=see_chat_non_mob'>[see_chat_non_mob ? "Enabled" : "Disabled"]</a><br>"
@@ -995,6 +997,9 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			desiredfps = clamp(desiredfps, 0, 240)
 			clientfps = desiredfps
 			parent.fps = desiredfps
+
+		if("tgui_say")
+			tgui_say = !tgui_say
 
 		if("tgui_input")
 			tgui_input = !tgui_input
