@@ -70,7 +70,7 @@ export const chatMiddleware = store => {
   let loaded = false;
   const sequences = [];
   const sequences_requested = [];
-  chatRenderer.events.on('batchProcessed', (countByType) => {
+  chatRenderer.events.on('batchProcessed', countByType => {
     // Use this flag to workaround unread messages caused by
     // loading them from storage. Side effect of that, is that
     // message count can not be trusted, only unread count.
@@ -105,7 +105,7 @@ export const chatMiddleware = store => {
       seq_check: if (sequence_count > 0) {
         if (sequences_requested.includes(sequence)) {
           sequences_requested.splice(sequences_requested.indexOf(sequence), 1);
-          // if we are receiving a message we requested, we can stop reliability checks
+          // A message we requested has arrived, stop the reliability checks
           break seq_check;
         }
 

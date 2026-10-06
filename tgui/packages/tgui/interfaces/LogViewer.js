@@ -63,7 +63,8 @@ export const LogViewer = (props, context) => {
           </Flex>
         </Section>
         <Section
-          title={`Entries (newest first, ${entries.length} of ${total} shown, at most ${max_shown})`}>
+          title={`Entries (newest first, ${entries.length} of ${total}`
+            + ` shown, at most ${max_shown})`}>
           <Table>
             {entries.map((entry, i) => (
               <Table.Row key={i} className="candystripe">

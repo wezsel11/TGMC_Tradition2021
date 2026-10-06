@@ -9,7 +9,8 @@ import { vecAdd, vecInverse, vecMultiply, vecScale } from 'common/vector';
 import { createLogger } from './logging';
 
 const logger = createLogger('drag');
-// 516: BYOND window positions and sizes are in display-pixels, the browser works in css-pixels
+// 516: BYOND window positions and sizes are in display-pixels,
+// the browser works in css-pixels
 const pixelRatio = window.devicePixelRatio || 1;
 
 let windowKey = window.__windowId__;

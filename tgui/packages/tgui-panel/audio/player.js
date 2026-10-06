@@ -35,7 +35,7 @@ export class AudioPlayer {
       // rejection on a failed playback would crash the chat panel.
       const playback = this.node.play();
       if (playback) {
-        playback.catch((error) => logger.log('playback error', error));
+        playback.catch(error => logger.log('playback error', error));
       }
       for (let subscriber of this.onPlaySubscribers) {
         subscriber();

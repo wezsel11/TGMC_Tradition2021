@@ -151,7 +151,7 @@ export const HealthAnalyzer = (props, context) => {
             ))}
             {!!unknown_reagents && (
               <NoticeBox danger mt={1}>
-                Warning: Unknown substance{unknown_reagents > 1 ? 's' : ''} detected in subject's blood.
+                Warning: Unknown substance{unknown_reagents > 1 ? 's' : ''} detected in subject&apos;s blood.
               </NoticeBox>
             )}
           </Section>
