@@ -10,9 +10,10 @@
 	if(!check_rights(R_ASAY))
 		return
 
-	if(!log_viewer)
-		log_viewer = new
-	log_viewer.ui_interact(usr)
+	var/datum/admins/holder = usr.client.holder
+	if(!holder.log_viewer)
+		holder.log_viewer = new
+	holder.log_viewer.ui_interact(usr)
 
 
 ///Shows the recent log entries of the round, with filters on category and text
