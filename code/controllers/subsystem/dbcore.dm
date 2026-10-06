@@ -64,11 +64,11 @@ SUBSYSTEM_DEF(dbcore)
 	if(IsConnected())
 		return TRUE
 
-	if(failed_connection_timeout <= world.time) //it's been more than 5 seconds since we failed to connect, reset the counter
-		failed_connections = 0
+	//The counter used to be reset on every call, so a down database was retried by every query and froze the server, fixed as modern TGMC
+	if(failed_connection_timeout && failed_connection_timeout <= world.time) //it's been long enough since we failed to connect, try once more
+		failed_connection_timeout = 0
 
-	if(failed_connections > 5)	//If it failed to establish a connection more than 5 times in a row, don't bother attempting to connect for 5 seconds.
-		failed_connection_timeout = world.time + 50
+	if(failed_connection_timeout > 0) //Recently failed to connect too often, don't bother attempting to connect for a time
 		return FALSE
 
 	if(!CONFIG_GET(flag/sql_enabled))
@@ -95,11 +95,15 @@ SUBSYSTEM_DEF(dbcore)
 	. = (result["status"] == "ok")
 	if (.)
 		connection = result["handle"]
+		failed_connections = 0
 	else
 		connection = null
 		last_error = result["data"]
 		log_sql("Connect() failed | [last_error]")
 		++failed_connections
+		//If it failed to establish a connection more than 5 times in a row, wait before trying again, longer each time up to 2 minutes
+		if(failed_connections > 5)
+			failed_connection_timeout = world.time + min(5 SECONDS * (2 ** (failed_connections - 6)), 2 MINUTES)
 
 /datum/controller/subsystem/dbcore/proc/CheckSchemaVersion()
 	if(CONFIG_GET(flag/sql_enabled))
@@ -155,6 +159,7 @@ SUBSYSTEM_DEF(dbcore)
 
 /datum/controller/subsystem/dbcore/proc/Disconnect()
 	failed_connections = 0
+	failed_connection_timeout = 0
 	if (connection)
 		rustg_sql_disconnect_pool(connection)
 	connection = null

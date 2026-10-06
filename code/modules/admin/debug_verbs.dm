@@ -424,6 +424,7 @@ GLOBAL_PROTECT(AdminProcCallSpamPrevention)
 	message_admins("[ADMIN_TPMONTY(usr)] is attempting to re-established the DB Connection.")
 
 	SSdbcore.failed_connections = 0
+	SSdbcore.failed_connection_timeout = 0
 
 	if(!SSdbcore.Connect())
 		log_admin("Database connection failed: " + SSdbcore.ErrorMsg())
