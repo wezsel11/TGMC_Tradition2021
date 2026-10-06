@@ -50,3 +50,81 @@ See `DEPLOYING.md` for how to host it.
 - Fixed HTML injection through carbon copies
 - Non-ASCII text is rejected in OOC, flavor text, supply requests and command
   announcements; supply request reasons are capped at 250 characters
+
+## Rounds and maps
+
+- The default game mode is Distress Signal (it fell back to Extended)
+- Vapor Processing, Desert Outpost, Whiskey Outpost and Marine HQ are out of
+  the map rotation; a saved next map that is no longer in the rotation is
+  never loaded
+- Larva queue, as modern TGMC: dead players queue fairly for a new larva, see
+  their position in the Status tab, keep their place while on the respawn
+  timer, and spawn prompts time out after 20 seconds
+- Round end statistics show where larvas came from
+
+## Interface
+
+- HTML stat panel, as modern TGMC, with an object tab when you Alt-click a tile
+- TGUI Say: a small input bar for say, radio, me, OOC and LOOC. Tab changes
+  the channel, Up and Down go through the last messages, and the bar can be
+  dragged. It can be turned off in the game preferences
+- TGUI input boxes for text and number prompts, with a preference to go back
+  to the old popups
+- Hive Status and the health analyzer open in TGUI windows, showing the same
+  information as before
+- Chat reliability layer: messages are no longer lost or duplicated
+- Balloon alerts: xeno ability messages ("wait 3 seconds", "not enough
+  plasma") float above your head instead of filling chat
+- BYOND 516: windows scale with the monitor DPI, old windows use proper HTML,
+  chat logs can be saved, and floating overlays layer correctly
+- Smoother movement and runechat
+
+## Controls and quality of life
+
+- Xeno abilities have default keys, shown on the ability buttons; ability
+  tooltips explain what they do
+- Pheromones and resin structures are picked from a radial menu, and the
+  pheromone keys always work
+- Bags: clicking an open bag closes it, a bag opens when an item doesn't fit,
+  and Ctrl-click takes out the first item
+- Alternate quick equip (Shift+E) with its own preferred slot; "Inside Belt"
+  can be chosen as a preferred slot
+- New keybinds: toggle suit light, interact with the other hand, toggle
+  automatic magazine ejection (also a Weapons verb)
+- "Hotkeys" verb in the Preferences tab
+- Short labels on autoinjectors, hyposprays and pill bottles
+- Checking yourself for injuries shows bleeding
+- Vendors say why they refuse you
+- Requisitions: search field, and identical crates are grouped in orders
+- Less chat spam when shooting objects and walls
+- Ghosts see reagents on examine, can Shift-click examine while following,
+  and their window only flashes for offers to rejoin the round
+- The health analyzer's {B} and {T} untreated markers were shown for treated
+  limbs; they now match the legend
+
+## Performance
+
+- Faster overlays, icon2html, INVOKE_ASYNC, element ids and item action lists,
+  as modern TGMC
+- Master controller and garbage collector improvements, and hard-delete
+  fixes, from modern TGMC
+- Runechat runs on the timer subsystem
+- Sounds only check players on the same z-level
+
+## Administration and logging
+
+- JSON logging: every categorized log line is also written to
+  `game.log.json` in the round log folder (one JSON object per line); the text
+  logs are unchanged
+- "Log Viewer" admin verb: the round's logs in a TGUI window, with category
+  filters and search
+- Admin links in human examine, observer Ctrl+Shift-click for admins, and
+  quick create paths
+
+## Reliability
+
+- A down database no longer freezes the server: Connect() reset its failure
+  counter on every call, so every query made a new blocking connection
+  attempt. It now backs off after 5 failures, as modern TGMC
+- The chat no longer crashes when audio playback fails
+- Text prompts that were missing their user work again
