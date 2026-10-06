@@ -24,11 +24,12 @@ body {
 }
 
 .window {
+  cursor: move;
   display: flex;
   align-items: center;
   box-sizing: border-box;
   height: 100%;
-  padding: 3px;
+  padding: 4px 6px;
   border: 1px solid #333;
   background-color: #131313;
 }
@@ -50,6 +51,7 @@ body {
 }
 
 .textarea {
+  cursor: text;
   flex: 1 1 auto;
   min-width: 0;
   height: 22px;

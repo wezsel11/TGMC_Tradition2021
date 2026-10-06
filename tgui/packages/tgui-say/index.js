@@ -15,6 +15,34 @@ const WINDOW_ID = 'tgui_say';
 
 const isValidChannel = channel => CHANNELS.indexOf(channel) !== -1;
 
+// winget gives positions and sizes as {x, y} objects, or as "1,2" / "1x2" text
+const parseVector = value => {
+  if (value && typeof value === 'object') {
+    return [Number(value.x), Number(value.y)];
+  }
+  return String(value).split(/[,x]/).map(Number);
+};
+
+const POSITION_KEY = 'tgui-say-position';
+
+const loadPosition = () => {
+  try {
+    const pos = JSON.parse(window.localStorage.getItem(POSITION_KEY));
+    if (pos && pos.length === 2 && !isNaN(pos[0] + pos[1])) {
+      return pos;
+    }
+  }
+  catch (err) {}
+  return null;
+};
+
+const savePosition = pos => {
+  try {
+    window.localStorage.setItem(POSITION_KEY, JSON.stringify(pos));
+  }
+  catch (err) {}
+};
+
 class TguiSay extends Component {
   constructor() {
     super();
@@ -55,19 +83,80 @@ class TguiSay extends Component {
       channel: isValidChannel(channel) ? channel : 'Say',
       value: '',
     });
-    // Center the window on the game window
-    Byond.winget('mainwindow', ['pos', 'size']).then(props => {
-      const [x, y] = String(props.pos).split(',').map(Number);
-      const [width, height] = String(props.size).split('x').map(Number);
-      const posX = Math.round(x + width / 2 - 130);
-      const posY = Math.round(y + height * 0.6);
-      Byond.winset(WINDOW_ID, {
-        'pos': `${posX},${posY}`,
-        'is-visible': true,
-      });
+    const show = pos => {
+      const props = { 'is-visible': true };
+      if (pos) {
+        this.pos = pos;
+        props.pos = `${pos[0]},${pos[1]}`;
+      }
+      Byond.winset(WINDOW_ID, props);
       Byond.winset('tgui_say_browser', { 'focus': true });
       setTimeout(() => this.input.current?.focus(), 10);
-    });
+    };
+    // Reopen where the player dragged it to
+    const saved = loadPosition();
+    if (saved) {
+      show(saved);
+      return;
+    }
+    // Otherwise center it near the bottom of the map
+    Promise.all([
+      Byond.winget('mainwindow', ['pos', 'size', 'is-maximized']),
+      Byond.winget('mapwindow.map', 'size'),
+    ]).then(([main, mapSize]) => {
+      const ratio = window.devicePixelRatio || 1;
+      let [x, y] = parseVector(main.pos);
+      let [width, height] = parseVector(main.size);
+      // The pos of a maximized window is where it goes when restored
+      if (main['is-maximized'] === true || main['is-maximized'] === 'true') {
+        x = 0;
+        y = 0;
+        width = window.screen.availWidth * ratio;
+        height = window.screen.availHeight * ratio;
+      }
+      const [mapWidth, mapHeight] = parseVector(mapSize);
+      if (mapWidth > 0 && mapHeight > 0) {
+        width = Math.min(width, mapWidth);
+        height = Math.min(height, mapHeight);
+      }
+      if (isNaN(x + y + width + height)) {
+        show();
+        return;
+      }
+      show([
+        Math.round(x + width / 2 - 130 * ratio),
+        Math.round(y + height * 0.85),
+      ]);
+    }, () => show());
+  }
+
+  // Dragging the window by its edge
+  onMouseDown(event) {
+    const tag = event.target.tagName;
+    if (event.button !== 0 || tag === 'INPUT' || tag === 'BUTTON' || !this.pos) {
+      return;
+    }
+    event.preventDefault();
+    const ratio = window.devicePixelRatio || 1;
+    const startX = event.screenX;
+    const startY = event.screenY;
+    const [posX, posY] = this.pos;
+    const onMove = e => {
+      const pos = [
+        Math.round(posX + (e.screenX - startX) * ratio),
+        Math.round(posY + (e.screenY - startY) * ratio),
+      ];
+      this.pos = pos;
+      Byond.winset(WINDOW_ID, { pos: `${pos[0]},${pos[1]}` });
+    };
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      savePosition(this.pos);
+      this.input.current?.focus();
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
   }
 
   close() {
@@ -143,7 +232,9 @@ class TguiSay extends Component {
     const { channel, value, maxLength, lightMode } = this.state;
     const channelClass = `channel-${channel.toLowerCase()}`;
     return (
-      <div className={`window ${channelClass}${lightMode ? ' lightMode' : ''}`}>
+      <div
+        className={`window ${channelClass}${lightMode ? ' lightMode' : ''}`}
+        onMouseDown={e => this.onMouseDown(e)}>
         <button
           className="button"
           type="button"
