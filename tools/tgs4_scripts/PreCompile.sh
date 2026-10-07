@@ -18,6 +18,7 @@ has_git="$(command -v git)"
 has_cargo="$(command -v ~/.cargo/bin/cargo)"
 has_sudo="$(command -v sudo)"
 has_grep="$(command -v grep)"
+has_pkg_config="$(command -v pkg-config)"
 set -e
 
 # install cargo if needful
@@ -28,7 +29,6 @@ if ! [ -x "$has_cargo" ]; then
 fi
 
 # apt packages, libssl needed by rust-g but not included in TGS barebones install
-has_pkg_config="$(command -v pkg-config)"
 if ! ( [ -x "$has_git" ] && [ -x "$has_grep" ] && [ -x "$has_pkg_config" ] && [ -f "/usr/lib/i386-linux-gnu/libssl.so" ] && [ -f "/usr/lib/i386-linux-gnu/libz.so" ] && ls -d /usr/lib/gcc/x86_64-linux-gnu/*/32 >/dev/null 2>&1 ); then
 	# Package list as in tgstation's InstallDeps.sh. libssl1.1:i386 is not listed: it does not
 	# exist on Ubuntu 22.04+, which BYOND 516 requires (glibc 2.34). The libssl-dev packages pull
