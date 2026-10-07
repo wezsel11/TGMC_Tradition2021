@@ -280,10 +280,6 @@ GLOBAL_PROTECT(admin_verbs_default)
 	/datum/admins/proc/toggle_sleep,
 	/datum/admins/proc/toggle_sleep_panel,
 	/datum/admins/proc/toggle_sleep_area,
-	/datum/admins/proc/logs_server,
-	/datum/admins/proc/open_log_viewer,
-	/datum/admins/proc/logs_current,
-	/datum/admins/proc/logs_folder,
 	/datum/admins/proc/jump,
 	/datum/admins/proc/get_mob,
 	/datum/admins/proc/send_mob,
@@ -454,7 +450,6 @@ GLOBAL_PROTECT(admin_verbs_server)
 /world/proc/AVpermissions()
 	return list(
 	/client/proc/edit_admin_permissions,
-	/client/proc/poll_panel,
 	)
 GLOBAL_LIST_INIT(admin_verbs_permissions, world.AVpermissions())
 GLOBAL_PROTECT(admin_verbs_permissions)
@@ -483,6 +478,24 @@ GLOBAL_PROTECT(admin_verbs_sound)
 	)
 GLOBAL_LIST_INIT(admin_verbs_spawn, world.AVspawn())
 GLOBAL_PROTECT(admin_verbs_spawn)
+
+//Log access, poll management, as modern TGMC so ranks from a TGMC database give the same powers
+/world/proc/AVlog()
+	return list(
+	/datum/admins/proc/logs_server,
+	/datum/admins/proc/open_log_viewer,
+	/datum/admins/proc/logs_current,
+	/datum/admins/proc/logs_folder,
+	)
+GLOBAL_LIST_INIT(admin_verbs_log, world.AVlog())
+GLOBAL_PROTECT(admin_verbs_log)
+
+/world/proc/AVpolls()
+	return list(
+	/client/proc/poll_panel,
+	)
+GLOBAL_LIST_INIT(admin_verbs_polls, world.AVpolls())
+GLOBAL_PROTECT(admin_verbs_polls)
 
 /client/proc/add_admin_verbs()
 	if(holder)
@@ -514,6 +527,10 @@ GLOBAL_PROTECT(admin_verbs_spawn)
 			add_verb(src, GLOB.admin_verbs_varedit)
 		if(rights & R_SPAWN)
 			add_verb(src, GLOB.admin_verbs_spawn)
+		if(rights & R_LOG)
+			add_verb(src, GLOB.admin_verbs_log)
+		if(rights & R_POLLS)
+			add_verb(src, GLOB.admin_verbs_polls)
 
 
 /client/proc/remove_admin_verbs()
@@ -530,7 +547,9 @@ GLOBAL_PROTECT(admin_verbs_spawn)
 		GLOB.admin_verbs_sound,
 		GLOB.admin_verbs_color,
 		GLOB.admin_verbs_varedit,
-		GLOB.admin_verbs_spawn
+		GLOB.admin_verbs_spawn,
+		GLOB.admin_verbs_log,
+		GLOB.admin_verbs_polls
 	))
 
 

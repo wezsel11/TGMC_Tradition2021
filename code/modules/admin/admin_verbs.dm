@@ -238,7 +238,7 @@
 	set category = "Admin"
 	set name = "Get Server Logs"
 
-	if(!check_rights(R_ASAY))
+	if(!check_rights(R_LOG))
 		return
 
 	usr.client.holder.browse_server_logs()
@@ -249,7 +249,7 @@
 	set name = "Get Current Logs"
 	set desc = "View/retrieve logfiles for the current round."
 
-	if(!check_rights(R_ASAY))
+	if(!check_rights(R_LOG))
 		return
 
 	usr.client.holder.browse_server_logs("[GLOB.log_directory]/")
@@ -260,7 +260,7 @@
 	set name = "Get Server Logs Folder"
 	set desc = "Please use responsibly."
 
-	if(!check_rights(R_ASAY))
+	if(!check_rights(R_LOG))
 		return
 
 	if(alert("Due to the way BYOND handles files, you WILL need a click macro. This function is also recurive and prone to fucking up, especially if you select the wrong folder. Are you absolutely sure you want to proceed?", "WARNING", "Yes", "No") != "Yes")
@@ -274,7 +274,7 @@
 
 
 /datum/admins/proc/browse_server_logs(path = "data/logs/")
-	if(!check_rights(R_ASAY))
+	if(!check_rights(R_LOG))
 		return
 
 	path = browse_files(path)
@@ -296,7 +296,7 @@
 
 
 /datum/admins/proc/recursive_download(folder)
-	if(!check_rights(R_ASAY))
+	if(!check_rights(R_LOG))
 		return
 
 	var/files = flist(folder)
@@ -312,7 +312,7 @@
 
 
 /datum/admins/proc/browse_folders(root = "data/logs/", max_iterations = 100)
-	if(!check_rights(R_ASAY))
+	if(!check_rights(R_LOG))
 		return
 
 	var/path = root
@@ -344,7 +344,7 @@
 
 
 /datum/admins/proc/browse_files(root = "data/logs/", max_iterations = 20, list/valid_extensions = list("txt", "log", "htm", "html"))
-	if(!check_rights(R_ASAY))
+	if(!check_rights(R_LOG))
 		return
 
 	var/path = root
@@ -375,7 +375,7 @@
 
 
 /datum/admins/proc/show_individual_logging_panel(mob/M, source = LOGSRC_CLIENT, type = INDIVIDUAL_ATTACK_LOG)
-	if(!check_rights(R_ADMIN))
+	if(!check_rights(R_LOG))
 		return
 
 	if(!istype(M))

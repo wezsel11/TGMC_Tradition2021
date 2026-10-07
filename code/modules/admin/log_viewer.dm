@@ -7,7 +7,7 @@
 	set name = "Log Viewer"
 	set desc = "Search the logs of the current round."
 
-	if(!check_rights(R_ASAY))
+	if(!check_rights(R_LOG))
 		return
 
 	var/datum/admins/holder = usr.client.holder
@@ -26,7 +26,15 @@
 	var/max_shown = 500
 
 /datum/log_viewer/ui_state(mob/user)
-	return GLOB.admin_state
+	return GLOB.log_state
+
+GLOBAL_DATUM_INIT(log_state, /datum/ui_state/log_state, new)
+
+///Only admins with log access can use the log viewer
+/datum/ui_state/log_state/can_use_topic(src_object, mob/user)
+	if(check_rights_for(user.client, R_LOG))
+		return UI_INTERACTIVE
+	return UI_CLOSE
 
 /datum/log_viewer/ui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
@@ -62,7 +70,7 @@
 	. = ..()
 	if(.)
 		return
-	if(!check_rights(R_ASAY))
+	if(!check_rights(R_LOG))
 		return
 
 	switch(action)

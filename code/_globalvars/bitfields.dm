@@ -13,7 +13,10 @@ GLOBAL_LIST_INIT(bitfields, list(
 		"VAREDIT" = R_VAREDIT,
 		"SOUND" = R_SOUND,
 		"SPAWN" = R_SPAWN,
-		"DBRANKS" = R_DBRANKS
+		"DBRANKS" = R_DBRANKS,
+		"RUNTIME" = R_RUNTIME,
+		"LOG" = R_LOG,
+		"POLLS" = R_POLLS
 		),
 	"machine_stat" = list(
 		"BROKEN" = BROKEN,
