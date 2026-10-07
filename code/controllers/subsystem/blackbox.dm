@@ -80,7 +80,7 @@ SUBSYSTEM_DEF(blackbox)
 	if (!length(sqlrowlist))
 		return
 
-	SSdbcore.MassInsert(format_table_name("feedback"), sqlrowlist, ignore_errors = TRUE, delayed = TRUE, special_columns = special_columns)
+	SSdbcore.MassInsert(format_table_name("feedback"), sqlrowlist, ignore_errors = TRUE, delayed = FALSE, special_columns = special_columns)
 
 
 /datum/controller/subsystem/blackbox/proc/Seal()
@@ -192,7 +192,7 @@ SUBSYSTEM_DEF(blackbox)
 
 	var/datum/db_query/query_report_death = SSdbcore.NewQuery({"INSERT INTO [format_table_name("death")]
 		(pod, x_coord, y_coord, z_coord, mapname, server_ip, server_port, round_id, tod, job, special, name, byondkey, laname, lakey, bruteloss, fireloss, brainloss, oxyloss, toxloss, cloneloss, staminaloss, last_words, suicide)
-		VALUES (:pod, :x_coord, :y_coord, :z_coord, :map, INET_ATON(:world.internet_address), :port, :round_id, :time, :job, :sqlspecial, :name, :key, :laname, :lakey, :brute, :fire, :brain, :oxy, :tox, :clone, :stamina, :last_words, :suicide)
+		VALUES (:pod, :x_coord, :y_coord, :z_coord, :map, INET_ATON(:internet_address), :port, :round_id, :time, :job, :special, :name, :key, :laname, :lakey, :brute, :fire, :brain, :oxy, :tox, :clone, :stamina, :last_words, :suicide)
 		"}, list(
 			"name" = L.real_name,
 			"key" = L.ckey,
@@ -203,7 +203,7 @@ SUBSYSTEM_DEF(blackbox)
 			"lakey" = L.ckey,
 			"brute" = L.getBruteLoss(),
 			"fire" = L.getFireLoss(),
-			"brain" = -1, //L.GetBrainLoss(), Byond errors that the proc isnt defined and I have no idea why and the person before me either :/
+			"brain" = L.getBrainLoss(),
 			"oxy" = L.getOxyLoss(),
 			"tox" = L.getToxLoss(),
 			"clone" = L.getCloneLoss(),
@@ -214,6 +214,10 @@ SUBSYSTEM_DEF(blackbox)
 			"last_words" = "no last words",
 			"suicide" = L.suiciding,
 			"map" = SSmapping.configs[GROUND_MAP].map_name,
+			"internet_address" = world.internet_address || "0",
+			"port" = "[world.port]",
+			"round_id" = GLOB.round_id,
+			"time" = SQLtime(),
 		)
 	)
 
