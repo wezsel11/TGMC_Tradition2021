@@ -1,12 +1,15 @@
 # Deploying TGMC "Tradition 2021"
 
-This branch is the TerraGov Marine Corps codebase as of **2021-01-07**
+This repository is the TerraGov Marine Corps codebase as of **2021-01-07**
 (mini-silos, after the Hunt gamemode was removed), revived to build and run
 on modern BYOND and deploy through the same pipeline as modern TGMC.
 
-Gameplay content is kept as it was on 2021-01-07. Only engine, tooling and
-UI infrastructure were updated, mostly by taking the corresponding pieces
-from modern TGMC.
+Gameplay content is kept as it was on 2021-01-07. Only engine, tooling, UI
+infrastructure and database compatibility were updated, mostly by taking the
+corresponding pieces from modern TGMC.
+
+- Repository: `https://github.com/wezsel11/TGMC_Tradition2021`
+- Branch: `main`
 
 ## Requirements
 
@@ -15,48 +18,87 @@ Pinned in `dependencies.sh`, identical to modern TGMC:
 | Dependency | Version |
 |---|---|
 | BYOND | 516.1659 (also compiles on 513, 514 and 515) |
-| rust_g | 3.11.0 (Linux: built by `PreCompile.sh`; Windows: `rust_g.dll` in the repo) |
+| rust_g | Linux: 3.11.0, built by `PreCompile.sh`. Windows: the committed `rust_g.dll` is 3.10.0, the same file modern TGMC ships. Both have every function the code uses. |
 | Node | 22.11.0 (downloaded automatically by `tools/bootstrap`) |
 | TGS DMAPI | 7.4.0 |
+| Database | MariaDB or MySQL with TGMC's schema **2.5** (optional) |
 
 ## Deploying with tgstation-server
 
-The repository contains `.tgs4.yml` and `tools/tgs4_scripts/` from modern
-TGMC, so an instance pointed at this repository and branch should deploy
-like modern TGMC:
+`.tgs4.yml` and `tools/tgs4_scripts/` are the same as modern TGMC's. Set up
+the instance like a modern TGMC instance:
 
-1. Point the instance's repository at this repo and branch.
-2. Set the instance's BYOND version to 516.1659 (or later 516).
-3. Deploy. `PreCompile` builds rust_g (Linux) and tgui, then TGS compiles
+1. Create an instance and point its repository at the URL above, branch `main`.
+2. Set the instance's BYOND version to 516.1659 (or a later 516).
+3. Event scripts: copy `tools/tgs4_scripts/PreCompile.sh` (Linux) or
+   `PreCompile.bat` (Windows) into the instance's `Configuration/EventScripts`.
+   `PreSynchronize.*` (changelog compile on sync) is optional.
+4. Static files: create `Configuration/GameStaticFiles/config` with this
+   repository's `config/` folder, and an empty `Configuration/GameStaticFiles/data`
+   (logs, player saves and the next map are kept there between deploys).
+5. Deploy. `PreCompile` builds rust_g (Linux) and tgui, then TGS compiles
    `tgmc.dme`.
 
-On Linux, BYOND 516 needs glibc 2.34 or newer (Ubuntu 22.04+). `PreCompile.sh`
-installs missing build packages with apt; if the TGS user has no passwordless
-sudo, install them once yourself:
+**Converting an existing modern TGMC instance:**
+- Replace its `PreCompile` event script and its `GameStaticFiles/config` with
+  this repository's, because the config defaults and maps differ. TGS never
+  replaces an existing static folder by itself.
+- Modern TGMC's `PreSynchronize` scripts work with this repository too.
+- Use a fresh `data` folder rather than the live modern server's one. Player
+  saves from modern TGMC load, but this build writes them back in its older
+  format.
 
-    sudo apt-get install -y lib32z1 git pkg-config libssl-dev:i386 libssl-dev zlib1g-dev:i386 g++-multilib
+**Linux:**
+- BYOND 516 needs glibc 2.34 or newer (Ubuntu 22.04+).
+- `PreCompile.sh` installs missing build packages with apt. If the TGS user
+  has no passwordless sudo, install them once yourself:
 
-(Modern TGMC's `PreCompile.sh` installs `libssl1.1:i386` unconditionally, which
-fails on Ubuntu 22.04+; this repository uses tgstation's package list instead.)
+      sudo dpkg --add-architecture i386
+      sudo apt-get update
+      sudo apt-get install -y lib32z1 git pkg-config libssl-dev:i386 libssl-dev zlib1g-dev:i386 g++-multilib
 
-`config/` and `data/` are static files; on first deploy `config/` is
-populated from this repository. Use this repository's `config/` rather
-than a modern TGMC config. Modern config keys unknown to this codebase are
-only logged and ignored, but defaults and maps differ.
+- Modern TGMC's `PreCompile.sh` installs `libssl1.1:i386` unconditionally,
+  which fails on Ubuntu 22.04+. This repository uses tgstation's package list
+  instead.
 
-### Database
+## Admins
 
-The code expects schema **2.0**; modern TGMC is at **2.5**. Everything
-between 2.0 and 2.5 is additive or widens column types (see
-`SQL/database_changelog.md` on modern TGMC), and no column used in 2021 was
-removed, so this code works against a current TGMC database. On start it
-logs a schema mismatch warning (2.5 vs 2.0) and continues. Tested against
-MariaDB 10.11 with the modern TGMC schema, on Windows and Linux: connection,
-round start, end and shutdown records, player and connection logging, and
-admins loaded from the database.
+Out of the box, nobody is an admin. Pick one of:
+
+- **Text files** (the default, `ADMIN_LEGACY_SYSTEM` on in `config/config.txt`):
+  list admins as `ckey = Rank` in `config/admins.txt`. The ranks are in
+  `config/admin_ranks.txt`, which is modern TGMC's rank file.
+- **Database** (`ADMIN_LEGACY_SYSTEM` off): admins and ranks come from the
+  database. Admins listed in `config/admins.txt` are still always loaded and
+  protected, so only put your own host keys there.
+
+Admin permissions are the same as modern TGMC's, including `RUNTIME`, `LOG`
+and `POLLS`. A rank from a TGMC database gives the same powers here:
+- `LOG`: server logs, the Log Viewer and player logs;
+- `POLLS`: the poll panel;
+- ranks in `config/admin_ranks.txt` override same-named database ranks.
+
+`LOCALHOST_RANK` (in `config/config.txt`) only works for a client on the same
+machine. It does not work through Docker's port mapping.
+
+## Database
+
+The code uses TGMC's database schema **2.5** (`SQL/tgmc-schema.sql`, the same
+file as modern TGMC; migrations in `SQL/database_changelog.md`).
+
+- For a new database, import `SQL/tgmc-schema.sql` and set the details in
+  `config/dbconfig.txt` (`SQL_ENABLED`, address, port, database, login).
+- An existing TGMC database at 2.5 works as it is. This build reads and
+  writes it the way modern TGMC does: admin ranks keep all their flags, bans
+  for `IC` and `Deadchat` are enforced, "Medical Officer" bans and playtime
+  are stored under TGMC's "Medical Doctor", and notes record playtime.
+- A database older than 2.5 must get the migrations from
+  `SQL/database_changelog.md` first. Ranks need the 24-bit flag columns
+  from 2.3.
 
 Running without a database is possible (`SQL_ENABLED` off), but then bans,
-notes and player data from the database are not available.
+notes, polls and playtime are not available. If the database goes down while
+running, the server backs off and retries instead of freezing.
 
 ## Building locally
 
@@ -64,7 +106,7 @@ notes and player data from the database are not available.
 - `bin/server.cmd`: builds and runs DreamDaemon on port 1337
 - `bin/tgui-dev.cmd`: tgui development server
 
-Built tgui bundles are committed in `tgui/public/`, so a plain
+Built tgui bundles are committed in `tgui/public`, so a plain
 `dm.exe tgmc.dme` also works without Node.
 
 ## Docker
@@ -74,8 +116,17 @@ Built tgui bundles are committed in `tgui/public/`, so a plain
 
 The image is Ubuntu 22.04 with the BYOND version from `dependencies.sh`. It
 builds through `tools/tgs4_scripts/PreCompile.sh`, so a successful image build
-also means the TGS Linux path works. Mount your own config with
-`-v /path/to/config:/tgmc/config`.
+also means the TGS Linux path works. The config inside the image is this
+repository's `config/`. To use your own, mount it with
+`-v /path/to/config:/tgmc/config`. On Docker Desktop for Windows a
+bind-mounted config is not read; copy it in with `docker cp` before starting
+the container instead.
+
+## License and source code
+
+The code is AGPL-3.0. If you run a modified version, you must offer its
+source to your players. Set `GITHUBURL` in `config/config.txt` (the in-game
+"Github" button) to your fork.
 
 ## BYOND 516 notes
 
@@ -94,10 +145,12 @@ The 2021 UI code was adapted the way modern TGMC handles it:
 | | Status |
 |---|---|
 | Compiles on BYOND 513, 514, 515 and 516 (0 errors, 0 warnings) | tested |
-| Local server on Windows, BYOND 516 | tested: boots, plays, vendors, closets, TGChat |
+| Unit tests (`-DCIBUILDING`) | tested, all pass |
+| Local server on Windows, BYOND 516 | tested: boots, plays, vendors, closets, TGChat, stat panel, TGUI windows |
 | TGS Windows path (`PreCompile.bat` + DM compile, clean checkout) | simulated, works |
 | TGS Linux path (`PreCompile.sh` on Ubuntu 22.04, rust_g, tgui, DM compile, boot) | tested in Docker |
-| Against a current TGMC database (schema 2.5) | tested on Windows and Linux: rounds, players, connections, DB admins |
+| Against a TGMC database (schema 2.5) | tested on Windows and Linux: rounds, players, connections, DB admins |
+| Database down while running | tested: no freeze, backs off |
 | Round end and restart (one player, with database) | tested |
 | Full round with multiple players | **not tested** |
-| GitHub Actions CI | not updated |
+| GitHub Actions CI | tgui bundles and lint, Docker build |

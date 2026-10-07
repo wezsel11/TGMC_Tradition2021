@@ -1,7 +1,20 @@
- # TerraGov Marine Corps
-[![Percentage of issues still open](https://isitmaintained.com/badge/open/tgstation/TerraGov-Marine-Corps.svg)](https://isitmaintained.com/project/tgstation/TerraGov-Marine-Corps "Percentage of issues still open") [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/tgstation/TerraGov-Marine-Corps.svg)](https://isitmaintained.com/project/tgstation/TerraGov-Marine-Corps "Average time to resolve an issue")
+# TerraGov Marine Corps: Tradition 2021
 
- [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/contains-technical-debt.svg)](https://forthebadge.com) [![forinfinityandbyond](https://user-images.githubusercontent.com/5211576/29499758-4efff304-85e6-11e7-8267-62919c3688a9.gif)](https://www.reddit.com/r/SS13/comments/5oplxp/what_is_the_main_problem_with_byond_as_an_engine/dclbu1a)
+This is the TerraGov Marine Corps codebase as it was on **2021-01-07**, revived to build and run on modern BYOND and to be hosted the same way as modern TGMC. Server hosts can run it instead of modern TGMC.
+
+- **Gameplay** is kept as it was on 2021-01-07. No weapons, items or other content from later TGMC seasons were added.
+- **Under the hood** it was brought up to date, mostly by backporting pieces of modern TGMC: BYOND 516 support, the build and deploy tooling, security and performance fixes, and interface improvements such as TGChat, the stat panel and TGUI windows.
+- **Database:** it uses TGMC's own database schema (2.5), so a TGMC community's existing database (admins, ranks, bans, notes, playtime) works as it does with modern TGMC.
+
+| | |
+|---|---|
+| BYOND | 516.1659 (also compiles on 513, 514 and 515) |
+| Hosting | [DEPLOYING.md](DEPLOYING.md): tgstation-server, local Windows build, Docker |
+| Changes | [CHANGELOG-TRADITION.md](CHANGELOG-TRADITION.md) |
+| Bugs | Report them in this repository's issues, not on the official TGMC repository. |
+
+## Original README
+
 
  This is a fork based off the July-2018 version of ColonialMarines. To see the original, GPL repo, go [here](https://github.com/MrStonedOne/cmhistory)
 

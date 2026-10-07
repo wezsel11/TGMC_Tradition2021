@@ -35,7 +35,7 @@ See `DEPLOYING.md` for how to host it.
   `libssl1.1:i386` (missing on Ubuntu 22.04+, which BYOND 516 needs) and no
   longer runs apt as root on every deploy
 - Dockerfile rewritten: Ubuntu 22.04, BYOND 516, builds through `PreCompile.sh`
-- Works against the current TGMC database (schema 2.5)
+- Uses TGMC's own database schema (2.5); see "TGMC database compatibility" below
 
 ## Security fixes from modern TGMC
 
@@ -46,7 +46,7 @@ See `DEPLOYING.md` for how to host it.
 - Reading player notes through admin links requires the BAN permission, as
   modern TGMC (mentors could read them)
 - The list of variables that must never be copied is protected from editing
-- Fixed the round-end SQL query and null values in death records
+- Fixed the round-end SQL query; null area names no longer break death records
 - Fixed HTML injection through carbon copies
 - Non-ASCII text is rejected in OOC, flavor text, supply requests and command
   announcements; supply request reasons are capped at 250 characters
@@ -116,7 +116,7 @@ See `DEPLOYING.md` for how to host it.
 - JSON logging: every categorized log line is also written to
   `game.log.json` in the round log folder (one JSON object per line); the text
   logs are unchanged
-- "Log Viewer" admin verb: the round's logs in a TGUI window, with category
+- "Log Viewer" admin verb (LOG permission): the round's logs in a TGUI window, with category
   filters and search
 - Admin links in human examine, observer Ctrl+Shift-click for admins, and
   quick create paths
@@ -128,3 +128,42 @@ See `DEPLOYING.md` for how to host it.
   attempt. It now backs off after 5 failures, as modern TGMC
 - The chat no longer crashes when audio playback fails
 - Text prompts that were missing their user work again
+
+## TGMC database compatibility
+
+A TGMC community's own database (admins, ranks, bans, notes, playtime) works
+the same as with modern TGMC.
+
+- `SQL/` holds TGMC's schema 2.5 and its changelog; the code reports 2.5, so
+  there is no schema mismatch warning on a TGMC database
+- Admin permissions match modern TGMC: the RUNTIME, LOG and POLLS
+  permissions exist, ranks are saved without losing them, EVERYTHING has the
+  same value, server logs and the Log Viewer need LOG, and the poll panel
+  needs POLLS
+- `config/admin_ranks.txt` is modern TGMC's rank file
+- `config/admins.txt` no longer makes about 100 /tg/station staff keys
+  protected admins on every server (it is now only a commented example)
+- Bans for IC and Deadchat (made on modern TGMC) are enforced, and can be
+  given from the ban panel
+- The "Medical Officer" job is stored as TGMC's "Medical Doctor" for job bans
+  and playtime, so both work across servers
+- Death records are written again: the query had unbound values since 2021
+  (TGMC #5883)
+- Blackbox feedback no longer uses `INSERT DELAYED`, which fails on InnoDB
+  (TGMC #16416)
+- Notes record the player's living playtime, as modern TGMC
+
+## Fixes from the final review
+
+- Hive Status no longer keeps updating for a ghost who respawns as a marine
+  (it showed xeno locations live); it uses modern TGMC's hive window state
+- TGS: the event handler is connected, so admins see deploy and restart
+  notices; the changelog script also accepts the one-argument form that the
+  TGS PreSynchronize scripts use
+- Docker: legacy instrument sounds are deployed and the boiler cursor is
+  compiled in
+- All unit tests pass again; test rounds start without players, as modern TGMC
+- GitHub: inherited automation for the official repository was removed; CI
+  checks the tgui bundles, lint and the Docker build
+- `PreCompile.sh` installs missing build packages more reliably
+- README, DEPLOYING.md and CONTRIBUTING.md describe this release for hosts
