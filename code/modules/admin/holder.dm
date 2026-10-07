@@ -55,6 +55,10 @@
 		return QDEL_HINT_LETMELIVE
 	return ..()
 
+/datum/admins/can_vv_get(var_name)
+	if(var_name == NAMEOF(src, href_token))
+		return FALSE
+	return ..()
 
 /datum/admins/proc/activate()
 	if(IsAdminAdvancedProcCall())
@@ -79,7 +83,7 @@
 	var/client/C
 	if((C = owner) || (C = GLOB.directory[target]))
 		disassociate()
-		C.verbs += /client/proc/readmin
+		add_verb(C, /client/proc/readmin)
 
 
 /datum/admins/proc/associate(client/C)
@@ -100,7 +104,8 @@
 	owner = C
 	owner.holder = src
 	owner.add_admin_verbs()
-	owner.verbs -= /client/proc/readmin
+	remove_verb(owner, /client/proc/readmin)
+	owner.init_verbs()
 	GLOB.admins |= C
 
 
@@ -275,9 +280,6 @@ GLOBAL_PROTECT(admin_verbs_default)
 	/datum/admins/proc/toggle_sleep,
 	/datum/admins/proc/toggle_sleep_panel,
 	/datum/admins/proc/toggle_sleep_area,
-	/datum/admins/proc/logs_server,
-	/datum/admins/proc/logs_current,
-	/datum/admins/proc/logs_folder,
 	/datum/admins/proc/jump,
 	/datum/admins/proc/get_mob,
 	/datum/admins/proc/send_mob,
@@ -360,7 +362,8 @@ GLOBAL_PROTECT(admin_verbs_asay)
 	/datum/admins/proc/view_del_failures,
 #endif
 	/datum/admins/proc/check_bomb_impacts,
-	/client/proc/toggle_cdn
+	/client/proc/toggle_cdn,
+	/client/proc/allow_browser_inspect
 	)
 GLOBAL_LIST_INIT(admin_verbs_debug, world.AVdebug())
 GLOBAL_PROTECT(admin_verbs_debug)
@@ -438,7 +441,8 @@ GLOBAL_PROTECT(admin_verbs_fun)
 	/datum/admins/proc/change_ship_map,
 	/datum/admins/proc/panic_bunker,
 	/datum/admins/proc/mode_check,
-	/client/proc/toggle_cdn
+	/client/proc/toggle_cdn,
+	/client/proc/allow_browser_inspect
 	)
 GLOBAL_LIST_INIT(admin_verbs_server, world.AVserver())
 GLOBAL_PROTECT(admin_verbs_server)
@@ -446,7 +450,6 @@ GLOBAL_PROTECT(admin_verbs_server)
 /world/proc/AVpermissions()
 	return list(
 	/client/proc/edit_admin_permissions,
-	/client/proc/poll_panel,
 	)
 GLOBAL_LIST_INIT(admin_verbs_permissions, world.AVpermissions())
 GLOBAL_PROTECT(admin_verbs_permissions)
@@ -476,40 +479,62 @@ GLOBAL_PROTECT(admin_verbs_sound)
 GLOBAL_LIST_INIT(admin_verbs_spawn, world.AVspawn())
 GLOBAL_PROTECT(admin_verbs_spawn)
 
+//Log access, poll management, as modern TGMC so ranks from a TGMC database give the same powers
+/world/proc/AVlog()
+	return list(
+	/datum/admins/proc/logs_server,
+	/datum/admins/proc/open_log_viewer,
+	/datum/admins/proc/logs_current,
+	/datum/admins/proc/logs_folder,
+	)
+GLOBAL_LIST_INIT(admin_verbs_log, world.AVlog())
+GLOBAL_PROTECT(admin_verbs_log)
+
+/world/proc/AVpolls()
+	return list(
+	/client/proc/poll_panel,
+	)
+GLOBAL_LIST_INIT(admin_verbs_polls, world.AVpolls())
+GLOBAL_PROTECT(admin_verbs_polls)
+
 /client/proc/add_admin_verbs()
 	if(holder)
 		var/rights = holder.rank.rights
-		verbs += GLOB.admin_verbs_default
+		add_verb(src, GLOB.admin_verbs_default)
 		if(rights & R_ADMIN)
-			verbs += GLOB.admin_verbs_admin
+			add_verb(src, GLOB.admin_verbs_admin)
 		if(rights & R_MENTOR)
-			verbs += GLOB.admin_verbs_mentor
+			add_verb(src, GLOB.admin_verbs_mentor)
 		if(rights & R_BAN)
-			verbs += GLOB.admin_verbs_ban
+			add_verb(src, GLOB.admin_verbs_ban)
 		if(rights & R_ASAY)
-			verbs += GLOB.admin_verbs_asay
+			add_verb(src, GLOB.admin_verbs_asay)
 		if(rights & R_FUN)
-			verbs += GLOB.admin_verbs_fun
+			add_verb(src, GLOB.admin_verbs_fun)
 		if(rights & R_SERVER)
-			verbs += GLOB.admin_verbs_server
+			add_verb(src, GLOB.admin_verbs_server)
 		if(rights & R_DEBUG)
-			verbs += GLOB.admin_verbs_debug
+			add_verb(src, GLOB.admin_verbs_debug)
 		if(rights & R_PERMISSIONS)
-			verbs += GLOB.admin_verbs_permissions
+			add_verb(src, GLOB.admin_verbs_permissions)
 		if(rights & R_DBRANKS)
-			verbs += GLOB.admin_verbs_permissions
+			add_verb(src, GLOB.admin_verbs_permissions)
 		if(rights & R_SOUND)
-			verbs += GLOB.admin_verbs_sound
+			add_verb(src, GLOB.admin_verbs_sound)
 		if(rights & R_COLOR)
-			verbs += GLOB.admin_verbs_color
+			add_verb(src, GLOB.admin_verbs_color)
 		if(rights & R_VAREDIT)
-			verbs += GLOB.admin_verbs_varedit
+			add_verb(src, GLOB.admin_verbs_varedit)
 		if(rights & R_SPAWN)
-			verbs += GLOB.admin_verbs_spawn
+			add_verb(src, GLOB.admin_verbs_spawn)
+		if(rights & R_LOG)
+			add_verb(src, GLOB.admin_verbs_log)
+		if(rights & R_POLLS)
+			add_verb(src, GLOB.admin_verbs_polls)
 
 
 /client/proc/remove_admin_verbs()
-	verbs.Remove(
+	remove_verb(src, list(
 		GLOB.admin_verbs_default,
 		GLOB.admin_verbs_admin,
 		GLOB.admin_verbs_mentor,
@@ -522,8 +547,10 @@ GLOBAL_PROTECT(admin_verbs_spawn)
 		GLOB.admin_verbs_sound,
 		GLOB.admin_verbs_color,
 		GLOB.admin_verbs_varedit,
-		GLOB.admin_verbs_spawn
-		)
+		GLOB.admin_verbs_spawn,
+		GLOB.admin_verbs_log,
+		GLOB.admin_verbs_polls
+	))
 
 
 /proc/is_mentor(client/C)
@@ -539,18 +566,22 @@ GLOBAL_PROTECT(admin_verbs_spawn)
 
 
 /proc/message_admins(msg)
-	msg = "<span class='admin'><span class='prefix'>ADMIN LOG:</span> <span class='message linkify'>[msg]</span></span>"
+	msg = "<span class=\"admin\"><span class=\"prefix\">ADMIN LOG:</span> <span class=\"message linkify\">[msg]</span></span>"
 	for(var/client/C in GLOB.admins)
 		if(check_other_rights(C, R_ADMIN, FALSE))
-			to_chat(C, msg)
+			to_chat(C,
+				type = MESSAGE_TYPE_ADMINLOG,
+				html = msg)
+
 
 
 /proc/message_staff(msg)
-	msg = "<span class='admin'><span class='prefix'>STAFF LOG:</span> <span class='message linkify'>[msg]</span></span>"
+	msg = "<span class=\"admin\"><span class=\"prefix\">STAFF LOG:</span> <span class=\"message linkify\">[msg]</span></span>"
 	for(var/client/C in GLOB.admins)
 		if(check_other_rights(C, R_ADMIN, FALSE) || is_mentor(C))
-			to_chat(C, msg)
-
+			to_chat(C,
+				type = MESSAGE_TYPE_STAFFLOG,
+				html = msg)
 
 /proc/msg_admin_ff(msg)
 	msg = "<span class='admin'><span class='prefix'>ATTACK:</span> <span class='green linkify'>[msg]</span></span>"
@@ -558,7 +589,9 @@ GLOBAL_PROTECT(admin_verbs_spawn)
 		if(!check_other_rights(C, R_ADMIN, FALSE))
 			continue
 		if((C.prefs.toggles_chat & CHAT_FFATTACKLOGS) || ((SSticker.current_state == GAME_STATE_FINISHED) && (C.prefs.toggles_chat & CHAT_ENDROUNDLOGS)))
-			to_chat(C, msg)
+			to_chat(C,
+				type = MESSAGE_TYPE_ATTACKLOG,
+				html = msg)
 
 
 /client/proc/find_stealth_key(txt)

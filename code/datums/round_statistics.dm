@@ -63,3 +63,7 @@ GLOBAL_DATUM_INIT(round_statistics, /datum/round_statistics, new)
 	var/xeno_headbites = 0
 	var/xeno_silo_corpses = 0
 	var/xeno_rally_hive = 0
+	///Larvas that came from marines spawning in, see job.jobworth
+	var/larva_from_marine_spawning = 0
+	///Larvas that came from bodies fed to resin silos
+	var/larva_from_siloing_body = 0

@@ -29,6 +29,13 @@
 //datum may be null, but it does need to be a typed var
 #define NAMEOF(datum, X) (#X || ##datum.##X)
 
+/// NAMEOF for use in static var initializers, where src is unavailable on 515+
+#if DM_VERSION >= 515
+#define NAMEOF_STATIC(datum, X) (nameof(type::##X))
+#else
+#define NAMEOF_STATIC(datum, X) (#X || ##datum.##X)
+#endif
+
 
 //gives us the stack trace from CRASH() without ending the current proc.
 /proc/stack_trace(msg)

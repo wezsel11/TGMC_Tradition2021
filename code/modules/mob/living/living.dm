@@ -9,6 +9,18 @@
 
 		updatehealth()
 
+	if(client)
+		var/turf/T = get_turf(src)
+		if(!T)
+			return
+		if(registered_z != T.z)
+			log_game("Z-TRACKING: [src] has somehow ended up in Z-level [T.z] despite being registered in Z-level [registered_z].")
+			update_z(T.z)
+		return
+	if(registered_z)
+		log_game("Z-TRACKING: [src] of type [src.type] has a Z-registration despite not having a client.")
+		update_z(null)
+
 
 //this updates all special effects: knockdown, druggy, stuttering, etc..
 /mob/living/proc/handle_status_effects()
@@ -95,6 +107,7 @@
 	GLOB.alive_living_list -= src
 	GLOB.mob_living_list -= src
 	GLOB.offered_mob_list -= src
+	update_z(null)
 	SSmobs.stop_processing(src)
 	job = null
 	. = ..()
@@ -224,6 +237,23 @@
 		if(client)
 			reset_perspective()
 
+
+///Updates the mob's registered_z
+/mob/living/proc/update_z(new_z) // 1+ to register, null to unregister
+	if(registered_z == new_z)
+		return
+	if(registered_z)
+		SSmobs.clients_by_zlevel[registered_z] -= src
+	if(isnull(client))
+		registered_z = null
+		return
+	if(new_z)
+		SSmobs.clients_by_zlevel[new_z] += src
+	registered_z = new_z
+
+/mob/living/onTransitZ(old_z, new_z)
+	. = ..()
+	update_z(new_z)
 
 /mob/living/proc/do_camera_update(oldLoc)
 	return
@@ -430,7 +460,7 @@
 
 /mob/living/proc/offer_mob()
 	GLOB.offered_mob_list += src
-	notify_ghosts("<span class='boldnotice'>A mob is being offered! Name: [name][job ? " Job: [job.title]" : ""] </span>", enter_link = "claim=[REF(src)]", source = src, action = NOTIFY_ORBIT)
+	notify_ghosts("<span class='boldnotice'>A mob is being offered! Name: [name][job ? " Job: [job.title]" : ""] </span>", enter_link = "claim=[REF(src)]", source = src, action = NOTIFY_ORBIT, flashwindow = TRUE)
 
 //used in datum/reagents/reaction() proc
 /mob/living/proc/get_permeability_protection()

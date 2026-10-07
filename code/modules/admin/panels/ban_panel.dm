@@ -72,16 +72,16 @@
 			"player_ckey" = player_ckey,
 			"must_apply_to_admins" = !!(GLOB.admin_datums[player_ckey] || GLOB.deadmins[player_ckey]),
 		)
-		var/sql_roles
-		if(islist(roles))
-			var/list/sql_roles_list = list()
-			for (var/i in 1 to roles.len)
-				values["role[i]"] = roles[i]
-				sql_roles_list += ":role[i]"
-			sql_roles = sql_roles_list.Join(", ")
-		else
-			values["role"] = roles
-			sql_roles = ":role"
+		//Also match jobs under their title in the TGMC database
+		var/list/check_roles = list()
+		for(var/role in (islist(roles) ? roles : list(roles)))
+			check_roles |= role
+			check_roles |= job_title_to_db(role)
+		var/list/sql_roles_list = list()
+		for (var/i in 1 to length(check_roles))
+			values["role[i]"] = check_roles[i]
+			sql_roles_list += ":role[i]"
+		var/sql_roles = sql_roles_list.Join(", ")
 		var/datum/db_query/query_check_ban = SSdbcore.NewQuery({"
 			SELECT 1
 			FROM [format_table_name("ban")]
@@ -120,12 +120,12 @@
 			computerid,
 			IFNULL((SELECT byond_key FROM [format_table_name("player")] WHERE [format_table_name("player")].ckey = [format_table_name("ban")].a_ckey), a_ckey)
 		FROM [format_table_name("ban")]
-		WHERE role = :role
+		WHERE role IN (:role, :db_role)
 			AND (ckey = :ckey OR ip = INET_ATON(:ip) OR computerid = :computerid)
 			AND unbanned_datetime IS NULL
 			AND (expiration_time IS NULL OR expiration_time > NOW())
 		ORDER BY bantime DESC
-	"}, list("role" = role, "ckey" = player_ckey, "ip" = player_ip, "computerid" = player_cid))
+	"}, list("role" = role, "db_role" = job_title_to_db(role), "ckey" = player_ckey, "ip" = player_ip, "computerid" = player_cid))
 	if(!query_check_ban.warn_execute())
 		qdel(query_check_ban)
 		return
@@ -153,7 +153,7 @@
 		while(query_build_ban_cache.NextRow())
 			if(is_admin && !text2num(query_build_ban_cache.item[2]))
 				continue
-			C.ban_cache[query_build_ban_cache.item[1]] = TRUE
+			C.ban_cache[job_title_from_db(query_build_ban_cache.item[1])] = TRUE
 		qdel(query_build_ban_cache)
 
 
@@ -293,7 +293,7 @@
 				qdel(query_get_banned_roles)
 				return
 			while(query_get_banned_roles.NextRow())
-				banned_from += query_get_banned_roles.item[1]
+				banned_from += job_title_from_db(query_get_banned_roles.item[1])
 			qdel(query_get_banned_roles)
 		for(var/department in SSjob.joinable_occupations_by_category)
 			//the first element is the department head so they need the same javascript call as above
@@ -315,7 +315,7 @@
 				break_counter++
 			output += "</div></div>"
 		//departments/groups that don't have command staff would throw a javascript error since there's no corresponding reference for toggle_head()
-		var/list/headless_job_lists = list("Abstract" = list("Appearance", "Emote", "OOC", "LOOC"))
+		var/list/headless_job_lists = list("Abstract" = list("Appearance", "IC", "Emote", "OOC", "LOOC", "Deadchat"))
 		for(var/department in headless_job_lists)
 			output += "<div class='column'><label class='rolegroup long [ckey(department)]'><input type='checkbox' name='[department]' class='hidden'>[department]</label><div class='content'>"
 			var/break_counter = 0
@@ -554,7 +554,7 @@
 			"server_ip" = world.internet_address || 0,
 			"server_port" = world.port,
 			"round_id" = GLOB.round_id,
-			"role" = role,
+			"role" = job_title_to_db(role),
 			"expiration_time" = duration,
 			"applies_to_admins" = applies_to_admins,
 			"reason" = reason,

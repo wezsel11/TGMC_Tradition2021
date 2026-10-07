@@ -18,7 +18,7 @@
 #define DIRLOCK					(1<<7)		// movable atom won't change direction when Moving()ing. Useful for items that have several dir states.
 #define INITIALIZED				(1<<8)  	//Whether /atom/Initialize() has already run for the object
 #define NODECONSTRUCT			(1<<9)
-#define OVERLAY_QUEUED			(1<<10)
+
 #define PREVENT_CLICK_UNDER		(1<<11)		//Prevent clicking things below it on the same turf
 #define CRITICAL_ATOM			(1<<12)		//Use when this shouldn't be obscured by large icons.
 ///Does not cascade explosions to its contents.

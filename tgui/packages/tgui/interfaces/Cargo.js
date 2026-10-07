@@ -1,7 +1,7 @@
+import { Fragment } from 'inferno';
 import { useBackend, useLocalState } from '../backend';
 import { Button, Flex, Divider, Collapsible, AnimatedNumber, Box, Section, LabeledList, Icon, Input } from '../components';
 import { Window } from '../layouts';
-import { Fragment } from 'inferno';
 import { map } from 'common/collections';
 import { FlexItem } from '../components/Flex';
 import { Table, TableRow, TableCell } from '../components/Table';
@@ -42,7 +42,9 @@ export const Cargo = (props, context) => {
     : null;
 
   return (
-    <Window resizable>
+    <Window
+      width={900}
+      height={700}>
       <Flex height="650px" align="stretch">
         <Flex.Item width="280px">
           <Menu />
@@ -71,7 +73,7 @@ export const Cargo = (props, context) => {
               <OrderList type={deniedrequests} />
             )}
             {!!selectedPackCat
-              && (<Category selectedPackCat={selectedPackCat} />)}
+              && (<Category selectedPackCat={selectedPackCat} should_filter />)}
           </Window.Content>
         </Flex.Item>
       </Flex>
@@ -160,7 +162,7 @@ const Menu = (props, context) => {
     <Section height="100%" p="5px">
       Points: <AnimatedNumber value={currentpoints} />
       { !readOnly && (
-        <Fragment>
+        <>
           <Divider />
           <Flex>
             <FlexItem grow={1}>
@@ -188,7 +190,7 @@ const Menu = (props, context) => {
               Elevator: {elevator}
             </FlexItem>
           </Flex>
-        </Fragment>
+        </>
       )}
       <Divider />
       <Flex>
@@ -206,7 +208,7 @@ const Menu = (props, context) => {
         <FlexItem>Cost: <AnimatedNumber value={shopping_list_cost} /></FlexItem>
       </Flex>
       { !readOnly && (
-        <Fragment>
+        <>
           <MenuButton
             icon="history"
             menuname="Previous Purchases"
@@ -215,7 +217,7 @@ const Menu = (props, context) => {
             icon="shipping-fast"
             menuname="Export History"
             condition={!export_history.length} />
-        </Fragment>
+        </>
       )}
       <Divider />
       <Flex>
@@ -283,7 +285,7 @@ const OrderList = (props, context) => {
           <Section key={id} level={2}
             title={"Order #"+id}
             buttons={!readOnly && (
-              <Fragment>
+              <>
                 { (!authed_by || selectedMenu==="Denied Requests") && (
                   <Button
                     onClick={() => act('approve', { id: id })}
@@ -294,7 +296,7 @@ const OrderList = (props, context) => {
                     onClick={() => act('deny', { id: id })}
                     icon="times"
                     content="Deny" />)}
-              </Fragment>
+              </>
             )}>
             <LabeledList>
               <LabeledListItem label="Requested by">
@@ -323,14 +325,14 @@ const Packs = (props, context) => {
     packs,
   } = props;
 
-  return packs.map(pack => (
-    <Pack pack={pack} key={pack} />
+  return Object.keys(packs).map(pack => (
+    <Pack pack={pack} key={pack} amount={packs[pack]} />
   ));
 };
 
 const Pack = (props, context) => {
   const { act, data } = useBackend(context);
-  const { pack } = props;
+  const { pack, amount } = props;
   const {
     supplypackscontents,
   } = data;
@@ -344,14 +346,14 @@ const Pack = (props, context) => {
       <Collapsible
         color="gray"
         title={
-          <PackName cost={cost} name={name} pl={0} />
+          <PackName cost={cost} name={name} pl={0} amount={amount} />
         }>
         <Table>
           <PackContents contains={contains} />
         </Table>
       </Collapsible>
     ) : (
-      <PackName cost={cost} name={name} pl="22px" />
+      <PackName cost={cost} name={name} pl="22px" amount={amount} />
     )
   );
 };
@@ -361,12 +363,14 @@ const PackName = (props, context) => {
     cost,
     name,
     pl,
+    amount,
   } = props;
 
   return (
     <Box inline pl={pl}>
-      <Box textAlign="right" inline width="65px">
-        {cost} points
+      <Box textAlign="right" inline width={amount ? "140px" : "65px"}>
+        {amount ? amount + "x " : ""}
+        {cost} points {amount > 1 ? "(" + amount * cost + ")" : ""}
       </Box>
       <Box width="15px" inline />
       <Box inline>
@@ -387,7 +391,7 @@ const Requests = (props, context) => {
     <OrderList type={requests}
       readOnly={readOnly}
       buttons={!readOnly && (
-        <Fragment>
+        <>
           <Button
             icon="check-double"
             onClick={() => act('approveall')}
@@ -396,7 +400,7 @@ const Requests = (props, context) => {
             icon="times-circle"
             onClick={() => act('denyall')}
             content="Deny All" />
-        </Fragment>
+        </>
       )} />
   );
 };
@@ -440,13 +444,13 @@ const ShoppingCart = (props, context) => {
           onClick={() => act('clearcart')} />
       </Box>
       { readOnly && (
-        <Fragment>
+        <>
           <Box width="10%" inline>Reason: </Box>
           <Input
             width="89%"
             inline value={reason}
             onInput={(e, value) => setReason(value)} />
-        </Fragment>
+        </>
       )}
       <Category selectedPackCat={shopping_list_array} level={2} />
     </Section>
@@ -492,17 +496,41 @@ const Category = (props, context) => {
   const {
     selectedPackCat,
     level,
+    should_filter,
   } = props;
+
+  // Search field, as modern TGMC (#8930)
+  const [
+    filter,
+    setFilter,
+  ] = useLocalState(context, `pack-name-filter`, null);
+
+  const filterSearch = entry =>
+    should_filter && filter
+      ? supplypackscontents[entry].name
+        ?.toLowerCase()
+        .includes(filter.toLowerCase())
+      : true;
 
   return (
     <Section level={level || 1} title={
-      <Fragment>
+      <>
         <Icon name={category_icon[selectedMenu]} mr="5px" />
         {selectedMenu}
-      </Fragment>
+      </>
     }>
+      {!!should_filter && (
+        <Flex mb={1}>
+          <FlexItem width="60px">
+            Search:
+          </FlexItem>
+          <FlexItem grow={1}>
+            <Input fluid onInput={(_e, value) => setFilter(value)} />
+          </FlexItem>
+        </Flex>
+      )}
       <Table>
-        { selectedPackCat.map(entry => {
+        { selectedPackCat.filter(filterSearch).map(entry => {
           const shop_list = shopping_list[entry] || 0;
           const count = shop_list ? shop_list.count : 0;
           const {
@@ -553,7 +581,7 @@ const PackContents = (props, context) => {
   } = props;
 
   return (
-    <Fragment>
+    <>
       <TableRow>
         <TableCell bold>
           Item Type
@@ -572,7 +600,7 @@ const PackContents = (props, context) => {
           </TableCell>
         </TableRow>
       ))(contains)}
-    </Fragment>
+    </>
   );
 };
 
@@ -597,7 +625,9 @@ export const CargoRequest = (props, context) => {
     : null;
 
   return (
-    <Window resizable>
+    <Window
+      width={900}
+      height={700}>
       <Flex height="650px" align="stretch">
         <Flex.Item width="280px">
           <Menu readOnly={1} />

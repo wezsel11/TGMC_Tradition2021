@@ -17,6 +17,9 @@
 	var/carved = 0	 // Has the book been hollowed out for use as a secret storage item?
 	var/obj/item/store	//What's in the book?
 
+/obj/item/book/Destroy()
+	store = null
+	return ..()
 
 /obj/item/book/interact(mob/user)
 	. = ..()
@@ -60,7 +63,7 @@
 				title = newtitle
 
 			if("Contents")
-				var/content = strip_html(input(usr, "Write your book's contents:") as message|null, 8192)
+				var/content = strip_html(tgui_input_text(usr, "Write your book's contents:", multiline = TRUE), 8192)
 				if(!content)
 					to_chat(usr, "The content is invalid.")
 					return
@@ -105,7 +108,7 @@
 	if(user.zone_selected == "eyes")
 		user.visible_message("<span class='notice'>You open up the book and show it to [M]. </span>", \
 			"<span class='notice'> [user] opens up a book and shows it to [M]. </span>")
-		M << browse("<TT><I>Penned by [author].</I></TT> <BR>" + "[dat]", "window=book")
+		M << browse(HTML_SKELETON_TITLE("Penned by [author].", "<TT><I>Penned by [author].</I></TT> <BR>[dat]"), "window=book")
 
 
 

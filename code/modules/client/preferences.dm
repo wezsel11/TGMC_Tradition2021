@@ -23,7 +23,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/ui_style_color = "#ffffff"
 	var/ui_style_alpha = 230
 	var/tgui_fancy = TRUE
-	var/tgui_lock = TRUE
+	var/tgui_lock = FALSE
+	///Whether to use TGUI input boxes instead of the BYOND ones
+	var/tgui_input = TRUE
+	var/tgui_say = TRUE
 	var/toggles_deadchat = TOGGLES_DEADCHAT_DEFAULT
 	var/toggles_chat = TOGGLES_CHAT_DEFAULT
 	var/toggles_sound = TOGGLES_SOUND_DEFAULT
@@ -39,7 +42,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/show_typing = TRUE
 	var/windowflashing = TRUE
 	var/focus_chat = FALSE
-	var/clientfps = 0
+	var/clientfps = 60
 
 	// Custom Keybindings
 	var/list/key_bindings = null
@@ -69,6 +72,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/preferred_squad = "None"
 	var/alternate_option = RETURN_TO_LOBBY
 	var/preferred_slot = SLOT_S_STORE
+	///Preferred slot for the alternate quick equip key
+	var/preferred_slot_alt = SLOT_BELT
 	var/list/gear = list()
 	var/list/job_preferences = list()
 
@@ -115,6 +120,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 	///Whether to mute goonchat combat messages when we are the source, such as when we are shot.
 	var/mute_self_combat_messages = FALSE
+	///Whether or not the MC tab of the Stat Panel refreshes fast. This is expensive so make sure you need it.
+	var/fast_mc_refresh = FALSE
+	///When enabled, will split the 'Admin' panel into several tabs.
+	var/split_admin_tabs = TRUE
 	///Whether to mute goonchat combat messages from others, such as when they are shot.
 	var/mute_others_combat_messages = FALSE
 	///Whether to mute xeno health alerts from when other xenos are badly hurt.
@@ -351,7 +360,14 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	dat += "<b>Mute others combat messages:</b> <a href='?_src_=prefs;preference=mute_others_combat_messages'>[mute_others_combat_messages ? "Enabled" : "Disabled"]</a><br>"
 	dat += "<b>Mute xeno health alert messages:</b> <a href='?_src_=prefs;preference=mute_xeno_health_alert_messages'>[mute_xeno_health_alert_messages ? "Enabled" : "Disabled"]</a><br>"
 
+	if(parent?.holder)
+		dat += "<h2>Administration:</h2>"
+		dat += "<b>Fast MC tab refresh:</b> <a href='?_src_=prefs;preference=fast_mc_refresh'>[fast_mc_refresh ? "Enabled" : "Disabled"]</a><br>"
+		dat += "<b>Split admin tabs:</b> <a href='?_src_=prefs;preference=split_admin_tabs'>[split_admin_tabs ? "Enabled" : "Disabled"]</a><br>"
+
 	dat += "<h2>Runechat Settings:</h2>"
+	dat += "<b>TGUI input boxes:</b> <a href='?_src_=prefs;preference=tgui_input'>[tgui_input ? "Enabled" : "Disabled"]</a><br>"
+	dat += "<b>TGUI say:</b> <a href='?_src_=prefs;preference=tgui_say'>[tgui_say ? "Enabled" : "Disabled"]</a><br>"
 	dat += "<b>Show Runechat Chat Bubbles:</b> <a href='?_src_=prefs;preference=chat_on_map'>[chat_on_map ? "Enabled" : "Disabled"]</a><br>"
 	dat += "<b>Runechat message char limit:</b> <a href='?_src_=prefs;preference=max_chat_length;task=input'>[max_chat_length]</a><br>"
 	dat += "<b>See Runechat for non-mobs:</b> <a href='?_src_=prefs;preference=see_chat_non_mob'>[see_chat_non_mob ? "Enabled" : "Disabled"]</a><br>"
@@ -677,7 +693,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			randomize_appearance_for()
 
 		if("age")
-			var/new_age = input(user, "Choose your character's age:\n([AGE_MIN]-[AGE_MAX])", "Age") as num|null
+			var/new_age = tgui_input_number(user, "Choose your character's age:\n([AGE_MIN]-[AGE_MAX])", "Age", age, AGE_MAX, AGE_MIN)
 			if(!isnum(new_age))
 				return
 			new_age = round(new_age)
@@ -955,6 +971,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			var/msg = stripped_input(user, "Give a physical description of your character.", "Flavor Text", sanitize(flavor_text))
 			if(!msg)
 				return
+			if(NON_ASCII_CHECK(msg))
+				return
 			flavor_text = msg
 
 		if("windowflashing")
@@ -979,6 +997,18 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			desiredfps = clamp(desiredfps, 0, 240)
 			clientfps = desiredfps
 			parent.fps = desiredfps
+
+		if("tgui_say")
+			tgui_say = !tgui_say
+
+		if("tgui_input")
+			tgui_input = !tgui_input
+
+		if("fast_mc_refresh")
+			fast_mc_refresh = !fast_mc_refresh
+
+		if("split_admin_tabs")
+			split_admin_tabs = !split_admin_tabs
 
 		if("mute_self_combat_messages")
 			mute_self_combat_messages = !mute_self_combat_messages
@@ -1036,6 +1066,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						key_bindings -= old_key
 				user << browse(null, "window=capturekeypress")
 				save_preferences()
+				user.client.keybinds_changed()
 				ShowKeybindings(user)
 				return
 
@@ -1069,6 +1100,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			user << browse(null, "window=capturekeypress")
 			user.client.update_movement_keys()
 			save_preferences()
+			user.client.keybinds_changed()
 			ShowKeybindings(user)
 			return
 
@@ -1076,7 +1108,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			user << browse(null, "window=keybindings")
 
 		if("keybindings_reset")
-			var/choice = tgalert(usr, "Would you prefer 'hotkey' or 'classic' defaults?", "Setup keybindings", "Hotkey", "Classic", "Cancel")
+			var/choice = tgui_alert(usr, "Would you prefer 'hotkey' or 'classic' defaults?", "Setup keybindings", list("Hotkey", "Classic", "Cancel"))
 			if (choice == "Cancel")
 				ShowKeybindings(user)
 				return
@@ -1084,6 +1116,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			key_bindings = (!focus_chat) ? deepCopyList(GLOB.hotkey_keybinding_list_by_key) : deepCopyList(GLOB.classic_keybinding_list_by_key)
 			user.client.update_movement_keys()
 			save_preferences()
+			user.client.keybinds_changed()
 			ShowKeybindings(user)
 			return
 
@@ -1139,3 +1172,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 	job_preferences[job.title] = level
 	return TRUE
+
+/// Opens the keybindings window, as modern TGMC (#16902)
+/client/verb/hotkeys_help()
+	set name = "Hotkeys"
+	set category = "Preferences"
+
+	prefs.ShowKeybindings(mob)

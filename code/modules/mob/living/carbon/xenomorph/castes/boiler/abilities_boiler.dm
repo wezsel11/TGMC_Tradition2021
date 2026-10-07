@@ -172,7 +172,7 @@
 
 /mob/living/carbon/xenomorph/boiler/proc/set_bombard_pointer()
 	if(client)
-		client.mouse_pointer_icon = file("icons/mecha/mecha_mouse.dmi")
+		client.mouse_pointer_icon = 'icons/mecha/mecha_mouse.dmi'
 
 /mob/living/carbon/xenomorph/boiler/proc/reset_bombard_pointer()
 	if(client)

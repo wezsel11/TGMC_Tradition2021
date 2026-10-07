@@ -8,6 +8,8 @@
 
 
 /datum/proc/can_vv_get(var_name)
+	if(var_name == NAMEOF(src, vars))
+		return FALSE
 	return TRUE
 
 
@@ -602,7 +604,7 @@
 
 
 /client/proc/view_var_Topic(href, href_list, hsrc)
-	if(usr.client != src || !src.holder || !holder.CheckAdminHref(href, href_list))
+	if(usr.client != src || !check_rights_for(src, R_VAREDIT) || !holder.CheckAdminHref(href, href_list))
 		return
 
 

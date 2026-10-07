@@ -40,3 +40,4 @@
 
 	update_movespeed()
 	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_MOB_LOGIN, src)
+	client.init_verbs()

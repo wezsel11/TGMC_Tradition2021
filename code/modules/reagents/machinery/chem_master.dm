@@ -8,8 +8,6 @@
 	layer = BELOW_OBJ_LAYER //So bottles/pills reliably appear above it
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 20
-	ui_x = 465
-	ui_y = 550
 
 	var/obj/item/reagent_containers/beaker = null
 	var/obj/item/storage/pill_bottle/loaded_pill_bottle = null
@@ -199,7 +197,7 @@
 				return
 
 			if (href_list["createpill_multiple"])
-				count = clamp(input("Select the number of pills to make. (max: [max_pill_count])", 16, pillamount) as num|null,0,max_pill_count)
+				count = clamp(tgui_input_number(usr, "Select the number of pills to make. (max: [max_pill_count])", 16, pillamount, max_pill_count, 0),0,max_pill_count)
 				if(!count)
 					return
 
@@ -209,7 +207,7 @@
 			var/amount_per_pill = reagents.total_volume/count
 			if (amount_per_pill > 15) amount_per_pill = 15
 
-			var/name = reject_bad_text(input(user,"Name:","Name your pill!","[reagents.get_master_reagent_name()] ([amount_per_pill] units)") as text|null)
+			var/name = reject_bad_text(tgui_input_text(user, "Name:","Name your pill!","[reagents.get_master_reagent_name()] ([amount_per_pill] units)"))
 			if(!name)
 				return
 
@@ -231,7 +229,7 @@
 
 		else if (href_list["createbottle"])
 			if(!condi)
-				var/name = reject_bad_text(input(user,"Name:","Name your bottle!",reagents.get_master_reagent_name()) as text|null)
+				var/name = reject_bad_text(tgui_input_text(user, "Name:","Name your bottle!",reagents.get_master_reagent_name()))
 				if(!name)
 					return
 				var/obj/item/reagent_containers/glass/bottle/P = new/obj/item/reagent_containers/glass/bottle(loc)
@@ -248,7 +246,7 @@
 
 		else if (href_list["createautoinjector"])
 			if(!condi)
-				var/name = reject_bad_text(input(user,"Name:","Name your autoinjector!",reagents.get_master_reagent_name()) as text|null)
+				var/name = reject_bad_text(tgui_input_text(user, "Name:","Name your autoinjector!",reagents.get_master_reagent_name()))
 				if(!name)
 					return
 				var/obj/item/reagent_containers/hypospray/autoinjector/fillable/P = new/obj/item/reagent_containers/hypospray/autoinjector/fillable(loc)

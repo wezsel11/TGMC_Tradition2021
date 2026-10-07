@@ -28,28 +28,28 @@ GLOBAL_LIST_EMPTY(tagger_locations)
 		if(nameset || examtext)
 			var/image/I = new/image('icons/obj/items/storage/storage.dmi',"delivery_label")
 			if(icon_state == "deliverycloset")
-				I.pixel_x = 2
+				I.pixel_w = 2
 				if(label_y == null)
 					label_y = rand(-6, 11)
-				I.pixel_y = label_y
+				I.pixel_z = label_y
 			else if(icon_state == "deliverycrate")
 				if(label_x == null)
 					label_x = rand(-8, 6)
-				I.pixel_x = label_x
-				I.pixel_y = -3
+				I.pixel_w = label_x
+				I.pixel_z = -3
 			overlays += I
 		if(src.sortTag)
 			var/image/I = new/image('icons/obj/items/storage/storage.dmi',"delivery_tag")
 			if(icon_state == "deliverycloset")
 				if(tag_x == null)
 					tag_x = rand(-2, 3)
-				I.pixel_x = tag_x
-				I.pixel_y = 9
+				I.pixel_w = tag_x
+				I.pixel_z = 9
 			else if(icon_state == "deliverycrate")
 				if(tag_x == null)
 					tag_x = rand(-8, 6)
-				I.pixel_x = tag_x
-				I.pixel_y = -3
+				I.pixel_w = tag_x
+				I.pixel_z = -3
 			overlays += I
 
 	examine(mob/user)
@@ -141,24 +141,24 @@ GLOBAL_LIST_EMPTY(tagger_locations)
 		if((nameset || examtext) && icon_state != "deliverycrate1")
 			var/image/I = new/image('icons/obj/items/storage/storage.dmi',"delivery_label")
 			if(icon_state == "deliverycrate5")
-				I.pixel_y = -1
+				I.pixel_z = -1
 			overlays += I
 		if(src.sortTag)
 			var/image/I = new/image('icons/obj/items/storage/storage.dmi',"delivery_tag")
 			switch(icon_state)
 				if("deliverycrate1")
-					I.pixel_y = -5
+					I.pixel_z = -5
 				if("deliverycrate2")
-					I.pixel_y = -2
+					I.pixel_z = -2
 				if("deliverycrate3")
-					I.pixel_y = 0
+					I.pixel_z = 0
 				if("deliverycrate4")
 					if(tag_x == null)
 						tag_x = rand(0,5)
-					I.pixel_x = tag_x
-					I.pixel_y = 3
+					I.pixel_w = tag_x
+					I.pixel_z = 3
 				if("deliverycrate5")
-					I.pixel_y = -3
+					I.pixel_z = -3
 			overlays += I
 
 	examine(mob/user)

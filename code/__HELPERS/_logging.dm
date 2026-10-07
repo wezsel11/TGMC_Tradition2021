@@ -40,30 +40,35 @@
 	LAZYADD(GLOB.admin_log, "\[[stationTimestamp()]\] ADMIN: [text]")
 	if(CONFIG_GET(flag/log_admin))
 		WRITE_LOG(GLOB.world_game_log, "ADMIN: [text]")
+		log_json("ADMIN", text)
 
 
 /proc/log_admin_private(text)
 	LAZYADD(GLOB.adminprivate_log, "\[[stationTimestamp()]\] PRIVATE: [text]")
 	if(CONFIG_GET(flag/log_admin))
 		WRITE_LOG(GLOB.world_game_log, "ADMINPRIVATE: [text]")
+		log_json("ADMINPRIVATE", text)
 
 
 /proc/log_admin_private_asay(text)
 	LAZYADD(GLOB.asay_log, "\[[stationTimestamp()]\] ASAY: [text]")
 	if(CONFIG_GET(flag/log_adminchat))
 		WRITE_LOG(GLOB.world_game_log, "ADMINPRIVATE: ASAY: [text]")
+		log_json("ADMINPRIVATE: ASAY", text)
 
 
 /proc/log_admin_private_msay(text)
 	LAZYADD(GLOB.msay_log, "\[[stationTimestamp()]\] MSAY: [text]")
 	if(CONFIG_GET(flag/log_adminchat))
 		WRITE_LOG(GLOB.world_game_log, "ADMINPRIVATE: MSAY: [text]")
+		log_json("ADMINPRIVATE: MSAY", text)
 
 
 /proc/log_dsay(text)
 	LAZYADD(GLOB.admin_log, "\[[stationTimestamp()]\] DSAY: [text]")
 	if(CONFIG_GET(flag/log_adminchat))
 		WRITE_LOG(GLOB.world_game_log, "ADMIN: DSAY: [text]")
+		log_json("ADMIN: DSAY", text)
 
 
 
@@ -72,12 +77,14 @@
 	LAZYADD(GLOB.game_log, "\[[stationTimestamp()]\] GAME: [text]")
 	if(CONFIG_GET(flag/log_game))
 		WRITE_LOG(GLOB.world_game_log, "GAME: [text]")
+		log_json("GAME", text)
 
 
 /proc/log_access(text)
 	LAZYADD(GLOB.access_log, "\[[stationTimestamp()]\] ACCESS: [text]")
 	if(CONFIG_GET(flag/log_access))
 		WRITE_LOG(GLOB.world_game_log, "ACCESS: [text]")
+		log_json("ACCESS", text)
 
 
 /proc/log_asset(text)
@@ -87,78 +94,91 @@
 	LAZYADD(GLOB.attack_log, "\[[stationTimestamp()]\] ATTACK: [text]")
 	if(CONFIG_GET(flag/log_attack))
 		WRITE_LOG(GLOB.world_attack_log, "ATTACK: [text]")
+		log_json("ATTACK", text)
 
 
 /proc/log_ffattack(text)
 	LAZYADD(GLOB.ffattack_log, "\[[stationTimestamp()]\] FFATTACK: [text]")
 	if(CONFIG_GET(flag/log_attack))
 		WRITE_LOG(GLOB.world_attack_log, "FFATTACK: [text]")
+		log_json("FFATTACK", text)
 
 
 /proc/log_explosion(text)
 	LAZYADD(GLOB.explosion_log, "\[[stationTimestamp()]\] EXPLOSION: [text]")
 	if(CONFIG_GET(flag/log_attack))
 		WRITE_LOG(GLOB.world_game_log, "EXPLOSION: [text]")
+		log_json("EXPLOSION", text)
 
 
 /proc/log_manifest(text)
 	LAZYADD(GLOB.manifest_log, "\[[stationTimestamp()]\] MANIFEST: [text]")
 	if(CONFIG_GET(flag/log_manifest))
 		WRITE_LOG(GLOB.world_manifest_log, "MANIFEST: [text]")
+		log_json("MANIFEST", text)
 
 
 /proc/log_say(text)
 	LAZYADD(GLOB.say_log, "\[[stationTimestamp()]\] SAY: [text]")
 	if(CONFIG_GET(flag/log_say))
 		WRITE_LOG(GLOB.world_game_log, "SAY: [text]")
+		log_json("SAY", text)
 
 
 /proc/log_telecomms(text)
 	LAZYADD(GLOB.telecomms_log, "\[[stationTimestamp()]\] TCOMMS: [text]")
 	if(CONFIG_GET(flag/log_telecomms))
 		WRITE_LOG(GLOB.world_telecomms_log, "TCOMMS: [text]")
+		log_json("TCOMMS", text)
 
 
 /proc/log_ooc(text)
 	LAZYADD(GLOB.say_log, "\[[stationTimestamp()]\] OOC: [text]")
 	if(CONFIG_GET(flag/log_ooc))
 		WRITE_LOG(GLOB.world_game_log, "OOC: [text]")
+		log_json("OOC", text)
 
 
 /proc/log_looc(text)
 	LAZYADD(GLOB.say_log, "\[[stationTimestamp()]\] LOOC: [text]")
 	if(CONFIG_GET(flag/log_looc))
 		WRITE_LOG(GLOB.world_game_log, "LOOC: [text]")
+		log_json("LOOC", text)
 
 
 /proc/log_hivemind(text)
 	LAZYADD(GLOB.telecomms_log, "\[[stationTimestamp()]\] HIVEMIND: [text]")
 	if(CONFIG_GET(flag/log_hivemind))
 		WRITE_LOG(GLOB.world_game_log, "HIVEMIND: [text]")
+		log_json("HIVEMIND", text)
 
 
 /proc/log_whisper(text)
 	LAZYADD(GLOB.say_log, "\[[stationTimestamp()]\] WHISPER: [text]")
 	if(CONFIG_GET(flag/log_whisper))
 		WRITE_LOG(GLOB.world_game_log, "WHISPER: [text]")
+		log_json("WHISPER", text)
 
 
 /proc/log_emote(text)
 	LAZYADD(GLOB.say_log, "\[[stationTimestamp()]\] EMOTE: [text]")
 	if(CONFIG_GET(flag/log_emote))
 		WRITE_LOG(GLOB.world_game_log, "EMOTE: [text]")
+		log_json("EMOTE", text)
 
 
 /proc/log_prayer(text)
 	LAZYADD(GLOB.game_log, "\[[stationTimestamp()]\] PRAY: [text]")
 	if(CONFIG_GET(flag/log_prayer))
 		WRITE_LOG(GLOB.world_game_log, "PRAY: [text]")
+		log_json("PRAY", text)
 
 
 /proc/log_vote(text)
 	LAZYADD(GLOB.game_log, "\[[stationTimestamp()]\] VOTE: [text]")
 	if(CONFIG_GET(flag/log_vote))
 		WRITE_LOG(GLOB.world_game_log, "VOTE: [text]")
+		log_json("VOTE", text)
 
 
 /proc/log_topic(text)
@@ -201,10 +221,37 @@
 /proc/log_paper(text)
 	WRITE_LOG(GLOB.world_paper_log, "PAPER: [text]")
 
-/* ui logging */
-
-/proc/log_tgui(text)
-	WRITE_LOG(GLOB.tgui_log, text)
+/**
+ * Appends a tgui-related log entry. All arguments are optional.
+ */
+/proc/log_tgui(user, message, context,
+		datum/tgui_window/window,
+		datum/src_object)
+	var/entry = ""
+	// Insert user info
+	if(!user)
+		entry += "<nobody>"
+	else if(istype(user, /mob))
+		var/mob/mob = user
+		entry += "[mob.ckey] (as [mob] at [mob.x],[mob.y],[mob.z])"
+	else if(istype(user, /client))
+		var/client/client = user
+		entry += "[client.ckey]"
+	// Insert context
+	if(context)
+		entry += " in [context]"
+	else if(window)
+		entry += " in [window.id]"
+	// Resolve src_object
+	if(!src_object && window?.locked_by)
+		src_object = window.locked_by.src_object
+	// Insert src_object info
+	if(src_object)
+		entry += "\nUsing: [src_object.type] [REF(src_object)]"
+	// Insert message
+	if(message)
+		entry += "\n[message]"
+	WRITE_LOG(GLOB.tgui_log, entry)
 
 /* For logging round startup. */
 /proc/start_log(log)
@@ -316,3 +363,18 @@
 		return "([AREACOORD(T)])"
 	else if(A.loc)
 		return "(UNKNOWN (?, ?, ?))"
+
+///Most entries kept in memory for the admin log viewer
+#define LOG_VIEWER_MAX_ENTRIES 20000
+
+///Writes a log entry to the JSON log and keeps it for the admin log viewer, as modern logging
+/proc/log_json(category, text)
+	var/timestamp = time2text(world.realtime, "YYYY-MM-DD hh:mm:ss")
+	if(GLOB.world_json_log)
+		WRITE_LOG_NO_FORMAT(GLOB.world_json_log, json_encode(list("ts" = timestamp, "round_id" = GLOB.round_id, "category" = category, "message" = text)) + "\n")
+	GLOB.log_categories[category] = TRUE
+	GLOB.log_entries += list(list(copytext(timestamp, 12), category, text))
+	if(length(GLOB.log_entries) > LOG_VIEWER_MAX_ENTRIES)
+		GLOB.log_entries.Cut(1, 1001)
+
+#undef LOG_VIEWER_MAX_ENTRIES

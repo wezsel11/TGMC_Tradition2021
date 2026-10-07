@@ -1,6 +1,21 @@
 GLOBAL_LIST_EMPTY(exp_to_update)
 GLOBAL_PROTECT(exp_to_update)
 
+///Jobs that the TGMC database (bans, playtime) knows under their modern name, as list(title here = title in the database)
+GLOBAL_LIST_INIT(job_titles_in_db, list(MEDICAL_OFFICER = "Medical Doctor"))
+GLOBAL_PROTECT(job_titles_in_db)
+
+///Returns the title a job has in the TGMC database
+/proc/job_title_to_db(title)
+	return GLOB.job_titles_in_db[title] || title
+
+///Returns the title a job has here, for a title from the TGMC database
+/proc/job_title_from_db(title)
+	for(var/local_title in GLOB.job_titles_in_db)
+		if(GLOB.job_titles_in_db[local_title] == title)
+			return local_title
+	return title
+
 
 /datum/job/proc/required_playtime_remaining(client/C)
 	if(!C)
@@ -177,7 +192,7 @@ GLOBAL_PROTECT(exp_to_update)
 		return -1
 	var/list/play_records = list()
 	while(exp_read.NextRow())
-		play_records[exp_read.item[1]] = text2num(exp_read.item[2])
+		play_records[job_title_from_db(exp_read.item[1])] += text2num(exp_read.item[2])
 	qdel(exp_read)
 
 	for(var/rtype in SSjob.name_occupations)
@@ -235,7 +250,7 @@ GLOBAL_PROTECT(exp_to_update)
 			CRASH("invalid job value [jtype]:[jvalue]")
 		LAZYINITLIST(GLOB.exp_to_update)
 		GLOB.exp_to_update.Add(list(list(
-			"job" = jtype,
+			"job" = job_title_to_db(jtype),
 			"ckey" = ckey,
 			"minutes" = jvalue)))
 		prefs.exp[jtype] += jvalue

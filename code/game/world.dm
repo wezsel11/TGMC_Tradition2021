@@ -8,10 +8,6 @@ GLOBAL_VAR(restart_counter)
 //This happens after the Master subsystem new(s) (it's a global datum)
 //So subsystems globals exist, but are not initialised
 /world/New()
-	var/debug_server = world.GetConfig("env", "AUXTOOLS_DEBUG_DLL")
-	if (debug_server)
-		call(debug_server, "auxtools_init")()
-		enable_debugging()
 #ifdef REFERENCE_TRACKING
 	enable_reference_tracking()
 #endif
@@ -20,7 +16,7 @@ GLOBAL_VAR(restart_counter)
 
 	GLOB.config_error_log = GLOB.world_qdel_log = GLOB.world_manifest_log = GLOB.sql_error_log = GLOB.world_telecomms_log = GLOB.world_href_log = GLOB.world_runtime_log = GLOB.world_attack_log = GLOB.world_game_log = "data/logs/config_error.[GUID()].log" //temporary file used to record errors with loading config, moved to log directory once logging is set
 
-	TgsNew(minimum_required_security_level = TGS_SECURITY_TRUSTED)
+	TgsNew(new /datum/tgs_event_handler/impl, TGS_SECURITY_TRUSTED)
 
 	GLOB.revdata = new
 
@@ -61,7 +57,7 @@ GLOBAL_VAR(restart_counter)
 
 	update_status()
 
-	world.tick_lag = CONFIG_GET(number/ticklag)
+	change_tick_lag(CONFIG_GET(number/ticklag))
 
 	#ifdef UNIT_TESTS
 	HandleTestRun()
@@ -73,6 +69,7 @@ GLOBAL_VAR(restart_counter)
 	//trigger things to run the whole process
 	Master.sleep_offline_after_initializations = FALSE
 	SSticker.start_immediately = TRUE
+	SSticker.bypass_checks = TRUE //As modern TGMC, test rounds start without players
 	CONFIG_SET(number/round_end_countdown, 0)
 	var/datum/callback/cb
 #ifdef UNIT_TESTS
@@ -107,6 +104,8 @@ GLOBAL_VAR(restart_counter)
 	GLOB.world_runtime_log = "[GLOB.log_directory]/runtime.log"
 	GLOB.world_debug_log = "[GLOB.log_directory]/debug.log"
 	GLOB.world_paper_log = "[GLOB.log_directory]/paper.log"
+	GLOB.tgui_log = "[GLOB.log_directory]/tgui.log"
+	GLOB.world_json_log = "[GLOB.log_directory]/game.log.json"
 
 #ifdef UNIT_TESTS
 	GLOB.test_log = "[GLOB.log_directory]/tests.log"
@@ -336,7 +335,6 @@ GLOBAL_VAR(restart_counter)
 	else
 		hub_password = "SORRYNOPASSWORD"
 
-
 /world/proc/change_fps(new_value = 20)
 	if(new_value <= 0)
 		CRASH("change_fps() called with [new_value] new_value.")
@@ -344,8 +342,22 @@ GLOBAL_VAR(restart_counter)
 		return //No change required.
 
 	fps = new_value
+	on_tickrate_change()
 
+
+/world/proc/change_tick_lag(new_value = 0.5)
+	if(new_value <= 0)
+		CRASH("change_tick_lag() called with [new_value] new_value.")
+	if(tick_lag == new_value)
+		return //No change required.
+
+	tick_lag = new_value
+	on_tickrate_change()
+
+
+/world/proc/on_tickrate_change()
 	SStimer?.reset_buckets()
+	SSrunechat?.reset_buckets()
 
 #undef MAX_TOPIC_LEN
 #undef TOPIC_BANNED

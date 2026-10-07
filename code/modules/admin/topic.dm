@@ -1572,6 +1572,8 @@ Status: [status ? status : "Unknown"] | Damage: [health ? health : "None"]
 
 
 	else if(href_list["showmessageckeylinkless"])
+		if(!check_rights(R_BAN))
+			return
 		var/target = href_list["showmessageckeylinkless"]
 		browse_messages(target_ckey = target, linkless = TRUE)
 
@@ -2065,7 +2067,7 @@ Status: [status ? status : "Unknown"] | Damage: [health ? health : "None"]
 					if(H.assigned_squad)
 						squad_to_insert_into = H.assigned_squad
 					else
-						squad_to_insert_into = pick(SSjob.active_squads)
+						squad_to_insert_into = SSjob.active_squads[pick(SSjob.active_squads)]
 				H.apply_assigned_role_to_spawn(J, H.client, squad_to_insert_into, admin_action = TRUE)
 				if(href_list["doequip"])
 					H.set_equipment(J.title)

@@ -235,6 +235,10 @@
 			if(40 to INFINITY)
 				status += "peeling away"
 
+		//Show bleeding like examine does, as modern TGMC (#13598)
+		if(org.limb_status & LIMB_BLEEDING)
+			status = status ? "[status] and bleeding" : "bleeding"
+
 		if(!status)
 			status = "OK"
 

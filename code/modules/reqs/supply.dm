@@ -271,8 +271,6 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 /datum/supply_ui
 	interaction_flags = INTERACT_MACHINE_TGUI
 	var/atom/source_object
-	var/ui_x = 900
-	var/ui_y = 700
 	var/tgui_name = "Cargo"
 
 /datum/supply_ui/New(atom/source_object)
@@ -290,12 +288,11 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		return FALSE
 	return TRUE
 
-/datum/supply_ui/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = FALSE, \
-										datum/tgui/master_ui = null, datum/ui_state/state = GLOB.default_state)
-	ui = SStgui.try_update_ui(user, src, ui_key, ui, force_open)
+/datum/supply_ui/ui_interact(mob/user, datum/tgui/ui)
+	ui = SStgui.try_update_ui(user, src, ui)
 
 	if(!ui)
-		ui = new(user, src, ui_key, tgui_name, source_object.name, ui_x, ui_y, master_ui, state)
+		ui = new(user, src, tgui_name, source_object.name)
 		ui.open()
 
 /datum/supply_ui/ui_static_data(mob/user)
@@ -315,7 +312,7 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		var/cost = 0
 		for(var/P in SO.pack)
 			var/datum/supply_packs/SP = P
-			packs += SP.type
+			packs[SP.type] += 1
 			cost += SP.cost
 		.["requests"] += list(list("id" = SO.id, "orderer" = SO.orderer, "orderer_rank" = SO.orderer_rank, "reason" = SO.reason, "cost" = cost, "packs" = packs, "authed_by" = SO.authorised_by))
 	.["deniedrequests"] = list()
@@ -325,7 +322,7 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		var/cost = 0
 		for(var/P in SO.pack)
 			var/datum/supply_packs/SP = P
-			packs += SP.type
+			packs[SP.type] += 1
 			cost += SP.cost
 		.["deniedrequests"] += list(list("id" = SO.id, "orderer" = SO.orderer, "orderer_rank" = SO.orderer_rank, "reason" = SO.reason, "cost" = cost, "packs" = packs, "authed_by" = SO.authorised_by))
 	.["approvedrequests"] = list()
@@ -335,7 +332,7 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		var/cost = 0
 		for(var/P in SO.pack)
 			var/datum/supply_packs/SP = P
-			packs += SP.type
+			packs[SP.type] += 1
 			cost += SP.cost
 		.["approvedrequests"] += list(list("id" = SO.id, "orderer" = SO.orderer, "orderer_rank" = SO.orderer_rank, "reason" = SO.reason, "cost" = cost, "packs" = packs, "authed_by" = SO.authorised_by))
 	.["export_history"] = list()
@@ -350,7 +347,7 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		var/list/packs = list()
 		for(var/P in SO.pack)
 			var/datum/supply_packs/SP = P
-			packs += SP.type
+			packs[SP.type] += 1
 		.["awaiting_delivery"] += list(list("id" = SO.id, "orderer" = SO.orderer, "orderer_rank" = SO.orderer_rank, "reason" = SO.reason, "packs" = packs, "authed_by" = SO.authorised_by))
 	.["shopping_history"] = list()
 	for(var/i in SSpoints.shopping_history)
@@ -359,7 +356,7 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		var/cost = 0
 		for(var/P in SO.pack)
 			var/datum/supply_packs/SP = P
-			packs += SP.type
+			packs[SP.type] += 1
 			cost += SP.cost
 		.["shopping_history"] += list(list("id" = SO.id, "orderer" = SO.orderer, "orderer_rank" = SO.orderer_rank, "reason" = SO.reason, "cost" = cost, "packs" = packs, "authed_by" = SO.authorised_by))
 	.["shopping_list_cost"] = 0
@@ -399,7 +396,8 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 	return SSpoints.shopping_cart
 
 /datum/supply_ui/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
-	if(..())
+	. = ..()
+	if(.)
 		return
 	switch(action)
 		if("cart")
@@ -497,7 +495,7 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		var/cost = 0
 		for(var/P in SO.pack)
 			var/datum/supply_packs/SP = P
-			packs += SP.type
+			packs[SP.type] += 1
 			cost += SP.cost
 		.["requests"] += list(list("id" = SO.id, "orderer" = SO.orderer, "orderer_rank" = SO.orderer_rank, "reason" = SO.reason, "cost" = cost, "packs" = packs, "authed_by" = SO.authorised_by))
 	.["deniedrequests"] = list()
@@ -507,7 +505,7 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		var/cost = 0
 		for(var/P in SO.pack)
 			var/datum/supply_packs/SP = P
-			packs += SP.type
+			packs[SP.type] += 1
 			cost += SP.cost
 		.["deniedrequests"] += list(list("id" = SO.id, "orderer" = SO.orderer, "orderer_rank" = SO.orderer_rank, "reason" = SO.reason, "cost" = cost, "packs" = packs, "authed_by" = SO.authorised_by))
 	.["approvedrequests"] = list()
@@ -517,7 +515,7 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		var/cost = 0
 		for(var/P in SO.pack)
 			var/datum/supply_packs/SP = P
-			packs += SP.type
+			packs[SP.type] += 1
 			cost += SP.cost
 		.["approvedrequests"] += list(list("id" = SO.id, "orderer" = SO.orderer, "orderer_rank" = SO.orderer_rank, "reason" = SO.reason, "cost" = cost, "packs" = packs, "authed_by" = SO.authorised_by))
 	if(!SSpoints.request_shopping_cart[user.ckey])
@@ -532,7 +530,8 @@ GLOBAL_LIST_EMPTY_TYPED(exports_types, /datum/supply_export)
 		.["shopping_list"][SP.type] = list("count" = SSpoints.request_shopping_cart[user.ckey][SP.type])
 
 /datum/supply_ui/requests/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
-	if(..())
+	. = ..()
+	if(.)
 		return TRUE
 	switch(action)
 		if("submitrequest")

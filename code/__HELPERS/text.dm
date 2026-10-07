@@ -84,7 +84,7 @@
 // Used to get a properly sanitized input, of max_length
 // no_trim is self explanatory but it prevents the input from being trimed if you intend to parse newlines or whitespace.
 /proc/stripped_input(mob/user, message = "", title = "", default = "", max_length = MAX_MESSAGE_LEN, no_trim = FALSE)
-	var/name = input(user, message, title, default) as text|null
+	var/name = tgui_input_text(user, message, title, default)
 	if(no_trim)
 		return copytext(html_encode(name), 1, max_length)
 	else
@@ -92,7 +92,7 @@
 
 // Used to get a properly sanitized multiline input, of max_length
 /proc/stripped_multiline_input(mob/user, message = "", title = "", default = "", max_length=MAX_MESSAGE_LEN, no_trim=FALSE)
-	var/name = input(user, message, title, default) as message|null
+	var/name = tgui_input_text(user, message, title, default, multiline = TRUE)
 	if(no_trim)
 		return copytext(html_encode(name), 1, max_length)
 	else

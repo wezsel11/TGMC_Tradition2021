@@ -166,7 +166,7 @@
 		INVOKE_ASYNC(src, .proc/start_playing, usr)
 
 	else if(href_list["newline"])
-		var/newline = html_encode(input("Enter your line: ", parent.name) as text|null)
+		var/newline = html_encode(tgui_input_text(usr, "Enter your line: ", parent.name))
 		if(!newline || !in_range(parent, usr))
 			return
 		if(lines.len > MUSIC_MAXLINES)

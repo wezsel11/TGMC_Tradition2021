@@ -137,6 +137,10 @@
 	READ_FILE(S["chem_macros"], chem_macros)
 
 	READ_FILE(S["mute_self_combat_messages"], mute_self_combat_messages)
+	READ_FILE(S["fast_mc_refresh"], fast_mc_refresh)
+	READ_FILE(S["split_admin_tabs"], split_admin_tabs)
+	READ_FILE(S["tgui_input"], tgui_input)
+	READ_FILE(S["tgui_say"], tgui_say)
 	READ_FILE(S["mute_others_combat_messages"], mute_others_combat_messages)
 	READ_FILE(S["mute_xeno_health_alert_messages"], mute_xeno_health_alert_messages)
 
@@ -180,6 +184,10 @@
 	chem_macros 	= sanitize_islist(chem_macros, list())
 
 	mute_self_combat_messages	= sanitize_integer(mute_self_combat_messages, FALSE, TRUE, initial(mute_self_combat_messages))
+	fast_mc_refresh = sanitize_integer(fast_mc_refresh, FALSE, TRUE, initial(fast_mc_refresh))
+	split_admin_tabs = sanitize_integer(split_admin_tabs, FALSE, TRUE, initial(split_admin_tabs))
+	tgui_input = sanitize_integer(tgui_input, FALSE, TRUE, initial(tgui_input))
+	tgui_say = sanitize_integer(tgui_say, FALSE, TRUE, initial(tgui_say))
 	mute_others_combat_messages	= sanitize_integer(mute_others_combat_messages, FALSE, TRUE, initial(mute_others_combat_messages))
 	mute_xeno_health_alert_messages	= sanitize_integer(mute_xeno_health_alert_messages, FALSE, TRUE, initial(mute_xeno_health_alert_messages))
 
@@ -234,6 +242,10 @@
 	tooltips		= sanitize_integer(tooltips, FALSE, TRUE, initial(tooltips))
 
 	mute_self_combat_messages	= sanitize_integer(mute_self_combat_messages, FALSE, TRUE, initial(mute_self_combat_messages))
+	fast_mc_refresh = sanitize_integer(fast_mc_refresh, FALSE, TRUE, initial(fast_mc_refresh))
+	split_admin_tabs = sanitize_integer(split_admin_tabs, FALSE, TRUE, initial(split_admin_tabs))
+	tgui_input = sanitize_integer(tgui_input, FALSE, TRUE, initial(tgui_input))
+	tgui_say = sanitize_integer(tgui_say, FALSE, TRUE, initial(tgui_say))
 	mute_others_combat_messages	= sanitize_integer(mute_others_combat_messages, FALSE, TRUE, initial(mute_others_combat_messages))
 	mute_xeno_health_alert_messages	= sanitize_integer(mute_xeno_health_alert_messages, FALSE, TRUE, initial(mute_xeno_health_alert_messages))
 
@@ -271,6 +283,10 @@
 	WRITE_FILE(S["tooltips"], tooltips)
 
 	WRITE_FILE(S["mute_self_combat_messages"], mute_self_combat_messages)
+	WRITE_FILE(S["fast_mc_refresh"], fast_mc_refresh)
+	WRITE_FILE(S["split_admin_tabs"], split_admin_tabs)
+	WRITE_FILE(S["tgui_input"], tgui_input)
+	WRITE_FILE(S["tgui_say"], tgui_say)
 	WRITE_FILE(S["mute_others_combat_messages"], mute_others_combat_messages)
 	WRITE_FILE(S["mute_xeno_health_alert_messages"], mute_xeno_health_alert_messages)
 
@@ -319,6 +335,7 @@
 	READ_FILE(S["alternate_option"], alternate_option)
 	READ_FILE(S["job_preferences"], job_preferences)
 	READ_FILE(S["preferred_slot"], preferred_slot)
+	READ_FILE(S["preferred_slot_alt"], preferred_slot_alt)
 	READ_FILE(S["gear"], gear)
 	READ_FILE(S["underwear"], underwear)
 	READ_FILE(S["undershirt"], undershirt)
@@ -370,6 +387,7 @@
 	alternate_option= sanitize_integer(alternate_option, 0, 2, initial(alternate_option))
 	job_preferences = SANITIZE_LIST(job_preferences)
 	preferred_slot	= sanitize_inlist(preferred_slot, SLOT_DRAW_ORDER, initial(preferred_slot))
+	preferred_slot_alt = sanitize_inlist(preferred_slot_alt, SLOT_DRAW_ORDER, initial(preferred_slot_alt))
 	if(gender == MALE)
 		underwear		= sanitize_integer(underwear, 1, length(GLOB.underwear_m), initial(underwear))
 	else
@@ -448,6 +466,7 @@
 	alternate_option= sanitize_integer(alternate_option, 0, 2, initial(alternate_option))
 	job_preferences = SANITIZE_LIST(job_preferences)
 	preferred_slot	= sanitize_inlist(preferred_slot, SLOT_DRAW_ORDER, initial(preferred_slot))
+	preferred_slot_alt = sanitize_inlist(preferred_slot_alt, SLOT_DRAW_ORDER, initial(preferred_slot_alt))
 	if(gender == MALE)
 		underwear		= sanitize_integer(underwear, 1, length(GLOB.underwear_m), initial(underwear))
 	else
@@ -500,6 +519,7 @@
 	WRITE_FILE(S["alternate_option"], alternate_option)
 	WRITE_FILE(S["job_preferences"], job_preferences)
 	WRITE_FILE(S["preferred_slot"], preferred_slot)
+	WRITE_FILE(S["preferred_slot_alt"], preferred_slot_alt)
 	WRITE_FILE(S["gear"], gear)
 	WRITE_FILE(S["underwear"], underwear)
 	WRITE_FILE(S["undershirt"], undershirt)

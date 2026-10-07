@@ -195,6 +195,8 @@ GLOBAL_PROTECT(exp_specialmap)
 		var/datum/job/scaled_job = SSjob.GetJobType(index)
 		if(!(scaled_job in SSjob.active_joinable_occupations))
 			continue
+		if(istype(scaled_job, /datum/job/xenomorph))
+			GLOB.round_statistics.larva_from_marine_spawning += jobworth[index] / scaled_job.job_points_needed
 		scaled_job.add_job_points(jobworth[index])
 
 /datum/job/proc/free_job_positions(amount)
@@ -205,6 +207,8 @@ GLOBAL_PROTECT(exp_specialmap)
 		var/datum/job/scaled_job = SSjob.GetJobType(index)
 		if(!(scaled_job in SSjob.active_joinable_occupations))
 			continue
+		if(istype(scaled_job, /datum/job/xenomorph))
+			GLOB.round_statistics.larva_from_marine_spawning -= jobworth[index] / scaled_job.job_points_needed
 		scaled_job.add_job_points(-jobworth[index])
 
 /datum/job/proc/add_job_points(amount)

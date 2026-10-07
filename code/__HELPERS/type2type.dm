@@ -344,6 +344,12 @@
 		. += "[seperator]+MENTOR"
 	if(rights & R_DBRANKS)
 		. += "[seperator]+DBRANKS"
+	if(rights & R_RUNTIME)
+		. += "[seperator]+RUNTIME"
+	if(rights & R_LOG)
+		. += "[seperator]+LOG"
+	if(rights & R_POLLS)
+		. += "[seperator]+POLLS"
 
 	return .
 

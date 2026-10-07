@@ -242,7 +242,7 @@
  *
  */
 /datum/admins/proc/poll_parse_href(list/href_list, datum/poll_question/poll)
-	if(!check_rights(R_DBRANKS))
+	if(!check_rights(R_POLLS))
 		return
 	if(!SSdbcore.Connect())
 		to_chat(usr, "<span class='danger'>Failed to establish database connection.</span>")
@@ -351,7 +351,7 @@
  *
  */
 /datum/poll_question/proc/delete_poll()
-	if(!check_rights(R_DBRANKS))
+	if(!check_rights(R_POLLS))
 		return
 	if(!SSdbcore.Connect())
 		to_chat(usr, "<span class='danger'>Failed to establish database connection.</span>")
@@ -380,7 +380,7 @@
  *
  */
 /datum/poll_question/proc/save_poll_data(clear_votes)
-	if(!check_rights(R_DBRANKS))
+	if(!check_rights(R_POLLS))
 		return
 	if(!SSdbcore.Connect())
 		to_chat(usr, "<span class='danger'>Failed to establish database connection.</span>")
@@ -457,7 +457,7 @@
  *
  */
 /datum/poll_question/proc/cleaR_DBRANKS_votes()
-	if(!check_rights(R_DBRANKS))
+	if(!check_rights(R_POLLS))
 		return
 	if(!SSdbcore.Connect())
 		to_chat(usr, "<span class='danger'>Failed to establish database connection.</span>")
@@ -540,7 +540,7 @@
  *
  */
 /datum/admins/proc/poll_option_parse_href(list/href_list, datum/poll_question/poll, datum/poll_option/option)
-	if(!check_rights(R_DBRANKS))
+	if(!check_rights(R_POLLS))
 		return
 	if(!SSdbcore.Connect())
 		to_chat(usr, "<span class='danger'>Failed to establish database connection.</span>")
@@ -638,7 +638,7 @@
  *
  */
 /datum/poll_option/proc/save_option()
-	if(!check_rights(R_DBRANKS))
+	if(!check_rights(R_POLLS))
 		return
 	if(!SSdbcore.Connect())
 		to_chat(usr, "<span class='danger'>Failed to establish database connection.</span>")
@@ -672,7 +672,7 @@
  *
  */
 /datum/poll_option/proc/delete_option()
-	if(!check_rights(R_DBRANKS))
+	if(!check_rights(R_POLLS))
 		return
 	. = parent_poll
 	if(option_id)

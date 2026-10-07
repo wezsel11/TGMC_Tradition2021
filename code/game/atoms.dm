@@ -1,7 +1,7 @@
 /atom
 	layer = TURF_LAYER
 	plane = GAME_PLANE
-	appearance_flags = TILE_BOUND
+	appearance_flags = TILE_BOUND|LONG_GLIDE
 	var/level = 2
 
 	var/flags_atom = NONE
@@ -18,8 +18,6 @@
 
 	var/germ_level = GERM_LEVEL_AMBIENT // The higher the germ level, the more germ on the atom.
 
-	///overlays that should remain on top and not normally removed when using cut_overlay functions, like c4.
-	var/list/priority_overlays
 	///a very temporary list of overlays to remove
 	var/list/remove_overlays
 	///a very temporary list of overlays to add
@@ -88,7 +86,6 @@ directive is properly returned.
 	orbiters = null // The component is attached to us normaly and will be deleted elsewhere
 
 	LAZYCLEARLIST(overlays)
-	LAZYCLEARLIST(priority_overlays)
 
 	QDEL_NULL(light)
 
@@ -270,7 +267,7 @@ directive is properly returned.
 			else if(CHECK_BITFIELD(reagents.reagent_flags, AMOUNT_SKILLCHECK))
 				if(isxeno(user))
 					return
-				if(user.skills.getRating("medical") >= SKILL_MEDICAL_NOVICE)
+				if(isobserver(user) || user.skills.getRating("medical") >= SKILL_MEDICAL_NOVICE)
 					to_chat(user, "It contains these reagents:")
 					if(reagents.reagent_list.len)
 						for(var/datum/reagent/R in reagents.reagent_list)
@@ -751,6 +748,26 @@ Proc for attack log creation, because really why not
 
 
 /atom/Topic(href, href_list)
+	if(usr?.client && href_list["statpanel_item_click"])
+		var/list/paramslist = list()
+		switch(href_list["statpanel_item_click"])
+			if("left")
+				paramslist["left"] = "1"
+			if("right")
+				paramslist["right"] = "1"
+			if("middle")
+				paramslist["middle"] = "1"
+			else
+				return
+		if(href_list["statpanel_item_shiftclick"])
+			paramslist["shift"] = "1"
+		if(href_list["statpanel_item_ctrlclick"])
+			paramslist["ctrl"] = "1"
+		if(href_list["statpanel_item_altclick"])
+			paramslist["alt"] = "1"
+		usr.client.Click(src, loc, "statbrowser", list2params(paramslist))
+		return TRUE
+
 	. = ..()
 	if(.)
 		return

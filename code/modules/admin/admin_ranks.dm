@@ -78,6 +78,12 @@
 				flag = R_SPAWN
 			if("DBRANKS")
 				flag = R_DBRANKS
+			if("RUNTIME")
+				flag = R_RUNTIME
+			if("LOG")
+				flag = R_LOG
+			if("POLLS")
+				flag = R_POLLS
 			if("EVERYTHING")
 				flag = R_EVERYTHING
 			if("@")

@@ -378,8 +378,8 @@ should be alright.
 		if(A.attach_icon)
 			item_icon = A.attach_icon
 		I = image(A.icon,src, item_icon)
-		I.pixel_x = attachable_offset["[slot]_x"] - A.pixel_shift_x
-		I.pixel_y = attachable_offset["[slot]_y"] - A.pixel_shift_y
+		I.pixel_w = attachable_offset["[slot]_x"] - A.pixel_shift_x
+		I.pixel_z = attachable_offset["[slot]_y"] - A.pixel_shift_y
 		attachable_overlays[slot] = I
 		overlays += I
 	else
@@ -971,3 +971,19 @@ else if(!casing_override)//So we're not reloading/emptying, we're firing the gun
 	//I would add a check here for attachables, but you can't fit the masterkey on a revolver/shotgun.
 	current_mag.casings_to_eject += ammo.casing_type //Other attachables are processed beforehand and don't matter here.
 */
+
+///Toggles the gun ejecting its magazine when it's empty, as modern TGMC (#12707)
+/obj/item/weapon/gun/verb/toggle_auto_eject()
+	set category = "Weapons"
+	set name = "Toggle Automatic Magazine Ejection"
+	set desc = "Toggles the automatic unloading of the gun's magazine upon depletion."
+	set src = usr.contents
+
+	var/obj/item/weapon/gun/G = get_active_firearm(usr)
+	if(!G)
+		return
+	G.do_toggle_auto_eject(usr)
+
+/obj/item/weapon/gun/proc/do_toggle_auto_eject(mob/user)
+	flags_gun_features ^= GUN_AUTO_EJECTOR
+	balloon_alert(user, "automatic unloading [(flags_gun_features & GUN_AUTO_EJECTOR) ? "enabled" : "disabled"]")

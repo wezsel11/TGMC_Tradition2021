@@ -8,6 +8,7 @@
 #include "spawn_humans.dm"
 #include "spawn_xenos.dm"
 #include "subsystem_init.dm"
+#include "tgmc_data_compat.dm"
 #include "timer_sanity.dm"
 #include "unit_test.dm"
 #include "xeno_logical_scaling.dm"

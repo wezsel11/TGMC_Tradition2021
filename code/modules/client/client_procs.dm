@@ -26,9 +26,15 @@
 		- If so, is there any protection against somebody spam-clicking a link?
 	*/
 
-/client/Topic(href, href_list, hsrc)
+//the undocumented 4th argument is for ?[0x\ref] style topic links. hsrc is set to the reference and anything after the ] gets put into hsrc_command
+/client/Topic(href, href_list, hsrc, hsrc_command)
 	if(!usr || usr != mob)	//stops us calling Topic for somebody else's client. Also helps prevent usr=null
 		return
+
+#ifndef TESTING
+	if (lowertext(hsrc_command) == "_debug") //disable the integrated byond vv in the client side debugging tools since it doesn't respect vv read protections
+		return
+#endif
 
 	//Asset cache
 	var/asset_cache_job
@@ -57,7 +63,7 @@
 			to_chat(src, "<span class='danger'>[msg]</span>")
 			return
 	var/stl = CONFIG_GET(number/second_topic_limit)
-	if (!holder && stl)
+	if (!holder && stl && href_list["window_id"] != "statbrowser")
 		var/second = round(world.time, 10)
 		if (!topiclimiter)
 			topiclimiter = new(LIMITER_SIZE)
@@ -68,9 +74,16 @@
 		if (topiclimiter[SECOND_COUNT] > stl)
 			to_chat(src, "<span class='danger'>Your previous action was ignored because you've done too many in a second</span>")
 			return
-	//Logs all hrefs, except chat pings
-	if(!(href_list["_src_"] == "chat" && href_list["proc"] == "ping" && LAZYLEN(href_list) == 2))
-		log_href("[src] (usr:[usr]\[[COORD(usr)]\]) : [hsrc ? "[hsrc] " : ""][href]")
+	
+	if(tgui_Topic(href_list))
+		return
+	if(href_list["reload_statbrowser"])
+		init_stat_panel()
+		return
+	
+	//Logs all hrefs.
+	log_href("[src] (usr:[usr]\[[COORD(usr)]\]) : [hsrc ? "[hsrc] " : ""][href]")
+	
 	//byond bug ID:2256651
 	if (asset_cache_job && (asset_cache_job in completed_asset_jobs))
 		to_chat(src, "<span class='danger'>An error has been detected in how your client is receiving resources. Attempting to correct.... (If you keep seeing these messages you might want to close byond and reconnect)</span>")
@@ -101,8 +114,6 @@
 			return
 		if("vars")
 			return view_var_Topic(href, href_list, hsrc)
-		if("chat")
-			return chatOutput.Topic(href, href_list)
 		if("vote")
 			return SSvote.Topic(href, href_list)
 		if("codex")
@@ -127,7 +138,6 @@
 
 /client/New(TopicData)
 	var/tdata = TopicData //save this for later use
-	chatOutput = new /datum/chatOutput(src)
 	TopicData = null	//Prevent calls to client.Topic from connect
 
 	if(connection != "seeker" && connection != "web")	//Invalid connection type.
@@ -135,6 +145,18 @@
 
 	GLOB.clients += src
 	GLOB.directory[ckey] = src
+
+	// BYOND 516+: byondstorage gives browser pages a persistent window.hubStorage (as modern TGMC)
+	if(byond_version >= 516)
+		winset(src, null, "browser-options=find,refresh,byondstorage")
+
+	// Instantiate stat panel
+	stat_panel = new(src, "statbrowser")
+	stat_panel.subscribe(src, .proc/on_stat_panel_message)
+
+	// Instantiate tgui panel
+	tgui_panel = new(src)
+	tgui_say = new(src)
 
 	GLOB.ahelp_tickets.ClientLogin(src)
 
@@ -151,7 +173,7 @@
 		holder.owner = src
 		holder.activate()
 	else if(GLOB.deadmins[ckey])
-		verbs += /client/proc/readmin
+		add_verb(src, /client/proc/readmin)
 
 	//preferences datum - also holds some persistant data for the client (because we may as well keep these datums to a minimum)
 	prefs = GLOB.preferences_datums[ckey]
@@ -208,7 +230,17 @@
 		set_macros()
 		update_movement_keys()
 
-	chatOutput.start() // Starts the chat
+	INVOKE_ASYNC(src, .proc/acquire_dpi)
+
+	// Initialize tgui panel
+	tgui_panel.initialize()
+
+	// Initialize tgui say
+	tgui_say.initialize()
+
+	// Initialize stat panel
+	init_stat_panel()
+	addtimer(CALLBACK(src, .proc/check_panel_loaded), 30 SECONDS)
 
 	if(byond_version < REQUIRED_CLIENT_MAJOR || (byond_build && byond_build < REQUIRED_CLIENT_MINOR))
 		//to_chat(src, "<span class='userdanger'>Your version of byond is severely out of date.</span>")
@@ -330,6 +362,8 @@
 /client/Del()
 	SEND_SIGNAL(src, COMSIG_CLIENT_DISCONNECTED)
 	log_access("Logout: [key_name(src)]")
+	if(obj_window)
+		QDEL_NULL(obj_window)
 	if(holder)
 		if(check_rights(R_ADMIN, FALSE))
 			message_admins("Admin logout: [key_name(src)].")
@@ -841,3 +875,58 @@ GLOBAL_VAR_INIT(automute_on, null)
 			change_view(var_value)
 			return TRUE
 	return ..()
+
+/// This grabs the DPI of the user per their skin
+/client/proc/acquire_dpi()
+	window_scaling = text2num(winget(src, null, "dpi"))
+
+/// Loads (or reloads) the stat panel browser
+/client/proc/init_stat_panel()
+	stat_panel.initialize(
+		inline_html = file2text('html/statbrowser.html'),
+		inline_js = file2text('html/statbrowser_shim.js') + file2text('html/statbrowser.js'),
+		inline_css = file2text('html/statbrowser.css'))
+
+/// compiles a full list of verbs and sends it to the browser
+/client/proc/init_verbs()
+	if(IsAdminAdvancedProcCall())
+		return
+	var/list/verblist = list()
+	var/list/verbstoprocess = verbs.Copy()
+	if(mob)
+		verbstoprocess += mob.verbs
+		for(var/atom/movable/thing as anything in mob.contents)
+			verbstoprocess += thing.verbs
+	panel_tabs.Cut() // panel_tabs get reset in init_verbs on JS side anyway
+	for(var/procpath/verb_to_init as anything in verbstoprocess)
+		if(!verb_to_init)
+			continue
+		if(verb_to_init.hidden)
+			continue
+		if(!istext(verb_to_init.category))
+			continue
+		panel_tabs |= verb_to_init.category
+		verblist[++verblist.len] = list(verb_to_init.category, verb_to_init.name)
+	stat_panel.send_message("init_verbs", list(panel_tabs = panel_tabs, verblist = verblist))
+
+/client/proc/check_panel_loaded()
+	if(stat_panel.is_ready())
+		return
+	to_chat(src, "<span class='userdanger'>Statpanel failed to load, click <a href='?src=[REF(src)];reload_statbrowser=1'>here</a> to reload the panel </span>")
+
+/**
+ * Handles incoming messages from the stat-panel TGUI.
+ */
+/client/proc/on_stat_panel_message(type, payload)
+	switch(type)
+		if("Update-Verbs")
+			init_verbs()
+		if("Remove-Tabs")
+			panel_tabs -= payload["tab"]
+		if("Send-Tabs")
+			panel_tabs |= payload["tab"]
+		if("Reset-Tabs")
+			panel_tabs = list()
+		if("Set-Tab")
+			stat_tab = payload["tab"]
+			SSstatpanels.immediate_send_stat_data(src)

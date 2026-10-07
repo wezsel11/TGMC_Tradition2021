@@ -49,6 +49,8 @@ GLOBAL_VAR_INIT(observer_default_invisibility, INVISIBILITY_OBSERVER)
 	var/ghost_orderhud = FALSE
 	var/ghost_vision = TRUE
 	var/ghost_orbit = GHOST_ORBIT_CIRCLE
+	///Position in the larva queue, 0 when not in it
+	var/larva_position = 0
 
 
 /mob/dead/observer/Initialize()
@@ -275,46 +277,47 @@ GLOBAL_VAR_INIT(observer_default_invisibility, INVISIBILITY_OBSERVER)
 	return FALSE
 
 
-/mob/dead/observer/Stat()
+/mob/dead/observer/get_status_tab_items()
 	. = ..()
 
-	if(statpanel("Status"))
-		if(SSticker.current_state == GAME_STATE_PREGAME)
-			stat("Time To Start:", "[SSticker.time_left > 0 ? SSticker.GetTimeLeft() : "(DELAYED)"]")
-			stat("Players: [length(GLOB.player_list)]", "Players Ready: [length(GLOB.ready_players)]")
-			for(var/i in GLOB.player_list)
-				if(isnewplayer(i))
-					var/mob/new_player/N = i
-					stat("[N.client?.holder?.fakekey ? N.client.holder.fakekey : N.key]", N.ready ? "Playing" : "")
-				else if(isobserver(i))
-					var/mob/dead/observer/O = i
-					stat("[O.client?.holder?.fakekey ? O.client.holder.fakekey : O.key]", "Observing")
-		var/status_value = SSevacuation?.get_status_panel_eta()
+	if(SSticker.current_state == GAME_STATE_PREGAME)
+		. += "Time To Start: [SSticker.time_left > 0 ? SSticker.GetTimeLeft() : "(DELAYED)"]"
+		. += "Players: [length(GLOB.player_list)] | Players Ready: [length(GLOB.ready_players)]"
+		for(var/i in GLOB.player_list)
+			if(isnewplayer(i))
+				var/mob/new_player/N = i
+				. += "[N.client?.holder?.fakekey ? N.client.holder.fakekey : N.key][N.ready ? " - Playing" : ""]"
+			else if(isobserver(i))
+				var/mob/dead/observer/O = i
+				. += "[O.client?.holder?.fakekey ? O.client.holder.fakekey : O.key] - Observing"
+	var/status_value = SSevacuation?.get_status_panel_eta()
+	if(status_value)
+		. += "Evacuation in: [status_value]"
+	if(SSticker.mode)
+		status_value = SSticker.mode.get_hivemind_collapse_countdown()
 		if(status_value)
-			stat("Evacuation in:", status_value)
-		if(SSticker.mode)
-			status_value = SSticker.mode.get_hivemind_collapse_countdown()
-			if(status_value)
-				stat("<b>Orphan hivemind collapse timer:</b>", status_value)
-		if(GLOB.respawn_allowed)
-			status_value = (timeofdeath + GLOB.respawntime - world.time) * 0.1
+			. += "Orphan hivemind collapse timer: [status_value]"
+	if(GLOB.respawn_allowed)
+		status_value = (timeofdeath + GLOB.respawntime - world.time) * 0.1
+		if(status_value <= 0)
+			. += "Respawn timer: READY"
+		else
+			. += "Respawn timer: [(status_value / 60) % 60]:[add_leading(num2text(status_value % 60), 2, "0")]"
+		if(SSticker.mode?.flags_round_type & MODE_INFESTATION)
+			status_value = (timeofdeath + GLOB.xenorespawntime - world.time) * 0.1
 			if(status_value <= 0)
-				stat("Respawn timer:", "<b>READY</b>")
+				. += "Xeno respawn timer: READY"
 			else
-				stat("Respawn timer:", "[(status_value / 60) % 60]:[add_leading(num2text(status_value % 60), 2, "0")]")
-			if(SSticker.mode?.flags_round_type & MODE_INFESTATION)
-				status_value = (timeofdeath + GLOB.xenorespawntime - world.time) * 0.1
-				if(status_value <= 0)
-					stat("Xeno respawn timer:", "<b>READY</b>")
-				else
-					stat("Xeno respawn timer:", "[(status_value / 60) % 60]:[add_leading(num2text(status_value % 60), 2, "0")]")
-				var/datum/job/xeno_job = SSjob.GetJobType(/datum/job/xenomorph)
-				var/stored_larva = xeno_job.total_positions - xeno_job.current_positions
-				if(stored_larva)
-					stat("Burrowed larva:", stored_larva)
-				var/datum/hive_status/normal/normal_hive = GLOB.hive_datums[XENO_HIVE_NORMAL]
-				if(LAZYLEN(normal_hive.ssd_xenos))
-					stat("SSD xenos:", normal_hive.ssd_xenos.Join(", "))
+				. += "Xeno respawn timer: [(status_value / 60) % 60]:[add_leading(num2text(status_value % 60), 2, "0")]"
+			if(larva_position)
+				. += "Position in larva candidate queue: [larva_position]"
+			var/datum/job/xeno_job = SSjob.GetJobType(/datum/job/xenomorph)
+			var/stored_larva = xeno_job.total_positions - xeno_job.current_positions
+			if(stored_larva)
+				. += "Burrowed larva: [stored_larva]"
+			var/datum/hive_status/normal/normal_hive = GLOB.hive_datums[XENO_HIVE_NORMAL]
+			if(LAZYLEN(normal_hive.ssd_xenos))
+				. += "SSD xenos: [normal_hive.ssd_xenos.Join(", ")]"
 
 
 /mob/dead/observer/verb/reenter_corpse()
@@ -902,3 +905,15 @@ GLOBAL_VAR_INIT(observer_default_invisibility, INVISIBILITY_OBSERVER)
 			return
 
 	return ..()
+
+///Ctrl+Shift click for admins with ghost vision: on yourself spawns a spatial agent, on another ghost turns it into a human. As modern TGMC (#14086)
+/mob/dead/observer/CtrlShiftClickOn(atom/A)
+	if(!ghost_vision || !check_rights(R_SPAWN, FALSE))
+		return ..()
+	if(A == src)
+		client.holder.spatial_agent()
+		return
+	if(!isobserver(A))
+		return ..()
+	var/mob/dead/observer/target_ghost = A
+	target_ghost.change_mob_type(/mob/living/carbon/human, null, null, TRUE) //always delmob, ghosts shouldn't be left lingering

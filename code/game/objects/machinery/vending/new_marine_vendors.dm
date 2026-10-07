@@ -97,9 +97,6 @@ GLOBAL_LIST_INIT(marine_selector_cats, list(
 	var/list/categories
 	var/list/listed_products
 
-	ui_x = 600
-	ui_y = 700
-
 /obj/machinery/marine_selector/update_icon()
 	if(is_operational())
 		icon_state = initial(icon_state)
@@ -116,6 +113,7 @@ GLOBAL_LIST_INIT(marine_selector_cats, list(
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(!allowed(H))
+			to_chat(user, "<span class='warning'>Access denied. Your assigned role doesn't have access to this machinery.</span>")
 			return FALSE
 
 		var/obj/item/card/id/I = H.get_idcard()
@@ -126,19 +124,20 @@ GLOBAL_LIST_INIT(marine_selector_cats, list(
 			return FALSE
 
 		if(lock_flags & JOB_LOCK && vendor_role && !istype(H.job, vendor_role))
+			to_chat(user, "<span class='warning'>Access denied. This vendor is heavily restricted.</span>")
 			return FALSE
 
 		if(lock_flags & SQUAD_LOCK && (!H.assigned_squad || (squad_tag && H.assigned_squad.name != squad_tag)))
+			to_chat(user, "<span class='warning'>Access denied. Your assigned squad isn't allowed to access this machinery.</span>")
 			return FALSE
 
 	return TRUE
 
-/obj/machinery/marine_selector/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = FALSE, \
-										datum/tgui/master_ui = null, datum/ui_state/state = GLOB.default_state)
-	ui = SStgui.try_update_ui(user, src, ui_key, ui, force_open)
+/obj/machinery/marine_selector/ui_interact(mob/user, datum/tgui/ui)
+	ui = SStgui.try_update_ui(user, src, ui)
 
 	if(!ui)
-		ui = new(user, src, ui_key, "MarineSelector", name, ui_x, ui_y, master_ui, state)
+		ui = new(user, src, "MarineSelector", name)
 		ui.open()
 
 /obj/machinery/marine_selector/ui_static_data(mob/user)
@@ -176,8 +175,9 @@ GLOBAL_LIST_INIT(marine_selector_cats, list(
 			if(buy_flags & flag)
 				.["cats"][i]["remaining"]++
 
-/obj/machinery/marine_selector/ui_act(action, params)
-	if(..())
+/obj/machinery/marine_selector/ui_act(action, list/params)
+	. = ..()
+	if(.)
 		return
 	switch(action)
 		if("vend")

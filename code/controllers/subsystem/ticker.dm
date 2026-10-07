@@ -226,14 +226,14 @@ SUBSYSTEM_DEF(ticker)
 	queue_delay = SSticker.queue_delay
 	queued_players = SSticker.queued_players
 
-	switch(current_state)
-		if(GAME_STATE_SETTING_UP)
-			Master.SetRunLevel(RUNLEVEL_SETUP)
-		if(GAME_STATE_PLAYING)
-			Master.SetRunLevel(RUNLEVEL_GAME)
-		if(GAME_STATE_FINISHED)
-			Master.SetRunLevel(RUNLEVEL_POSTGAME)
-
+	if(Master) //Set Masters run level if it exists
+		switch (current_state)
+			if(GAME_STATE_SETTING_UP)
+				Master.SetRunLevel(RUNLEVEL_SETUP)
+			if(GAME_STATE_PLAYING)
+				Master.SetRunLevel(RUNLEVEL_GAME)
+			if(GAME_STATE_FINISHED)
+				Master.SetRunLevel(RUNLEVEL_POSTGAME)
 
 /datum/controller/subsystem/ticker/proc/GetTimeLeft()
 	if(isnull(SSticker.time_left))
@@ -253,7 +253,7 @@ SUBSYSTEM_DEF(ticker)
 	if(mode)
 		GLOB.master_mode = mode
 	else
-		GLOB.master_mode = "Extended"
+		GLOB.master_mode = "Distress Signal"
 	log_game("Saved mode is '[GLOB.master_mode]'")
 
 
@@ -269,15 +269,7 @@ SUBSYSTEM_DEF(ticker)
 	if(usr && !check_rights(R_SERVER))
 		return
 
-	if(istype(GLOB.tgs, /datum/tgs_api/v3210))
-		var/datum/tgs_api/v3210/API = GLOB.tgs
-		if(API.reboot_mode == 2)
-			graceful = TRUE
-	else if(istype(GLOB.tgs, /datum/tgs_api/v4))
-		var/datum/tgs_api/v4/API = GLOB.tgs
-		if(API.reboot_mode == 1)
-			graceful = TRUE
-
+	// TGS 5+ handles shutdown/restart reboot modes itself via TgsReboot() (DMAPI 7)
 	if(graceful)
 		to_chat_immediate(world, "<h3><span class='boldnotice'>Shutting down...</span></h3>")
 		world.Reboot(FALSE)

@@ -530,6 +530,10 @@
 
 	msg += "[flavor_text]<br>"
 
+	//Admin links, as modern TGMC (#17806)
+	if(check_other_rights(user.client, R_ADMIN, FALSE))
+		msg += "<span class='admin'>[ADMIN_FULLMONTY(src)]</span><br>"
+
 	msg += "*---------*</span>"
 
 	to_chat(user, msg)

@@ -306,60 +306,70 @@
 
 
 /obj/item/storage/pill_bottle/kelotane
+	description_overlay = "Ke"
 	name = "kelotane pill bottle"
 	desc = "Contains pills that heal burns, but cause slight pain. Take two to heal faster, but have slightly more pain."
 	icon_state = "pill_canister2"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/kelotane
 
 /obj/item/storage/pill_bottle/dylovene
+	description_overlay = "Dy"
 	name = "dylovene pill bottle"
 	desc = "Contains pills that heal toxic damage and purge toxins and neurotoxins of all kinds."
 	icon_state = "pill_canister6"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/dylovene
 
 /obj/item/storage/pill_bottle/inaprovaline
+	description_overlay = "In"
 	name = "inaprovaline pill bottle"
 	desc = "Contains pills that prevent wounds from getting worse on their own."
 	icon_state = "pill_canister3"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/inaprovaline
 
 /obj/item/storage/pill_bottle/tramadol
+	description_overlay = "Ta"
 	name = "tramadol pill bottle"
 	desc = "Contains pills that numb pain. Take two for a stronger effect at the cost of a toxic effect."
 	icon_state = "pill_canister5"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/tramadol
 
 /obj/item/storage/pill_bottle/paracetamol
+	description_overlay = "Pa"
 	name = "paracetamol pill bottle"
 	desc = "Contains pills that mildly numb pain. Take two for a slightly stronger effect."
 	icon_state = "pill_canister5"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/paracetamol
 
 /obj/item/storage/pill_bottle/spaceacillin
+	description_overlay = "Sp"
 	name = "spaceacillin pill bottle"
 	desc = "Contains pills that handle low-level viral and bacterial infections. Effect increases with dosage."
 	icon_state = "pill_canister4"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/spaceacillin
 
 /obj/item/storage/pill_bottle/bicaridine
+	description_overlay = "Bi"
 	name = "bicaridine pill bottle"
 	desc = "Contains pills that heal cuts and bruises, but cause slight pain. Take two to heal faster, but have slightly more pain."
 	icon_state = "pill_canister11"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/bicaridine
 
 /obj/item/storage/pill_bottle/dexalin
+	description_overlay = "Dx"
 	name = "dexalin pill bottle"
 	desc = "Contains pills that heal oxygen damage. They can suppress bloodloss symptoms as well."
 	icon_state = "pill_canister12"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/dexalin
 
 /obj/item/storage/pill_bottle/alkysine
+	description_overlay = "Al"
 	name = "alkysine pill bottle"
 	desc = "Contains pills that heal brain damage."
 	icon_state = "pill_canister7"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/alkysine
 
 /obj/item/storage/pill_bottle/imidazoline
+	description_overlay = "Im"
 	name = "imidazoline pill bottle"
 	desc = "Contains pills that heal eye damage."
 	icon_state = "pill_canister9"
@@ -372,24 +382,28 @@
 	pill_type_to_fill = /obj/item/reagent_containers/pill/peridaxon
 
 /obj/item/storage/pill_bottle/russian_red
+	description_overlay = "Rr"
 	name = "\improper Russian Red pill bottle"
 	desc = "Contains pills that heal all damage rapidly at the cost of small amounts of unhealable damage."
 	icon_state = "pill_canister1"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/russian_red
 
 /obj/item/storage/pill_bottle/quickclot
+	description_overlay = "Qk"
 	name = "quick-clot pill bottle"
 	desc = "Contains pills that suppress internal bleeding while waiting for full treatment."
 	icon_state = "pill_canister8"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/quickclot
 
 /obj/item/storage/pill_bottle/hypervene
+	description_overlay = "Hy"
 	name = "hypervene pill bottle"
 	desc = "A purge medication used to treat overdoses and rapidly remove toxins. Causes pain and vomiting."
 	icon_state = "pill_canister7"
 	pill_type_to_fill = /obj/item/reagent_containers/pill/hypervene
 
 /obj/item/storage/pill_bottle/tricordrazine
+	description_overlay = "Ti"
 	name = "tricordrazine pill bottle"
 	desc = "Contains pills commonly used by untrained Squad Marines to avoid seeing their Squad Medic."
 	icon_state = "pill_canister9"

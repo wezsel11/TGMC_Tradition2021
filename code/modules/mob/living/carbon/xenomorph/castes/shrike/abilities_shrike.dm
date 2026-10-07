@@ -12,22 +12,22 @@
 
 
 /datum/action/xeno_action/call_of_the_burrowed/action_activate()
-	var/mob/living/carbon/xenomorph/shrike/caller = owner
-	if(!isnormalhive(caller.hive))
-		to_chat(caller, "<span class='warning'>Burrowed larva? What a strange concept... It's not for our hive.</span>")
+	var/mob/living/carbon/xenomorph/shrike/shrike_caller = owner
+	if(!isnormalhive(shrike_caller.hive))
+		to_chat(shrike_caller, "<span class='warning'>Burrowed larva? What a strange concept... It's not for our hive.</span>")
 		return FALSE
 	var/datum/job/xeno_job = SSjob.GetJobType(/datum/job/xenomorph)
 	var/stored_larva = xeno_job.total_positions - xeno_job.current_positions
 	if(!stored_larva)
-		to_chat(caller, "<span class='warning'>Our hive currently has no burrowed to call forth!</span>")
+		to_chat(shrike_caller, "<span class='warning'>Our hive currently has no burrowed to call forth!</span>")
 		return FALSE
 
-	playsound(caller,'sound/magic/invoke_general.ogg', 75, TRUE)
-	new /obj/effect/temp_visual/telekinesis(get_turf(caller))
-	caller.visible_message("<span class='xenowarning'>A strange buzzing hum starts to emanate from \the [caller]!</span>", \
+	playsound(shrike_caller,'sound/magic/invoke_general.ogg', 75, TRUE)
+	new /obj/effect/temp_visual/telekinesis(get_turf(shrike_caller))
+	shrike_caller.visible_message("<span class='xenowarning'>A strange buzzing hum starts to emanate from \the [shrike_caller]!</span>", \
 	"<span class='xenodanger'>We call forth the larvas to rise from their slumber!</span>")
 
-	var/datum/hive_status/normal/shrike_hive = caller.hive
+	var/datum/hive_status/normal/shrike_hive = shrike_caller.hive
 	for(var/i in 1 to stored_larva)
 		var/mob/M = get_alien_candidate()
 		if(!M)
@@ -36,15 +36,15 @@
 
 	if(stored_larva)
 		RegisterSignal(shrike_hive, list(COMSIG_HIVE_XENO_MOTHER_PRE_CHECK, COMSIG_HIVE_XENO_MOTHER_CHECK), .proc/is_burrowed_larva_host)
-		notify_ghosts("\The <b>[caller]</b> is calling for the burrowed larvas to wake up!", enter_link = "join_larva=1", enter_text = "Join as Larva", source = caller, action = NOTIFY_JOIN_AS_LARVA)
-		addtimer(CALLBACK(src, .proc/calling_larvas_end, caller), CALLING_BURROWED_DURATION)
+		notify_ghosts("\The <b>[shrike_caller]</b> is calling for the burrowed larvas to wake up!", enter_link = "join_larva=1", enter_text = "Join as Larva", source = shrike_caller, action = NOTIFY_JOIN_AS_LARVA, flashwindow = TRUE)
+		addtimer(CALLBACK(src, .proc/calling_larvas_end, shrike_caller), CALLING_BURROWED_DURATION)
 
 	succeed_activate()
 	add_cooldown()
 
 
-/datum/action/xeno_action/call_of_the_burrowed/proc/calling_larvas_end(mob/living/carbon/xenomorph/shrike/caller)
-	UnregisterSignal(caller.hive, list(COMSIG_HIVE_XENO_MOTHER_PRE_CHECK, COMSIG_HIVE_XENO_MOTHER_CHECK))
+/datum/action/xeno_action/call_of_the_burrowed/proc/calling_larvas_end(mob/living/carbon/xenomorph/shrike/shrike_caller)
+	UnregisterSignal(shrike_caller.hive, list(COMSIG_HIVE_XENO_MOTHER_PRE_CHECK, COMSIG_HIVE_XENO_MOTHER_CHECK))
 
 
 /datum/action/xeno_action/call_of_the_burrowed/proc/is_burrowed_larva_host(datum/source, list/mothers, list/silos) //Should only register while a viable candidate.

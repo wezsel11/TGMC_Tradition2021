@@ -39,132 +39,6 @@
 
 
 
-/proc/xeno_status_output(list/xenolist, can_overwatch = FALSE, ignore_leads = TRUE, user)
-	var/xenoinfo = ""
-	var/leadprefix = (ignore_leads?"":"<b>(-L-)</b>")
-	for(var/i in xenolist)
-		var/mob/living/carbon/xenomorph/X = i
-		if(ignore_leads && X.queen_chosen_lead)
-			continue
-		if(can_overwatch)
-			xenoinfo += "<tr><td>[leadprefix]<a href='byond://?src=\ref[user];watch_xeno_name=[X.nicknumber]'>[X.name]</a> "
-		else
-			xenoinfo += "<tr><td>[leadprefix][X.name] "
-		if(!X.client)
-			xenoinfo += " <i>(SSD)</i>"
-
-		var/hp_color = "green"
-		switch(X.health/X.maxHealth)
-			if(0.33 to 0.66)
-				hp_color = "orange"
-			if(0 to 0.33)
-				hp_color = "red"
-
-		xenoinfo += " <b><font color=[hp_color]>Health: ([X.health]/[X.maxHealth])</font></b>"
-
-		xenoinfo += " <b><font color=green>([AREACOORD_NO_Z(X)])</b></td></tr>"
-
-	return xenoinfo
-
-
-///Relays health and location data about resin silos belonging to the same hive as the input user
-/proc/resin_silo_status_output(mob/living/carbon/xenomorph/user)
-	. = "<BR><b>List of Resin Silos:</b><BR><table cellspacing=4>" //Resin silo data
-	for(var/obj/structure/resin/silo/resin_silo as() in GLOB.xeno_resin_silos)
-		if(resin_silo.associated_hive == user.hive)
-
-			var/hp_color = "green"
-			switch(resin_silo.obj_integrity/resin_silo.max_integrity)
-				if(0.33 to 0.66)
-					hp_color = "orange"
-				if(0 to 0.33)
-					hp_color = "red"
-
-			. += "<b>[resin_silo.name] <font color=[hp_color]>Health: ([resin_silo.obj_integrity]/[resin_silo.max_integrity])</font></b> located at: <b><font color=green>[AREACOORD_NO_Z(resin_silo)]</b></font><BR>"
-
-	. += "</table>"
-
-
-
-/proc/check_hive_status(mob/user)
-	if(!SSticker)
-		return
-	var/dat = "<br>"
-
-	var/datum/hive_status/hive
-	if(isxeno(user))
-		var/mob/living/carbon/xenomorph/xeno_user = user
-		if(xeno_user.hive)
-			hive = xeno_user.hive
-	else
-		hive = GLOB.hive_datums[XENO_HIVE_NORMAL]
-
-	if(!hive)
-		CRASH("couldnt find a hive in check_hive_status")
-
-	var/xenoinfo = ""
-	var/can_overwatch = FALSE
-
-	var/tier3counts = ""
-	var/tier2counts = ""
-	var/tier1counts = ""
-
-	if(isxenoqueen(user))
-		can_overwatch = TRUE
-
-	xenoinfo += xeno_status_output(hive.xenos_by_typepath[/mob/living/carbon/xenomorph/queen], FALSE, TRUE)
-
-	xenoinfo += xeno_status_output(hive.xeno_leader_list, can_overwatch, FALSE, user)
-
-	for(var/typepath in hive.xenos_by_typepath)
-		var/mob/living/carbon/xenomorph/T = typepath
-		var/datum/xeno_caste/XC = GLOB.xeno_caste_datums[typepath][XENO_UPGRADE_BASETYPE]
-		if(XC.caste_flags & CASTE_HIDE_IN_STATUS)
-			continue
-
-		switch(initial(T.tier))
-			if(XENO_TIER_ZERO)
-				continue
-			if(XENO_TIER_THREE)
-				tier3counts += " | [initial(T.name)]s: [length(hive.xenos_by_typepath[typepath])]"
-			if(XENO_TIER_TWO)
-				tier2counts += " | [initial(T.name)]s: [length(hive.xenos_by_typepath[typepath])]"
-			if(XENO_TIER_ONE)
-				tier1counts += " | [initial(T.name)]s: [length(hive.xenos_by_typepath[typepath])]"
-
-		xenoinfo += xeno_status_output(hive.xenos_by_typepath[typepath], can_overwatch, TRUE, user)
-
-	xenoinfo += xeno_status_output(hive.xenos_by_typepath[/mob/living/carbon/xenomorph/larva], can_overwatch, TRUE, user)
-
-	var/hivemind_text = length(hive.xenos_by_typepath[/mob/living/carbon/xenomorph/hivemind]) > 0 ? "Active" : "Inactive"
-	var/mob/living/carbon/xenomorph/queen/hive_queen = hive.living_xeno_queen
-
-	var/queen_text = "None" //Define the Queen
-	if(hive_queen)
-		queen_text = "[hive_queen]"
-
-		if(!hive_queen.client)
-			queen_text += " <i>(SSD)</i>"
-
-	dat += "<b>Total Living Sisters: [hive.get_total_xeno_number()]</b><BR>"
-	dat += "<b>Tier 3: ([length(hive.xenos_by_tier[XENO_TIER_THREE])]/[hive.tier3_xeno_limit]) Sisters</b>[tier3counts]<BR>"
-	dat += "<b>Tier 2: ([length(hive.xenos_by_tier[XENO_TIER_TWO])]/[hive.tier2_xeno_limit]) Sisters</b>[tier2counts]<BR>"
-	dat += "<b>Tier 1: [length(hive.xenos_by_tier[XENO_TIER_ONE])] Sisters</b>[tier1counts]<BR>"
-	dat += "<b>Larvas: [length(hive.xenos_by_typepath[/mob/living/carbon/xenomorph/larva])] Sisters<BR>"
-	dat += "<b>Queen: [queen_text]<BR>"
-	dat += "<b>Hivemind: [hivemind_text]<BR>"
-	if(hive.hivenumber == XENO_HIVE_NORMAL)
-		var/datum/job/xeno_job = SSjob.GetJobType(/datum/job/xenomorph)
-		dat += "<b>Burrowed Larva: [xeno_job.total_positions - xeno_job.current_positions] Sisters<BR>"
-	dat += "<table cellspacing=4>"
-	dat += xenoinfo
-	dat += "</table>"
-	dat += resin_silo_status_output(user)
-
-	var/datum/browser/popup = new(user, "roundstatus", "<div align='center'>Hive Status</div>", 650, 650)
-	popup.set_content(dat)
-	popup.open(FALSE)
-
 ///Send a message to all xenos. Force forces the message whether or not the hivemind is intact. Target is an atom that is pointed out to the hive. Filter list is a list of xenos we don't message.
 /proc/xeno_message(message = null, size = 3, hivenumber = XENO_HIVE_NORMAL, force = FALSE, atom/target = null, sound = null, apply_preferences = FALSE, filter_list = null)
 	if(!message)
@@ -181,86 +55,64 @@
 
 //Adds stuff to your "Status" pane -- Specific castes can have their own, like carrier hugger count
 //Those are dealt with in their caste files.
-/mob/living/carbon/xenomorph/Stat()
+/mob/living/carbon/xenomorph/get_status_tab_items()
 	. = ..()
 
-	if(!statpanel("Game"))
-		return
-
 	if(!(xeno_caste.caste_flags & CASTE_EVOLUTION_ALLOWED))
-		stat("Evolve Progress:", "(FINISHED)")
+		. += "Evolve Progress: (FINISHED)"
 	else if(!hive.check_ruler())
-		stat("Evolve Progress:", "(HALTED - NO RULER)")
+		. += "Evolve Progress: (HALTED - NO RULER)"
 	else
-		stat("Evolve Progress:", "[evolution_stored]/[xeno_caste.evolution_threshold]")
+		. += "Evolve Progress: [evolution_stored]/[xeno_caste.evolution_threshold]"
 
 	if(upgrade_possible())
-		stat("Upgrade Progress:", "[upgrade_stored]/[xeno_caste.upgrade_threshold]")
+		. += "Upgrade Progress: [upgrade_stored]/[xeno_caste.upgrade_threshold]"
 	else //Upgrade process finished or impossible
-		stat("Upgrade Progress:", "(FINISHED)")
+		. += "Upgrade Progress: (FINISHED)"
 
 	if(xeno_caste.plasma_max > 0)
-		stat("Plasma:", "[plasma_stored]/[xeno_caste.plasma_max]")
+		. += "Plasma: [plasma_stored]/[xeno_caste.plasma_max]"
 
 	if(hivenumber != XENO_HIVE_CORRUPTED)
 		if(hive.slashing_allowed == XENO_SLASHING_ALLOWED)
-			stat("Slashing of hosts status:", "ALLOWED")
+			. += "Slashing of hosts status: ALLOWED"
 		else if(hive.slashing_allowed == XENO_SLASHING_RESTRICTED)
-			stat("Slashing of hosts status:","RESTRICTED")
+			. += "Slashing of hosts status: RESTRICTED"
 		else
-			stat("Slashing of hosts status:","FORBIDDEN")
+			. += "Slashing of hosts status: FORBIDDEN"
 
 	//Very weak <= 1.0, weak <= 2.0, no modifier 2-3, strong <= 3.5, very strong <= 4.5
-	var/msg_holder = ""
 	if(frenzy_aura)
-		switch(frenzy_aura)
-			if(-INFINITY to 1.0)
-				msg_holder = "Very weak"
-			if(1.1 to 2.0)
-				msg_holder = "Weak"
-			if(2.1 to 2.9)
-				msg_holder = "Medium"
-			if(3.0 to 3.9)
-				msg_holder = "Strong"
-			if(4.0 to INFINITY)
-				msg_holder = "Very strong"
-		stat("Frenzy pheromone strength:", msg_holder)
+		. += "Frenzy pheromone strength: [aura_strength_text(frenzy_aura)]"
 	if(warding_aura)
-		switch(warding_aura)
-			if(-INFINITY to 1.0)
-				msg_holder = "Very weak"
-			if(1.1 to 2.0)
-				msg_holder = "Weak"
-			if(2.1 to 2.9)
-				msg_holder = "Medium"
-			if(3.0 to 3.9)
-				msg_holder = "Strong"
-			if(4.0 to INFINITY)
-				msg_holder = "Very strong"
-		stat("Warding pheromone strength:", msg_holder)
+		. += "Warding pheromone strength: [aura_strength_text(warding_aura)]"
 	if(recovery_aura)
-		switch(recovery_aura)
-			if(-INFINITY to 1.0)
-				msg_holder = "Very weak"
-			if(1.1 to 2.0)
-				msg_holder = "Weak"
-			if(2.1 to 2.9)
-				msg_holder = "Medium"
-			if(3.0 to 3.9)
-				msg_holder = "Strong"
-			if(4.0 to INFINITY)
-				msg_holder = "Very strong"
-		stat("Recovery pheromone strength:", msg_holder)
+		. += "Recovery pheromone strength: [aura_strength_text(recovery_aura)]"
 
 	switch(hivenumber)
 		if(XENO_HIVE_NORMAL)
 			if(hive.hive_orders && hive.hive_orders != "")
-				stat("Hive Orders:", hive.hive_orders)
+				. += "Hive Orders: [hive.hive_orders]"
 			var/countdown = SSticker.mode?.get_hivemind_collapse_countdown()
 			if(countdown)
-				stat("<b>Orphan hivemind collapse timer:</b>", countdown)
+				. += "Orphan hivemind collapse timer: [countdown]"
 		if(XENO_HIVE_CORRUPTED)
-			stat("Hive Orders:","Follow the instructions of our masters")
+			. += "Hive Orders: Follow the instructions of our masters"
+
+///Describes the strength of a pheromone aura for the status tab
+/proc/aura_strength_text(strength)
+	switch(strength)
+		if(-INFINITY to 1.0)
+			return "Very weak"
+		if(1.1 to 2.0)
+			return "Weak"
+		if(2.1 to 2.9)
+			return "Medium"
+		if(3.0 to 3.9)
+			return "Strong"
+		if(4.0 to INFINITY)
+			return "Very strong"
+	return ""
 
 //A simple handler for checking your state. Used in pretty much all the procs.
 /mob/living/carbon/xenomorph/proc/check_state()
@@ -298,13 +150,13 @@
 /mob/living/carbon/xenomorph/proc/remove_inherent_verbs()
 	if(inherent_verbs)
 		for(var/verb_path in inherent_verbs)
-			verbs -= verb_path
+			remove_verb(src, verb_path)
 
 //Add all your inherent caste verbs and procs. Used in evolution.
 /mob/living/carbon/xenomorph/proc/add_inherent_verbs()
 	if(inherent_verbs)
 		for(var/verb_path in inherent_verbs)
-			verbs |= verb_path
+			add_verb(src, verb_path)
 
 
 //Adds or removes a delay to movement based on your caste. If speed = 0 then it shouldn't do much.
@@ -650,7 +502,7 @@
 	return FALSE
 
 /mob/living/carbon/xenomorph/proc/setup_verbs()
-	verbs += /mob/living/proc/lay_down
+	add_verb(src, /mob/living/proc/lay_down)
 
 /mob/living/carbon/xenomorph/hivemind/setup_verbs()
 	return

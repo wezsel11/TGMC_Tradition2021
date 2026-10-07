@@ -4,19 +4,19 @@ GLOBAL_LIST_EMPTY(all_huds)
 
 //GLOBAL HUD LIST
 GLOBAL_LIST_INIT(huds, list(
-	DATA_HUD_BASIC = new /datum/atom_hud/simple,
-	DATA_HUD_SECURITY_ADVANCED = new /datum/atom_hud/security,
-	DATA_HUD_MEDICAL_BASIC = new /datum/atom_hud/medical/basic,
-	DATA_HUD_MEDICAL_ADVANCED = new /datum/atom_hud/medical/advanced,
-	DATA_HUD_MEDICAL_ADVANCED_SYNTH = new /datum/atom_hud/medical/advanced/synthetic,
-	DATA_HUD_MEDICAL_OBSERVER = new /datum/atom_hud/medical/observer,
-	DATA_HUD_XENO_INFECTION = new /datum/atom_hud/xeno_infection,
-	DATA_HUD_XENO_REAGENTS = new /datum/atom_hud/xeno_reagents,
-	DATA_HUD_XENO_STATUS = new /datum/atom_hud/xeno,
-	DATA_HUD_SQUAD = new /datum/atom_hud/squad,
-	DATA_HUD_ORDER = new /datum/atom_hud/order,
-	DATA_HUD_MEDICAL_PAIN = new /datum/atom_hud/medical/pain,
-	DATA_HUD_XENO_TACTICAL = new /datum/atom_hud/xeno_tactical,
+	new /datum/atom_hud/simple, // DATA_HUD_BASIC
+	new /datum/atom_hud/security, // DATA_HUD_SECURITY_ADVANCED
+	new /datum/atom_hud/medical/basic, // DATA_HUD_MEDICAL_BASIC
+	new /datum/atom_hud/medical/advanced, // DATA_HUD_MEDICAL_ADVANCED
+	new /datum/atom_hud/medical/advanced/synthetic, // DATA_HUD_MEDICAL_ADVANCED_SYNTH
+	new /datum/atom_hud/medical/observer, // DATA_HUD_MEDICAL_OBSERVER
+	new /datum/atom_hud/xeno_infection, // DATA_HUD_XENO_INFECTION
+	new /datum/atom_hud/xeno_reagents, // DATA_HUD_XENO_REAGENTS
+	new /datum/atom_hud/xeno, // DATA_HUD_XENO_STATUS
+	new /datum/atom_hud/squad, // DATA_HUD_SQUAD
+	new /datum/atom_hud/order, // DATA_HUD_ORDER
+	new /datum/atom_hud/medical/pain, // DATA_HUD_MEDICAL_PAIN
+	new /datum/atom_hud/xeno_tactical, // DATA_HUD_XENO_TACTICAL
 	))
 
 
@@ -101,6 +101,8 @@ GLOBAL_LIST_INIT(huds, list(
 	if(!A || (A in hudatoms))
 		return FALSE
 	hudatoms |= A
+	if(!ismob(A))
+		RegisterSignal(A, COMSIG_PARENT_QDELETING, .proc/remove_from_hud, A)
 	for(var/u in hudusers)
 		var/mob/M = u
 		if(!queued_to_see[M])

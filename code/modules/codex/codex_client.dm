@@ -12,7 +12,7 @@
 		return
 
 	if(!searching)
-		searching = input("Enter a search string.", "Codex Search") as text|null
+		searching = tgui_input_text(usr, "Enter a search string.", "Codex Search")
 		if(!searching)
 			return
 

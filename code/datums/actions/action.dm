@@ -52,6 +52,8 @@
 	if(background_icon_state)
 		button.icon_state = background_icon_state
 
+	update_button_keybind_text()
+
 	if(can_use_action())
 		button.color = rgb(255, 255, 255, 255)
 	else

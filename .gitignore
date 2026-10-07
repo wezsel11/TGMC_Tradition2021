@@ -29,3 +29,7 @@ tools/BalanceTool/raw.json
 dmdoc/*
 
 tools/UnstandardnessTestForDM/UnstandardnessTestForDM/obj/x86/Debug/.NETFramework,Version=v4.0,Profile=Client.AssemblyAttributes.cs
+
+# rust_g built on Linux, and the BYOND versions file used by tools, as modern TGMC
+/*.so
+dm_versions.json

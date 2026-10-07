@@ -2,7 +2,6 @@
 	parent_type = /datum // black magic
 	preload_rsc = PRELOAD_RSC // This is 0 so we can set it to an URL once the player logs in and have them download the resources from a different server.
 	view = WORLD_VIEW
-	var/datum/chatOutput/chatOutput //Goonchat holder
 	var/datum/tooltip/tooltips
 
 	//Admin related
@@ -92,3 +91,15 @@
 
 	/// Messages currently seen by this client
 	var/list/seen_messages
+
+	/// The DPI scale of the client. 1 is equivalent to 100% window scaling, 2 will be 200% window scaling
+	var/window_scaling
+
+	/// our current tab
+	var/stat_tab
+	/// list of all tabs
+	var/list/panel_tabs = list()
+	/// list of tabs containing spells and abilities
+	var/list/spell_tabs = list()
+	///Our object window datum. It stores info about and handles behavior for the object tab
+	var/datum/object_window_info/obj_window

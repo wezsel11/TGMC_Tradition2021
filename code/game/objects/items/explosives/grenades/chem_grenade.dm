@@ -28,6 +28,10 @@
 	create_reagents(1000)
 	stage_change() // If no argument is set, it will change the stage to the current stage, useful for stock grenades that start READY.
 
+/obj/item/explosive/grenade/chem_grenade/Destroy()
+	QDEL_LIST(beakers)
+	QDEL_NULL(nadeassembly)
+	return ..()
 
 /obj/item/explosive/grenade/chem_grenade/attack_self(mob/user)
 	if(stage == CG_READY && !active)
@@ -127,7 +131,7 @@
 /obj/item/explosive/grenade/chem_grenade/examine(mob/user)
 	display_timer = (stage == CG_READY && !nadeassembly)	//show/hide the timer based on assembly state
 	. = ..()
-	if(user.skills.getRating("medical") > SKILL_MEDICAL_NOVICE)
+	if(isobserver(user) || user.skills.getRating("medical") > SKILL_MEDICAL_NOVICE)
 		if(length(beakers))
 			to_chat(user, "<span class='notice'>You scan the grenade and detect the following reagents:</span>")
 			for(var/obj/item/reagent_containers/glass/G in beakers)
