@@ -16,7 +16,7 @@ GLOBAL_VAR(restart_counter)
 
 	GLOB.config_error_log = GLOB.world_qdel_log = GLOB.world_manifest_log = GLOB.sql_error_log = GLOB.world_telecomms_log = GLOB.world_href_log = GLOB.world_runtime_log = GLOB.world_attack_log = GLOB.world_game_log = "data/logs/config_error.[GUID()].log" //temporary file used to record errors with loading config, moved to log directory once logging is set
 
-	TgsNew(minimum_required_security_level = TGS_SECURITY_TRUSTED)
+	TgsNew(new /datum/tgs_event_handler/impl, TGS_SECURITY_TRUSTED)
 
 	GLOB.revdata = new
 
@@ -69,6 +69,7 @@ GLOBAL_VAR(restart_counter)
 	//trigger things to run the whole process
 	Master.sleep_offline_after_initializations = FALSE
 	SSticker.start_immediately = TRUE
+	SSticker.bypass_checks = TRUE //As modern TGMC, test rounds start without players
 	CONFIG_SET(number/round_end_countdown, 0)
 	var/datum/callback/cb
 #ifdef UNIT_TESTS
