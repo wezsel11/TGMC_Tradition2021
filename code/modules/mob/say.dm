@@ -46,6 +46,9 @@
 			if(client?.prefs && !(client.prefs.toggles_chat & CHAT_DEAD))
 				to_chat(usr, "<span class='warning'>You have deadchat muted.</span>")
 				return
+			if(is_banned_from(ckey, "Deadchat"))
+				to_chat(src, "<span class='warning'>You are banned from deadchat.</span>")
+				return
 			if(client.handle_spam_prevention(message, MUTE_DEADCHAT))
 				return
 

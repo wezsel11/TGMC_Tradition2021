@@ -331,6 +331,9 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 		if(client.prefs.muted & MUTE_IC)
 			to_chat(src, "<span class='danger'>You cannot speak in IC (muted).</span>")
 			return FALSE
+		if(is_banned_from(ckey, "IC"))
+			to_chat(src, "<span class='warning'>You are banned from IC chat.</span>")
+			return FALSE
 		if(!ignore_spam && client.handle_spam_prevention(message, MUTE_IC))
 			return FALSE
 
