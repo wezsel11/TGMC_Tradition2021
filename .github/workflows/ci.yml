@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tgui:
+    name: tgui (bundles up to date, lint)
+    runs-on: ubuntu-22.04
+    env:
+      TG_BOOTSTRAP_NODE_LINUX: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build tgui
+        run: tools/bootstrap/node tools/build/build.js tgui
+      - name: Committed bundles match the sources
+        run: git diff --exit-code --stat -- tgui/public
+      - name: Lint
+        run: |
+          cd tgui
+          ../tools/bootstrap/node .yarn/releases/yarn-*.cjs tgui:lint
+
+  docker:
+    name: Docker build (the host Linux path)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the server image
+        run: docker build -t tgmc .

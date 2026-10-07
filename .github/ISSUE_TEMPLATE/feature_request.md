@@ -4,5 +4,5 @@ about: Suggest an idea for this project
 
 ---
 
-Feature requests are not handled in the repository. The best place to discuss these ideas would be on the #dev-general of the TGCM discord, or
-this thread on /tg/station 13 forums: https://tgstation13.org/phpBB/viewtopic.php?f=65&t=20995
+TGMC Tradition 2021 keeps the gameplay of 2021-01-07. Weapons, items or other content from later TGMC seasons are not added.
+Suggestions for fixes, performance and quality of life that don't change gameplay are welcome here.

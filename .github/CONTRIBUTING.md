@@ -2,47 +2,24 @@
 
 ## Reporting Issues
 
-See [this page](https://github.com/tgstation/TerraGov-Marine-Corps/issues/new?template=bug_report.md) for a guide and format to issue reports.
+Report bugs in this repository's issue tracker, using the bug report template. Bugs in modern TGMC belong on [tgstation/TerraGov-Marine-Corps](https://github.com/tgstation/TerraGov-Marine-Corps/issues) instead.
 
 ## Introduction
 
-Hello and welcome to the TGMC contributing page. You are here because you are curious or interested in contributing - thank you! Everyone is free to contribute to this project as long as they follow the simple guidelines and specifications below. We strive to maintain long-term code stability and maintainability, and to do that, we need all pull requests to hold up to those specifications. It's in everyone's best interests - including yours! - if the same bug doesn't have to be fixed twice because of duplicated code.
+This repository is **TGMC Tradition 2021**: the TerraGov Marine Corps codebase as of 2021-01-07, revived to run on modern BYOND and to be hosted like modern TGMC. See [README.md](../README.md), [DEPLOYING.md](../DEPLOYING.md) and [CHANGELOG-TRADITION.md](../CHANGELOG-TRADITION.md).
 
-First things first, we want to make it clear how you can contribute (if you've never contributed before), as well as what the structure of the team and the processes are, to avoid any unpleasant surprises if your pull request is closed for a reason you didn't foresee.
+What is accepted here:
 
-## Getting Started
+* Fixes for bugs, crashes, security problems and BYOND compatibility, preferably backported from modern TGMC (name the TGMC PR).
+* Performance improvements and quality of life that do not change gameplay.
+* Hosting, build and database compatibility with modern TGMC (a TGMC community's own database must keep working).
 
-We don't have a strict list of goals and features to add; we instead allow freedom for contributors to suggest and create their ideas for the game. That doesn't mean we aren't determined to squash bugs, which unfortunately pop up a lot due to the deep complexity of the game. Here are some useful starting guides, if you want to contribute or if you want to know what challenges you can tackle with zero knowledge about the game's code structure.
+What is not accepted:
 
-If you'd still like some guidance to see which features are appreciated, check the thread [here](https://tgstation13.org/phpBB/viewtopic.php?f=65&t=20487).
+* Weapons, tools, items, maps or other content from later TGMC seasons.
+* Balance or gameplay changes. The gameplay is kept as it was on 2021-01-07.
 
-If you want to contribute the first thing you'll need to do is set up Git and clone the repository. Check out [this](https://tgstation13.org/wiki/TGMC:Guide_to_contributing) helpful guide.
-
-We have a [list of guides on the wiki](http://www.tgstation13.org/wiki/index.php/Guides#Development_and_Contribution_Guides) that will help you get started contributing to this codebase with Git and Dream Maker. For beginners, it is recommended you work on small projects like bugfixes at first. If you need help learning to program in BYOND, check out this [repository of resources](http://www.byond.com/developer/articles/resources).
-
-You can of course, as always, ask for help at #coding channel on our [Discord](https://discord.gg/2dFpfNE). We're just here to have fun and help out, so please don't expect professional support. If you're eager to learn we'll gladly hold your hand during the first steps.
-
-## Meet the Team
-
-**Design Lead**
-
-The Design Lead has the final say on what gameplay changes get into and out of the game. He or she has full veto power on any feature or balance additions, changes, or removals, and establishes a general, personally-preferred direction for the game. They can also appoint maintainers.
-
-**Headcoder**
-
-The Headcoder is responsible for overall quality of the code and has the veto power here. In addition they are also able to appoint maintainers.
-
-**Art Director**
-
-The Art Director controls sprites and aesthetic that get into the game. While sprites for brand-new additions are generally accepted without harsh standards, modified current art assets fall to the Art Director, who can decide whether or not a sprite tweak is both merited and a suitable replacement.
-
-They also control the general "perspective" of the game - how sprites should generally look, especially the angle from which they're viewed. An example of this is the [3/4 perspective](http://static.tvtropes.org/pmwiki/pub/images/kakarikovillage.gif), which is a bird's eye view from above the object being viewed.
-
-**Maintainers**
-
-Maintainers are the quality control. If a proposed pull request doesn't meet the following specifications, they can request a change, and if a proper reason is not provided or the request becomes stale, they may close it. Maintainers are required to give a reason for closing the pull request.
-
-Maintainers can revert changes if they feel they are not worth maintaining or if they did not live up to the quality specifications.
+Code written here follows the 2021 code style below (for example `.proc/` callbacks, no `?[` operator), and must compile on BYOND 513 to 516.
 
 ## Specifications
 
