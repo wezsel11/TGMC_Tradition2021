@@ -37,10 +37,18 @@ dateformat = "%d %B %Y"
 opt = argparse.ArgumentParser()
 opt.add_argument('-d', '--dry-run', dest='dryRun', default=False, action='store_true', help='Only parse changelogs and, if needed, the targetFile. (A .dry_changelog.yml will be output for debugging purposes.)')
 opt.add_argument('-t', '--time-period', dest='timePeriod', default=9, type=int, help='Define how many weeks back the changelog should display')
-opt.add_argument('targetFile', help='The HTML changelog we wish to update.')
-opt.add_argument('ymlDir', help='The directory of YAML changelogs we will use.')
+# Takes "targetFile ymlDir", or only "ymlDir" like modern TGMC's script (as its TGS PreSynchronize scripts call it),
+# then the target is html/changelog.html next to the yml directory.
+opt.add_argument('paths', nargs='+', metavar='[targetFile] ymlDir', help='The HTML changelog we wish to update (default: html/changelog.html), and the directory of YAML changelogs we will use.')
 
 args = opt.parse_args()
+if len(args.paths) == 1:
+    args.ymlDir = args.paths[0]
+    args.targetFile = os.path.join(os.path.dirname(os.path.normpath(args.ymlDir)), 'changelog.html')
+elif len(args.paths) == 2:
+    args.targetFile, args.ymlDir = args.paths
+else:
+    opt.error('expected "targetFile ymlDir" or "ymlDir"')
 
 all_changelog_entries = {}
 

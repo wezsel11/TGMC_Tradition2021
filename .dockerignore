@@ -1,6 +1,5 @@
 .dockerignore
 .editorconfig
-GPLv3.txt
 LICENSE
 README.md
 .github
@@ -14,10 +13,14 @@ README.md
 .vs*
 cfg
 data
+tmp
 SQL
+*.lk
+*.log
 tgui/node_modules
 tgui/.yarn/cache
 tgui/.yarn/unplugged
+tgui/.yarn/webpack
 tgui/.yarn/install-state.gz
 tgui/.yarn/install-target
 tgui/.pnp.*
@@ -25,8 +28,6 @@ tools/bootstrap/.cache
 tgmc.dmb
 tgmc.int
 tgmc.rsc
-tgmc.lk
 tgmc.dyn.rsc
 *.dll
-appveyor.yml
 Dockerfile

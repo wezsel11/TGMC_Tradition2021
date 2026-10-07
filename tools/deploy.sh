@@ -11,6 +11,7 @@ fi
 
 mkdir -p \
     $1/_maps \
+    $1/sound/runtime \
     $1/strings
 
 if [ -d ".git" ]; then
@@ -21,6 +22,8 @@ fi
 cp tgmc.dmb tgmc.rsc $1/
 cp -r _maps/* $1/_maps/
 cp -r strings/* $1/strings/
+#sounds loaded at runtime, see sound/runtime/README.md
+cp -r sound/runtime/* $1/sound/runtime/
 
 #remove .dm files from _maps
 
