@@ -33,7 +33,7 @@
 	hive = new_hive
 
 /datum/hive_status_ui/ui_state(mob/user)
-	return GLOB.always_state
+	return GLOB.hive_ui_state
 
 /datum/hive_status_ui/ui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
